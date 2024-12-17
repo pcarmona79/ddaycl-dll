@@ -1,0 +1,56 @@
+# Local 
+.DS_Store
+.vscode
+.vs
+.idea/*.xml
+
+build/**/*
+
+include/*
+lib/*
+
+# Compiled Object files
+
+*.slo
+*.lo
+*.sdf
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+[Dd]ebug
+CMakeFiles
+**/cmake-build-debug
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/install_manifest.txt
+**/CMakeFiles/
+**/CTestTestfile.cmake
+**/*.cbp
+**/CMakeScripts
+**/compile_commands.json
+
+include/divisible/*
