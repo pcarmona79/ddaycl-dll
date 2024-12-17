@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_cmds.h"
 #include "stddef.h"
 //#include "p_classes.h"
+#include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 // evil: global variables for countdown
 extern int countdownActive;
@@ -3403,7 +3404,7 @@ void Cmd_ShowTimeLeft_f(edict_t* ent)
 	}
 	else
 	{
-		gi.cprintf(ent, PRINT_HIGH, "No hay un límite de tiempo configurado para esta partida.\n");
+		gi.cprintf(ent, PRINT_HIGH, "No hay un lï¿½mite de tiempo configurado para esta partida.\n");
 	}
 }
 

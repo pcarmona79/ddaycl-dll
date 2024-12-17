@@ -407,15 +407,16 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 		//u = (calcv) ? (crandom() * vspread) : vspread;
 
 
+
 		// add spread to hip shots
 		if (self->client && !self->client->aim)
 		{
-			r = 300 - crandom() * 600;
-			u = crandom() * 600;
+			r = 400 - crandom() * 600;//hans era 600
+			u = crandom() * 600;// hans era 600
 		}
 		else 
 		{
-			r = (crandom() * (hspread)) - ((hspread)/2);
+			r = (crandom() * (hspread)) - ((hspread)/2);//hans era 2
 			u = (crandom() * (vspread));
 		}
 
@@ -1919,7 +1920,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 		rocket->nextthink = rocket->nextthink = level.time + 8000/speed;
 		rocket->think = G_FreeEdict;
 	}
-	//Nuevos valores al da�o del rocket --- Hans
+	//Nuevos valores al daño del rocket --- Hans
 
 	//rocket->dmg = damage;
 	rocket->dmg = 400;
@@ -2307,7 +2308,7 @@ edict_t *ApplyFirstAid (edict_t *ent)
 
 int DoAnarchyStuff(edict_t *ent,char *sound)
 {
-	static lastone;
+	static int lastone; // static lastone; // Esto deberia ser un int - ZeRo
 	int soundindexM,soundindexF;
 	float RanMale,RanFemale;
 
@@ -2493,7 +2494,7 @@ void Weapon_Rifle_Fire (edict_t *ent)
 	vec3_t		start;
 	vec3_t		forward, right;
 	vec3_t		offset;
-	int			kick=200;
+	int			kick=50;//hans era 200
 	int			i;
 	
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
@@ -3742,15 +3743,15 @@ void Weapon_Sniper_Fire (edict_t *ent)
 		if (!ent->ai && ent->client->movement && ent->client->ps.gunframe <=  guninfo->AFO[0] )
 		{
 			safe_cprintf(ent, PRINT_HIGH, "Inaccurate shot!  Hold still when you fire the sniper rifle!\n");
-			fire_gun(ent, start, forward, damage, kick, 100, 100, mod, false);
+			fire_gun(ent, start, forward, damage, kick, 250, 250, mod, false);
 		}
 		else
 		{
 			fire_rifle (ent, start, forward, damage, kick, mod);
 		}
 	}
-	else
-		fire_gun(ent, start, forward, damage, kick, 100, 100, mod, false);
+		else
+			fire_gun(ent, start, forward, damage, kick, 50, 50, mod, false);
 
 	ent->client->sniper_loaded[ent->client->resp.team_on->index] = false;
 	// rezmoth - cosmetic recoil

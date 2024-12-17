@@ -32,6 +32,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // D-Day: Normandy Player Classes
 // this file is for definitions for classes in DDay.
 
+void initialize_random_seed() {  // Necesario para el modo random_class - ZeRo
+    srand(time(NULL));
+}
 
 //fills a gun with bullets
 void Load_Weapon (edict_t *ent, gitem_t	*item)
@@ -153,7 +156,6 @@ void Give_Class_Weapon(edict_t *ent)
 		item = FindItem("Knife");
 		client->pers.inventory[ITEM_INDEX(item)] = 1;
 	}
-
 	// faf rifle-only code  //ddaylife 
 	if ((mauser_only->value == 1) && !(client->resp.mos == MEDIC))
 	{
@@ -166,6 +168,12 @@ void Give_Class_Weapon(edict_t *ent)
 	else if (swords->value == 1 && client->resp.mos != MEDIC)
 	{
 			item= FindItem("Sword");
+	}
+	else if ((random_class->value == 1)) // Modo de clases al azar al spawnear, se activa con random_class 1 - ZeRo
+	{ 
+    		int random_value = (rand() % 9); // `rand() % 9` genera [0, 8] que son los numeros correspondientes a las clases.
+		    client->resp.mos = random_value; // Le asignamos el numero generado.
+			item=FindItem(client->resp.team_on->mos[client->resp.mos]->weapon1); // Le entregamos el arma principal a la clase sorteada.
 	}
 
 	else

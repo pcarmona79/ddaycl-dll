@@ -858,7 +858,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 
 
-
 	wound_location = die_time = 0;
 	height = abs(targ->mins[2]) + targ->maxs[2];
 
@@ -1001,9 +1000,11 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		return;
 	}
 
-	//Wheaty: Per Darwin's request... SMG/LMG can no longer inflict headshots
+	/*Wheaty: Per Darwin's request... SMG/LMG can no longer inflict headshots
 	if ((mod == MOD_LMG || mod == MOD_SHOTGUN2 || mod == MOD_SUBMG) && result == HEAD_WOUND)
-		result = CHEST_WOUND;
+	*/
+	if ((mod == MOD_LMG || mod == MOD_SHOTGUN2 || mod == MOD_SUBMG) && result == HEAD_WOUND && targ->health > 30 ) // ZeRo - Se agrega condicion de hp maximo para que si sea headshot.
+			result = CHEST_WOUND;
 			
 	switch(result)
 	{		
@@ -1096,8 +1097,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 					if(randnum > HELMET_SAVE)
 					{
 						gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hithelm.wav"), 1, ATTN_NORM, 0);
-						safe_cprintf(targ,PRINT_HIGH,"You lucky bastard! Your helmet deflected the shot!\n");
-						damage = 0;
+						if (exbattleinfo->value >= 1)
+							safe_bprintf(PRINT_MEDIUM,"** %s is a lucky bastard! The helmet deflected the shot!!! **\n",targ->client->pers.netname); // ZeRo - Esto lo muestra a todos (incluso en la consola, quiero cambiar eso.)
+						else
+							safe_cprintf(targ,PRINT_HIGH,"You lucky bastard! Your helmet deflected the shot!\n");
 						targ->client->kick_angles[0] += 3;
 						targ->client->kick_angles[1] -= 3;
 						targ->client->kick_angles[2] += 3;
@@ -1110,11 +1113,11 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				if(!saved)
 				{
 					if (!targ->deadflag) {
-						gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hithead.wav"), 1, ATTN_NORM, 0);
+						gi.sound (targ, CHAN_VOICE, gi.soundindex ("misc/hithead.wav"), 1, ATTN_NORM, 0); // ZeRo - Era CHAN_BODY, pero así no se escuchaba completo el sonido del headshot.
 						safe_cprintf(targ,PRINT_HIGH,"Your head's been shot off!\n");
 					}
 					damage *= 100;
-				
+					
 				//Wheaty: This was missing, for some reason :p
 					wound_location |= HEAD_WOUND;
 

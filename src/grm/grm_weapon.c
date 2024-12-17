@@ -122,19 +122,20 @@ void Weapon_m98k (edict_t *ent)
 		return;
 	}
 	
-	if (ent->client->ps.gunframe == 96)
+	//hans elimina mira ramdon
+/*	if (ent->client->ps.gunframe == 96)
 	{
 		ent->client->crosshair_offset_x = random() * 4 - 2;
 		ent->client->crosshair_offset_y = random() * 2;
 	}
-
+	*/
 	if ((ent->client->weaponstate == WEAPON_FIRING || 
 	 ent->client->weaponstate == WEAPON_READY)
 		&& !ent->client->heldfire && (ent->client->buttons & BUTTON_ATTACK)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?85:3)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?86:4)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?87:5)
-			&& ent->client->ps.gunframe!=((ent->client->aim)?88:6)
+		/* && ent->client->ps.gunframe != ((ent->client->aim) ? 88 : 6)      // hans muchas menos opciones
 			&& ent->client->ps.gunframe!=((ent->client->aim)?89:7)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?90:8)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?91:9)
@@ -144,7 +145,7 @@ void Weapon_m98k (edict_t *ent)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?95:13)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?96:14)
 			&& ent->client->ps.gunframe!=((ent->client->aim)?97:15)
-			&& ent->client->ps.gunframe!=((ent->client->aim)?98:16)
+			&& ent->client->ps.gunframe!=((ent->client->aim)?98:16) */
 	//		&& ent->client->ps.gunframe!=((ent->client->aim)?0:17)
 			
 			//gotta do it this way for both firing modes
@@ -152,7 +153,7 @@ void Weapon_m98k (edict_t *ent)
 		{
 //			if (ent->client->ps.gunframe<4)
 //				firetype = abs(5-ent->client->ps.gunframe);  unknown function
-		ent->client->ps.gunframe = (ent->client->aim)?98:16;
+		ent->client->ps.gunframe = (ent->client->aim)?88:16;// Hans Era 98 
 			ent->client->weaponstate = WEAPON_READY;
 			ent->client->latched_buttons |= BUTTON_ATTACK;
 			ent->client->heldfire = true;

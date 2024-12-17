@@ -65,6 +65,8 @@ void Weapon_Generic (edict_t *ent,
 
 //	vec3_t	vieworg;
 
+	if (!ent || !ent->client)
+		return;
 
 	if (ent->ai)
 	{
@@ -84,7 +86,7 @@ void Weapon_Generic (edict_t *ent,
 
 
 
-	if (ent->client->pers.weapon &&
+	if (/*ent->client->pers.weapon && MetalGod redundant check */
 		ent->client->pers.weapon->pickup_name &&
 		frame_output)
 		gi.dprintf("%i / %i - %s\n", ent->client->weaponstate, ent->client->ps.gunframe, ent->client->pers.weapon->pickup_name);
@@ -207,7 +209,7 @@ void Weapon_Generic (edict_t *ent,
 		}
 
 		// faf: show finish of reloading
-		if (ent->client->ps.gunframe == FRAME_RELOAD_LAST -10
+		if (ent->client->ps.gunframe == FRAME_RELOAD_LAST -1
 		&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
 
 		{
@@ -294,7 +296,7 @@ void Weapon_Generic (edict_t *ent,
 				}
                
 			}
-
+			/* MetalGod Duplicated as default below so... why bother?
 			else if(ent->client->pers.weapon->topoff==2)//for beltfed
 			{
 				if(*ammo_amount)
@@ -303,7 +305,7 @@ void Weapon_Generic (edict_t *ent,
 						ent->client->pers.inventory[ammo_index]--;
 					*ent->client->p_rnd = ammo_item->quantity;
 				}
-			}
+			}*/
 			
 			else 
 			{
@@ -402,8 +404,18 @@ void Weapon_Generic (edict_t *ent,
 	
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
-		if (ent->client->pers.weapon->position == LOC_SNIPER)
-			ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
+		//faf:  stop avoiding bolting by switching weaps
+//		if (ent->client->pers.weapon->position == LOC_SNIPER)
+//			ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
+
+		// Nerfeo recarga automatica doble pipa
+/*		if (ent->client->pers.weapon->position == LOC_SNIPER)
+		{
+			if (*ent->client->p_rnd == ammo_item->quantity) //if fully loaded, assume it's bolted
+				ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
+		}
+*/
+		ent->client->sniper_loaded[ent->client->resp.team_on->index] = true; // carga de bala en el arma sola
 
 		if (ent->client->ps.gunframe == FRAME_ACTIVATE_LAST)
 		{
@@ -707,9 +719,7 @@ skip_anim:
 			return;
 		}
 
-
 		ent->client->aim=true;
-
 
 
 		if (ent->client->pers.weapon->position == LOC_SNIPER &&
@@ -729,10 +739,18 @@ skip_anim:
 			{
 				// if not finished with bolt animation, continue
 				if (ent->client->ps.gunframe < guninfo->AFO[2])
-				{
+				{	
+					// if the bolt is at the end of the animation, play the sound
+					if (ent->client->ps.gunframe == guninfo->AFO[2] - 6)
+
+						gi.sound(ent, CHAN_AUTO, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
+
+					if (ent->client->ps.gunframe == guninfo->AFO[2])
+						//ent->client->scopetry = false;
+
 					if (ent->client->ps.gunframe == ent->client->pers.weapon->guninfo->sniper_bolt_frame ) 
 					{
-	 					gi.sound(ent, CHAN_AUTO, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
+	 				//	gi.sound(ent, CHAN_AUTO, gi.soundindex(ent->client->pers.weapon->guninfo->sniper_bolt_wav), 1, ATTN_NORM, 0);
 
 						// faf: show player bolting rifle
 						if (ent->oldstance == ent->stanceflags) //faf:  not changing stances
@@ -756,7 +774,7 @@ skip_anim:
 							}
 						}//faf: end
 					}
-
+					// pasa la siguiente bala 
 					ent->client->ps.gunframe++;
 				}
 				else // else un-TS and set back to WEAPON_READY
@@ -792,7 +810,7 @@ skip_anim:
 		}*/
 
 
-
+		// postura de mira sniper
 		if(ent->client->ps.gunframe < FRAME_RAISE_FIRST)
 			ent->client->ps.gunframe = FRAME_RAISE_FIRST;
 		else if(ent->client->ps.gunframe >= FRAME_RAISE_LAST)
@@ -872,11 +890,11 @@ skip_anim:
 
 
 }
-  
-  
+/*	  MetalGod Unused
 
-void ifchangewep(edict_t *ent)
+
+void ifchangewep(edict_t* ent)
 {
-//	if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
+	//	if(auto_weapon_change->value) NoAmmoWeaponChange (ent);
 	return;
-}
+}	 */

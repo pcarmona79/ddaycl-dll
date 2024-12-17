@@ -47,7 +47,58 @@ void weapon_grenade_fire (edict_t *ent);
 void check_unscope (edict_t *ent);//faf
 void turret_off (edict_t *self);
 
+//// ZeRo - KILLING SPREE! ////
+void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent)
+{
+	int i;
 
+	if (OnSameTeam(attacker, self) && attacker && attacker->client && attacker != self) // La racha se pierde si se comete un asesinato por fiendly fire.
+	{
+		if (attacker->client->resp.streak >= exbattleinfo->value)
+		{
+			for (i = 1; i <= game.maxclients; i++)
+			{
+				Tent = &g_edicts[i];
+					if (!Tent->inuse || !Tent->client)
+						continue;
+				safe_cprintf (Tent, PRINT_MEDIUM, "** %s has LOST his streak due to FRIENDLY FIRE. **\n", attacker->client->pers.netname); 
+			}
+		}
+		attacker->client->resp.streak = 0;
+	}
+	else if (attacker && attacker->client && attacker != self)
+		attacker->client->resp.streak++;
+
+	if (attacker && attacker->client && attacker->client->resp.streak >= exbattleinfo->value && attacker != self) // Si el jugador está en racha se genera el anuncio.
+		for (i = 1; i <= game.maxclients; i++)
+		{
+			Tent = &g_edicts[i];
+				if (!Tent->inuse || !Tent->client)
+					continue;
+			safe_cprintf (Tent, PRINT_MEDIUM, "** %s is on a KILLING SPREE!: %d frags **\n", attacker->client->pers.netname, attacker->client->resp.streak);
+		}
+
+	if (self->client->resp.streak >= exbattleinfo->value && attacker->client && attacker != self) // Si el jugador está en racha y es asesinado, quien corta la racha es anunciado.
+		for (i = 1; i <= game.maxclients; i++)
+		{
+			Tent = &g_edicts[i];
+				if (!Tent->inuse || !Tent->client)
+					continue;
+		safe_cprintf (Tent, PRINT_MEDIUM, "** %s has ENDED %s KILLING SPREE. Total frags: %d **\n", attacker->client->pers.netname, self->client->pers.netname, self->client->resp.streak); 
+		}
+
+	if (self->client->resp.streak >= exbattleinfo->value && (!attacker || !attacker->client || attacker == self)) // Si el jugador está en racha y cambia de equipo 0 se suicida se anuncia su error :P
+		for (i = 1; i <= game.maxclients; i++)
+		{
+			Tent = &g_edicts[i];
+				if (!Tent->inuse || !Tent->client)
+					continue;
+		safe_cprintf (Tent, PRINT_MEDIUM, "** %s has made a mistake and LOST his streak. **\n", self->client->pers.netname);
+		}
+	
+	self->client->resp.streak = 0; // La racha se reinicia si el jugador muere.
+	
+}
 
 //
 // Gross, ugly, disgustuing hack section
@@ -572,16 +623,14 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 				}
 			}
 
-
-
-
 			if (deathmatch->value)
 				self->client->resp.score--;
 			if (!self->ai)
 				self->enemy = NULL;
+			if (exbattleinfo->value > 2)
+			KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
 			return;
 		}
-
 
 
 		self->enemy = attacker;
@@ -725,13 +774,14 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 
 
 			}
-
 			//faf:  announce team kills
+			//ZeRo: And/Or Headshots
 			if (OnSameTeam(attacker, self) && attacker != self)
 				message3 = " (Friendly fire)";
+			else if (self->client->resp.deathblend == 1 && exbattleinfo->value >= 1) // ZeRo - Los headshots son anunciados a todos (excepto los headshot de teamkill)
+				message3 = " - ** HEADSHOT **";
 			else
 				message3 = "";
-
 			if (message)
 			{
 				// Means of Death msgs now server customizable
@@ -779,8 +829,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					}
 
 				}
-
-
+				
 				if (deathmatch->value)
 				{
 					if (ff)
@@ -788,6 +837,8 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					else
 						attacker->client->resp.score++;
 				}
+				if (exbattleinfo->value > 2)
+				KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
 				return;
 			}
 		}
@@ -3279,16 +3330,16 @@ qboolean Setup_Map_Vote (void)
 			if (!strcmp(level.nextmap, level.mapname))
 			{
 				changefirstmap = true;
-				//votemaps[0] = level.nextmap;
-				//continue;
+				votemaps[0] = level.nextmap;
+				continue;
 			}
 			for (k = 0; k<20 && last_maps_played[k]; k++)
 			{
 				if (!strcmp (last_maps_played[k], level.nextmap))
 				{	
 					changefirstmap = true;
-					//votemaps[0] = votemaps[3];
-					//votemaps[3] = level.nextmap;
+					votemaps[0] = votemaps[3];
+					votemaps[3] = level.nextmap;
 				}
 			}
 			if (!changefirstmap)

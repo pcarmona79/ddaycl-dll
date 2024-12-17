@@ -80,7 +80,7 @@ static void AStar_InitLists (void)
 	memset( alist, -1, sizeof(alist));//jabot092
 }
 
-static int AStar_PLinkDistance( n1, n2 )
+static int AStar_PLinkDistance( int n1, int n2 ) // Faltaba definir como int estas 2 variables. El compilador lo hace por defecto pero tira un warning feo >:( - ZeRo
 {
 	int	i;
 
@@ -122,7 +122,7 @@ static void AStar_PutInClosed( int node )
 	astarnodes[node].list = CLOSEDLIST;
 }
 
-static void AStar_PutAdjacentsInOpen( node )
+static void AStar_PutAdjacentsInOpen( int node ) // Faltaba definir como int a node. El compilador lo hace por defecto pero tira un warning feo >:( - ZeRo
 {
 	int	i;
 	int rand_ignore = 0;

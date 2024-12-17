@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerCommand>D:\Quake2\r1q2.exe</LocalDebuggerCommand>
-    <LocalDebuggerCommandArguments>+set game dday +set deathmatch 1</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>+set dedicated 1 +set game dday +set deathmatch 1+exec server2.cfg</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

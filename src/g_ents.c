@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 // g_ents.c
 // D-Day: Normandy Old / Unsorted Entities
@@ -302,7 +303,7 @@ spawn_t sp_usm[MAX_TEAM_ITEMS];
 SMos_t USM_MOS_List[NUM_CLASSES];
 void USM_UserPrecache(void);
 
-InitTeam (char *team, int i)
+int InitTeam (char *team, int i) // Faltaba definir como int a InitTeam. El compilador lo hace por defecto pero tira un warning feo >:( - ZeRo
 {
 	int j;
 

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 
 // evil: global variables for countdown
@@ -585,14 +586,14 @@ void SVCmd_KillPlayer_f()
 	int player_id = atoi(playerIdStr);
 	if (player_id < 1 || player_id > maxclients->value)
 	{
-		gi.cprintf(NULL, PRINT_HIGH, "ID de jugador no válido. Debe estar entre 1 y %d.\n", (int)maxclients->value);
+		gi.cprintf(NULL, PRINT_HIGH, "ID de jugador no vÃ¡lido. Debe estar entre 1 y %d.\n", (int)maxclients->value);
 		return;
 	}
 
 	edict_t* player = &g_edicts[player_id];
 	if (!player->inuse || !player->client)
 	{
-		gi.cprintf(NULL, PRINT_HIGH, "El jugador con ID %d no está en juego o no es válido.\n", player_id);
+		gi.cprintf(NULL, PRINT_HIGH, "El jugador con ID %d no estÃ¡ en juego o no es vï¿½lido.\n", player_id);
 		return;
 	}
 

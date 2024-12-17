@@ -114,6 +114,8 @@ cvar_t  *axis_password;
 cvar_t  *objective_protect;
 cvar_t  *ent_files;
 
+cvar_t *exbattleinfo; // ZeRo
+cvar_t *random_class;	// ZeRo	
 cvar_t *mauser_only;  //ddaylife
 cvar_t *sniper_only;  //ddaylife 
 cvar_t *no_nades; //ddaylife
@@ -1189,29 +1191,29 @@ void CheckDMRules (void)
 		if (timeRemaining == 300 && !fiveMinWarning)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/5_minute.wav"), 1, ATTN_NONE, 0);
-			centerprintall("¡Quedan 5 minutos de tiempo!\n");
+			centerprintall("Quedan 5 minutos de tiempo!\n");
 			fiveMinWarning = true;
 		}
 
 		if (timeRemaining == 60 && !oneMinWarning)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/1_minute.wav"), 1, ATTN_NONE, 0);
-			centerprintall("¡Queda 1 minuto de tiempo!\n", 5.0f);
+			centerprintall("Queda 1 minuto de tiempo!\n", 5.0f);
 			oneMinWarning = true;
 		}
 
 		if (timeRemaining == 4 && !threeSeconds)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/final_count.wav"), 1, ATTN_NONE, 0);
-			centerprintall("¡Quedan 3 segundos!\n", 5.0f);
+			centerprintall("Quedan 3 segundos!\n", 5.0f);
 			threeSeconds = true;
 		}
 
 		if (timeRemaining == 3)
-			centerprintall("¡Quedan 2 segundos!\n", 5.0f);
+			centerprintall("Quedan 2 segundos!\n", 5.0f);
 
 		if (timeRemaining == 2)
-			centerprintall("¡Queda 1 segundo!\n", 5.0f);
+			centerprintall("Queda 1 segundo!\n", 5.0f);
 
 		// end game if timelimit hits
 		if (timeRemaining <= 0)
@@ -1355,53 +1357,6 @@ int HumanPlayerCount(void)
                               
 }
 
-/*
-================
-HandleCountdown
-
-Handles countdown if exists
-================
-*/
-void HandleCountdown(void)
-{
-	if (countdownActive)
-	{
-		if (countdownTimer > 0)
-		{
-			countdownTimer--;
-		}
-		else
-		{
-			if (countdownValue > 0)
-			{
-				if (countdownValue == 5)
-				{
-					centerprintall("¡Preparados!");
-					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex(va("misc/first_count.wav")), 1, ATTN_NONE, 0);
-				}
-
-				if (countdownValue == 3)
-					centerprintall("3...");
-
-				if (countdownValue == 2)
-					centerprintall("2...");
-
-				if (countdownValue == 1)
-					centerprintall("1...");
-
-				countdownValue--;
-				countdownTimer = 10;
-			}
-			else
-			{
-				centerprintall("¡Que comience el juego!");
-				gameStartTime = level.time;
-				timelimit->value = countdownTimeLimit;
-				countdownActive = 0;
-			}
-		}
-	}
-}
 
 /*
 ================
@@ -1555,7 +1510,43 @@ void G_RunFrame (void)
 
 
 	// evil: handle countdown if its active
-	HandleCountdown();
+	if (countdownActive)
+	{
+		if (countdownTimer > 0)
+		{
+			countdownTimer--;
+		}
+		else
+		{			
+			if (countdownValue > 0)
+			{
+				if (countdownValue == 5)
+				{
+					centerprintall("Preparados!");
+					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex(va("misc/first_count.wav")), 1, ATTN_NONE, 0);
+				}
+
+				if (countdownValue == 3)
+					centerprintall("3...");
+
+				if (countdownValue == 2)
+					centerprintall("2...");
+
+				if (countdownValue == 1)
+					centerprintall("1...");
+
+				countdownValue--;
+				countdownTimer = 10;
+			}
+			else
+			{
+				centerprintall("ï¿½Que comience el juego!");
+				gameStartTime = level.time;
+				timelimit->value = countdownTimeLimit;				
+				countdownActive = 0;
+			}
+		}
+	}
 
 	// see if it is time to end a deathmatch
 	CheckDMRules ();

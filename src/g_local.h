@@ -43,10 +43,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 #include "p_menu.h"
 
+// 2024 - intptr_t is more apropiated for compatibility with both 64 and 32 bits - ZeRo
+#include <stdint.h>
+
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-//#define DEVVERSION	"4.1"
-#define DEVVERSION "5.0"//faf
+//#define DEVVERSION "5.0"//faf
+#define DEVVERSION	"5.04"
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -660,10 +663,11 @@ extern	int	meansOfDeath;
 
 extern	edict_t			*g_edicts;
 
-#define	FOFS(x) (int)&(((edict_t *)0)->x)
-#define	STOFS(x) (int)&(((spawn_temp_t *)0)->x)
-#define	LLOFS(x) (int)&(((level_locals_t *)0)->x)
-#define	CLOFS(x) (int)&(((gclient_t *)0)->x)
+// 2024 - Modified from int to intptr_t - ZeRo
+#define	FOFS(x) (intptr_t)&(((edict_t *)0)->x)
+#define	STOFS(x) (intptr_t)&(((spawn_temp_t *)0)->x)
+#define	LLOFS(x) (intptr_t)&(((level_locals_t *)0)->x)
+#define	CLOFS(x) (intptr_t)&(((gclient_t *)0)->x)
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
 #define crandom()	(2.0 * (random() - 0.5))
@@ -748,6 +752,8 @@ extern cvar_t  *objective_protect;
 
 extern cvar_t  *ent_files;
 
+extern cvar_t  *exbattleinfo; // ZeRo - Activa datos de batalla adicionales: headshots, helmet saves y killing spree. Valores sobre 2 determinan las kills necesarias para la racha.
+extern cvar_t  *random_class; // ZeRo
 extern cvar_t  *sniper_only;
 extern cvar_t  *mauser_only;
 extern cvar_t  *swords;
@@ -1333,6 +1339,8 @@ typedef struct
 	int			stat_played_allied;
 	int			stat_played_axis;
 
+	int			streak;
+
 
 
 } client_respawn_t;
@@ -1794,6 +1802,7 @@ struct edict_s
 	
 	//new var for hit location
 	int				wound_location;
+
 //faf	int				die_time;
 	float die_time;
 
@@ -1895,10 +1904,10 @@ int ita_index;
 int jpn_index;
 int usm_index;
 
-#define SMG_SPREAD 40
-#define PISTOL_SPREAD 50
-#define LMG_SPREAD 80
-#define HMG_SPREAD 100
+#define SMG_SPREAD 30 // valor era 40 hans
+#define PISTOL_SPREAD 40 // valor era 50 hans
+#define LMG_SPREAD 20 // Valor para test (Original 80)- ZeRo
+#define HMG_SPREAD 30 // Valor para test (Original 100)- ZeRo
 
 
 
