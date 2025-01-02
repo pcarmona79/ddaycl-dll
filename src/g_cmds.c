@@ -3404,7 +3404,7 @@ void Cmd_ShowTimeLeft_f(edict_t* ent)
 	}
 	else
 	{
-		gi.cprintf(ent, PRINT_HIGH, "No hay un l�mite de tiempo configurado para esta partida.\n");
+		gi.cprintf(ent, PRINT_HIGH, "No hay un limite de tiempo configurado para esta partida.\n");
 	}
 }
 

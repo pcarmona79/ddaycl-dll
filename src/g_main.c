@@ -1540,7 +1540,7 @@ void G_RunFrame (void)
 			}
 			else
 			{
-				centerprintall("�Que comience el juego!");
+				centerprintall("Que comience el juego!");
 				gameStartTime = level.time;
 				timelimit->value = countdownTimeLimit;				
 				countdownActive = 0;
