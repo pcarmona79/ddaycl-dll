@@ -16,6 +16,12 @@ lib/*
 *.sdf
 *.o
 *.obj
+*.sbr
+*.sln
+*.filters
+*.user
+*.pbd
+*.tlog
 
 # Precompiled Headers
 *.gch
