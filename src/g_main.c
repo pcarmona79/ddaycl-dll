@@ -156,6 +156,9 @@ int countdownValue = 0;
 int countdownTimer = 0;
 float countdownTimeLimit = 0;
 float gameStartTime = 0.0f;
+qboolean fiveMinWarning = false;
+qboolean oneMinWarning = false;
+qboolean threeSeconds = false;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -1180,10 +1183,6 @@ void CheckDMRules (void)
 	// evil: print and play sound for timelimit if is setted
 	if (timelimit->value)
 	{
-		static qboolean fiveMinWarning = false;
-		static qboolean oneMinWarning = false;
-		static qboolean threeSeconds = false;
-
 		int totalTime = timelimit->value * 60;
 		int timeElapsed = level.time - gameStartTime;
 		int timeRemaining = totalTime - timeElapsed;
@@ -1260,7 +1259,7 @@ void CheckDMRules (void)
 	}
 }
 
-//evil: for reset timelimit and countdown timers
+//evil: for reset timelimit, countdown timers and booleans
 void ResetCountTimer(void)
 {
 	timelimit->value = 0;
@@ -1268,6 +1267,9 @@ void ResetCountTimer(void)
 	countdownValue = 0;
 	countdownTimer = 0;
 	countdownTimeLimit = 0;
+	fiveMinWarning = false;
+	oneMinWarning = false;
+	threeSeconds = false;
 }
 
 
@@ -1520,6 +1522,10 @@ void G_RunFrame (void)
 		{			
 			if (countdownValue > 0)
 			{
+				fiveMinWarning = false;
+				oneMinWarning = false;
+				threeSeconds = false;
+				
 				if (countdownValue == 5)
 				{
 					centerprintall("Preparados!");

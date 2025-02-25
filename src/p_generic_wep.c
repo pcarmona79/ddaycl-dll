@@ -409,13 +409,13 @@ void Weapon_Generic (edict_t *ent,
 //			ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
 
 		// Nerfeo recarga automatica doble pipa
-/*		if (ent->client->pers.weapon->position == LOC_SNIPER)
+		if (ent->client->pers.weapon->position == LOC_SNIPER)
 		{
 			if (*ent->client->p_rnd == ammo_item->quantity) //if fully loaded, assume it's bolted
 				ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
 		}
-*/
-		ent->client->sniper_loaded[ent->client->resp.team_on->index] = true; // carga de bala en el arma sola
+
+//		ent->client->sniper_loaded[ent->client->resp.team_on->index] = true; // carga de bala en el arma sola (Esta linea fea no existe en el codigo original - ZeRo)
 
 		if (ent->client->ps.gunframe == FRAME_ACTIVATE_LAST)
 		{

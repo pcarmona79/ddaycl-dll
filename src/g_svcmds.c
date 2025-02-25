@@ -638,9 +638,9 @@ void	ServerCommand (void)
 		Svcmd_Maplist_f (); 
 	else if (Q_stricmp (cmd, "mapinfo") == 0)
 		Svcmd_Mapinfo_f ();
-	else if (Q_stricmp (cmd, "teams") ==0)
+	else if (Q_stricmp (cmd, "teams") == 0)
 		Svcmd_Teams_f();
-	else if (Q_stricmp (cmd, "switch") ==0)
+	else if (Q_stricmp (cmd, "switch") == 0)
 		Svcmd_Teamswitch_f();
 
 	else if (Q_stricmp(cmd, "startcount") == 0)

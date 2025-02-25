@@ -53,10 +53,10 @@ SHLIBLDFLAGS=-shared
 DO_CC=$(CC) $(CFLAGS) $(SHLIBCFLAGS) -o $@ -c $<
 
 build_debug:
-	$(MAKE) game$(ARCH).$(SHLIBEXT) CFLAGS="$(CFLAGS_DEBUG)"
+	$(MAKE) game$(ARCH).real.$(SHLIBEXT) CFLAGS="$(CFLAGS_DEBUG)"
 
 build_release:
-	$(MAKE) game$(ARCH).$(SHLIBEXT) CFLAGS="$(CFLAGS_RELEASE)"
+	$(MAKE) game$(ARCH).real.$(SHLIBEXT) CFLAGS="$(CFLAGS_RELEASE)"
 
 #############################################################################
 # SETUP AND BUILD
@@ -122,7 +122,7 @@ GAME_OBJS =	\
 
 
 #	g_so.o # this file is a shared library thingie needed for Solaris
-game$(ARCH).$(SHLIBEXT) : $(GAME_OBJS)
+game$(ARCH).real.$(SHLIBEXT) : $(GAME_OBJS)
 	$(MAKE) usa$(ARCH).$(SHLIBEXT) -C usa
 	$(MAKE) grm$(ARCH).$(SHLIBEXT) -C grm
 # Nick - Uncomment out the next two lines if you wish to build GBR & RUS source

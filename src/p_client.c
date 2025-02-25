@@ -671,7 +671,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			if (!self->ai)
 				self->enemy = NULL;
 			if (exbattleinfo->value > 2)
-			KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+				KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
 			return;
 		}
 
@@ -881,7 +881,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 						attacker->client->resp.score++;
 				}
 				if (exbattleinfo->value > 2)
-				KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+					KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
 				return;
 			}
 		}
