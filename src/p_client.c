@@ -3185,7 +3185,7 @@ void Set_Stance_Max(edict_t *ent)
 	else if (ent->s.frame == 292) ent->stance_max = -5;
 /*	else if (ent->s.frame == 293) ent->stance_max = -9; weirdest bug ever*/
 	else if (ent->s.frame == 294) ent->stance_max = -12;
-	else if (ent->stanceflags == STANCE_DUCK) ent->stance_max = 4;
+	else if (ent->stanceflags == STANCE_DUCK) ent->stance_max = 10; // This was 4, but that value lead to a bug where the player's head is invulnerable. - ZeRo
 	else if (ent->stanceflags == STANCE_CRAWL) ent->stance_max = -15; //changing this to -16 causes weird  2 player crawl to sky bug
 
 
