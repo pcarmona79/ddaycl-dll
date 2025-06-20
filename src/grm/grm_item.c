@@ -46,7 +46,7 @@ GunInfo_t grmguninfo[MAX_TEAM_GUNS];
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-gitem_t grmitems[]=
+gitem_t grmitems[MAX_TEAM_ITEMS]=
 {
 /* Walther P38 becomes the standard issue weapon
 */
