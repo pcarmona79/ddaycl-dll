@@ -598,7 +598,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
                 int score, total[TEAM_TOP], totalscore[TEAM_TOP];
                 int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
                 int stoppedat[TEAM_TOP];
-char pingstring[3];
+char pingstring[4];
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
@@ -777,12 +777,11 @@ char pingstring[3];
         
 								if (cl_ent->ai)
 									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM1][i]].ping<10)
-									sprintf(pingstring, "  %i", game.clients[sorted[TEAM1][i]].ping);
-								else if (game.clients[sorted[TEAM1][i]].ping<100)
-									sprintf(pingstring, " %i", game.clients[sorted[TEAM1][i]].ping);
 								else if (game.clients[sorted[TEAM1][i]].ping<1000)
-									sprintf(pingstring, "%i", game.clients[sorted[TEAM1][i]].ping);
+								{
+									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM1][i]].ping % 1000) > 3)
+										sprintf(pingstring , "999");
+								}
 								else
 									sprintf(pingstring , "999");
 
@@ -825,12 +824,11 @@ char pingstring[3];
     	
 								if (cl_ent->ai)
 									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM2][i]].ping<10)
-									sprintf(pingstring, "  %i", game.clients[sorted[TEAM2][i]].ping);
-								else if (game.clients[sorted[TEAM2][i]].ping<100)
-									sprintf(pingstring, " %i", game.clients[sorted[TEAM2][i]].ping);
 								else if (game.clients[sorted[TEAM2][i]].ping<1000)
-									sprintf(pingstring, "%i", game.clients[sorted[TEAM2][i]].ping);
+								{
+									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM2][i]].ping % 1000) > 3)
+										sprintf(pingstring , "999");
+								}
 								else
 									sprintf(pingstring , "999");
 
