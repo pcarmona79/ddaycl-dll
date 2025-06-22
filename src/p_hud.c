@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <stdio.h>
 
 
 /*
@@ -1399,14 +1400,19 @@ void ShowCampaign (edict_t *ent)
 	// send the layout
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	sprintf (string, "%sxv 7 yv 7 picn %s ", string, level.campaign);
+	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, level.campaign) > 1023)
+		gi.dprintf("ShowCampaign: truncated string");
 
 	if (curx && cury)
-		sprintf (string, "%sxv %i yv %i picn o ", string, curx, cury);
+	{
+		if (snprintf(string, 1024, "%sxv %i yv %i picn o ", string, curx, cury) > 1023)
+			gi.dprintf("ShowCampaign: truncated string");
+	}
 
 	for (i = 0; campaign_spots[i].bspname; i++)
 	{
-		sprintf (string, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos);
+		if (snprintf(string, 1024, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos) > 1023)
+			gi.dprintf("ShowCampaign: truncated string");
 
 		if (campaign_spots[i].owner == 0)
 			sprintf (string, "%su ", string);
@@ -1451,8 +1457,8 @@ void ShowServerImg (edict_t *ent)
 	// send the layout
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	sprintf (string, "%sxv 7 yv 7 picn %s ", string, serverimg->string);
-
+	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, serverimg->string) > 1023)
+		gi.dprintf("ShowServerImg: truncated string");
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
