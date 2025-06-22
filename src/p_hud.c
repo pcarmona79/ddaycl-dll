@@ -661,7 +661,16 @@ char pingstring[4];
         else
         // if teams are anything else or grm|usa, display the split graphics:
         {
-                strcpy(scoreleftpic, "yv 80 xv   0 picn ");
+			snprintf(string, 1400,
+					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
+					"      xv 160 picn %s_score  ",    // scorerightpic
+					team_list[0]->teamid,
+					team_list[1]->teamid,
+					team_list[0]->teamid,
+					team_list[1]->teamid);
+                /*strcpy(scoreleftpic, "yv 80 xv   0 picn ");
                 strcat(scoreleftpic, team_list[0]->teamid);
                 strcat(scoreleftpic, "_score  ");
 
@@ -681,7 +690,7 @@ char pingstring[4];
                 sprintf(string, scoretopleftpic); //team 0
                 strcat(string, scoretoprightpic); // team 1
                 strcat(string, scoreleftpic); //background left list pic
-                strcat(string, scorerightpic); // background right list pic
+                strcat(string, scorerightpic); // background right list pic  */
         }
 		if (team_list[0]->kills_and_points)
 			strcat(string, "xv 90 yv 20 string \"&\" ");
@@ -988,7 +997,16 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
         else
         // if teams are anything else or grm|usa, display the split graphics:
         {
-                strcpy(scoreleftpic, "yv 80 xv   0 picn ");
+			snprintf(string, 1400,
+					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
+					"      xv 160 picn %s_score  ",    // scorerightpic
+					team_list[0]->teamid,
+					team_list[1]->teamid,
+					team_list[0]->teamid,
+					team_list[1]->teamid);
+                /* strcpy(scoreleftpic, "yv 80 xv   0 picn ");
                 strcat(scoreleftpic, team_list[0]->teamid);
                 strcat(scoreleftpic, "_score  ");
 
@@ -1008,7 +1026,7 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
                 sprintf(string, scoretopleftpic); //team 0
                 strcat(string, scoretoprightpic); // team 1
                 strcat(string, scoreleftpic); //background left list pic
-                strcat(string, scorerightpic); // background right list pic
+                strcat(string, scorerightpic); // background right list pic */
         }
 
 
