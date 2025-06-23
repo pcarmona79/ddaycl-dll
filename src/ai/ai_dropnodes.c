@@ -583,9 +583,16 @@ void Camp_Spot( void )
 
 
 	if (level.botfiles)
-		sprintf(filename, "dday/navigation/%s.cmp", level.botfiles);
+	{
+		if (snprintf(filename, MAX_QPATH, "dday/navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: filename truncated\n");
+	}
 	else
-		sprintf(filename, "dday/navigation/%s.cmp", level.mapname);
+	{
+		if (snprintf(filename, MAX_QPATH, "dday/navigation/%s.cmp", level.mapname) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: filename truncated\n");
+	}
+
 
 
 	f = fopen (filename, "a");

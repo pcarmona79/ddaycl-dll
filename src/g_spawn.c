@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 //Ok, since we are modifying this file, we might as well declare the
@@ -906,9 +907,15 @@ void LoadCampFile(void)
 
 
 	if (level.botfiles)
-		sprintf(cmpfilename, "dday/navigation/%s.cmp", level.botfiles);
+	{
+		if (snprintf(cmpfilename, MAX_QPATH, "dday/navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
+	}
 	else
-		sprintf(cmpfilename, "dday/navigation/%s.cmp", level.mapname);
+	{
+		if (snprintf(cmpfilename, MAX_QPATH, "dday/navigation/%s.cmp", level.mapname) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
+	}
 
 	//gi.dprintf("sdfl %s\n", cmpfilename);
 
