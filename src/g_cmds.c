@@ -237,9 +237,9 @@ g_cmds_t id_GameCmds[NUM_ID_CMDS] = // remember to set back to NUM_ID_COMDS
 	"list_team",	1,	Cmd_List_team,
 //	"quit_team",	1,	Cmd_Quit_team,
 //	"feed_ammo",	1,	Feed_Ammo,
-	"reload",		1,	(void *)Cmd_Reload_f,
+	"reload",		1,	Cmd_Reload_f,
 //	"begin_mission",1,	EndObserverMode,
-	"scope",		2,	Cmd_Scope_f,
+	"scope",		2,	(void *)Cmd_Scope_f,
 	"shout",		3,	Cmd_Shout_f,
 	"aliciamode",	1,	Cmd_AliciaMode_f,
 	"iwannabeanarchy",1,Cmd_SexPistols_f,
@@ -2426,10 +2426,11 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 
 	if (ent->client->resp.team_on)
 	{
-		sprintf (teamname, "%s ",ent->client->resp.team_on->playermodel);
+		if (snprintf(teamname, 5, "%s ", ent->client->resp.team_on->playermodel) >= 5)
+			gi.dprintf("Cmd_Say_f: teamname truncated\n");
 	}
-	else
-		sprintf (teamname,"");
+	//else
+	//	sprintf (teamname,"");
 
 
 	if (saved)

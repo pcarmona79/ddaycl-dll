@@ -1419,18 +1419,18 @@ void ShowCampaign (edict_t *ent)
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
 	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, level.campaign) > 1023)
-		gi.dprintf("ShowCampaign: truncated string");
+		gi.dprintf("ShowCampaign: truncated string\n");
 
 	if (curx && cury)
 	{
 		if (snprintf(string, 1024, "%sxv %i yv %i picn o ", string, curx, cury) > 1023)
-			gi.dprintf("ShowCampaign: truncated string");
+			gi.dprintf("ShowCampaign: truncated string\n");
 	}
 
 	for (i = 0; campaign_spots[i].bspname; i++)
 	{
 		if (snprintf(string, 1024, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos) > 1023)
-			gi.dprintf("ShowCampaign: truncated string");
+			gi.dprintf("ShowCampaign: truncated string\n");
 
 		if (campaign_spots[i].owner == 0)
 			sprintf (string, "%su ", string);
@@ -1476,7 +1476,7 @@ void ShowServerImg (edict_t *ent)
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
 	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, serverimg->string) > 1023)
-		gi.dprintf("ShowServerImg: truncated string");
+		gi.dprintf("ShowServerImg: truncated string\n");
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
