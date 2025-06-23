@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_DEFINES_H__
+#define __G_DEFINES_H__
+
 #define MOUSE_DELAY			0.3	//Used to determine how long to wait between mouse clicks.
 
 //KMM: These are for the stance routine
@@ -197,3 +200,5 @@ implemented it yet? */
 
 // pbowens: fix overflows
 #define	INTERMISSION_DELAY	1.5	// seconds
+
+#endif /* __G_DEFINES_H__ */

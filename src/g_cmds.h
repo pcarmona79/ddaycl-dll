@@ -33,6 +33,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
   vjj   01/20/98
   */
 
+#ifndef __G_CMDS_H__
+#define __G_CMDS_H__
+
+#include "game.h"
+
 typedef struct g_cmds_s
 {
     char *command;
@@ -96,3 +101,5 @@ struct cmd_list_t
     g_cmds_t *commands;
     int numCmds;
 };
+
+#endif /* __G_CMDS_H__ */
