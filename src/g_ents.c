@@ -472,9 +472,9 @@ void SP_info_team_start(edict_t *ent)
 		r = (int)(random() *5);
 		if (i==0)
 		{
+			r = (int)(random() *4);
 			switch (r)
 			{
-				r = (int)(random() *4);
 				case 0: team = "rus"; break;
 				case 1: team = "gbr"; break;
 				case 2: team = "pol"; break;
@@ -484,9 +484,9 @@ void SP_info_team_start(edict_t *ent)
 		}
 		else
 		{
+			r = (int)(random() *2);
 			switch (r)
 			{
-				r = (int)(random() *2);
 				case 0: team = "grm"; break;
 				case 1: team = "ita"; break;
 				default: team = "jpn"; break;
