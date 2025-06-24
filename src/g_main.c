@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include <stdio.h>
 
 game_locals_t	game;
 level_locals_t	level;
@@ -527,7 +528,7 @@ void EndDMLevel (void)
 {
 	char *s, *t, *f, *sb, *tb;// *fb;
 	static const char *seps = " ,\n\r";
-	char *mapname,*check;
+	char *mapname, check[20]; // kernel: check must be char[]
 	int i, axiscount=0,alliedcount=0;
 
 	char *nextmap;
@@ -694,7 +695,7 @@ void EndDMLevel (void)
 					}
 				}
 				if (!f)
-				f = t;
+					f = t;
 				t = strtok(NULL, seps);
 			}
 			s = strdup(sv_maplist->string);
@@ -730,8 +731,8 @@ void EndDMLevel (void)
 							}
 							else 
 							{
-								check = t;
-								strcat (check,"1");
+								// kernel: check if f+"1" can be a map
+								snprintf(check, 20, "%s1", f);
 								if (MapExists(check))
 								{
 									safe_bprintf (PRINT_HIGH, "Next map: %s \n", check);
@@ -753,8 +754,7 @@ void EndDMLevel (void)
 						{
 							//last_maplist_map_played = t;
 							//first_non_maplist_map = NULL;
-							check = t;
-							strcat (check,"1");
+							snprintf(check, 20, "%s1", t);
 							//gi.dprintf("%s kljfdsjlk\n",check);
 							if (MapExists(check))
 							{
@@ -806,8 +806,7 @@ void EndDMLevel (void)
 					}
 					else
 					{
-						check = tb;
-						strcat (check,"1");
+						snprintf(check, 20, "%s1", tb);
 						if (MapExists(check))
 						{
 							safe_bprintf (PRINT_HIGH, "Next map: %s \n", check);
