@@ -115,7 +115,8 @@ int LoadMapList(char *filename)
       // scan for [maplist] section 
       do 
       { 
-         fscanf(fp, "%s", szLineIn); 
+         if (fscanf(fp, "%s", szLineIn) < 0)
+            break;
       } while (!feof(fp) && (Q_stricmp(szLineIn, "[maplist]") != 0)); 
 
       if (feof(fp)) 
@@ -132,7 +133,7 @@ int LoadMapList(char *filename)
          // read map names into array 
          while ((!feof(fp)) && (i<MAX_MAPS)) 
          { 
-            fscanf(fp, "%s", szLineIn); 
+            int ret = fscanf(fp, "%s", szLineIn);
 
             if (Q_stricmp(szLineIn, "###") == 0)  // terminator is "###" 
                break; 
@@ -142,7 +143,10 @@ int LoadMapList(char *filename)
 
             strncpy(maplist.mapnames[i], szLineIn, MAX_MAPNAME_LEN); 
             gi.dprintf("...%s\n", maplist.mapnames[i]); 
-            i++; 
+            i++;
+
+            if (ret < 0)
+               break;
          } 
 
          strncpy(maplist.filename, filename, 20); 
