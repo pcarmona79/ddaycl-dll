@@ -709,7 +709,12 @@ qboolean AI_LoadPLKFile( char *mapname )
 		return false; 
 
 	// check version
-	fread( &version, sizeof(int), 1, pIn);
+	if (fread( &version, sizeof(int), 1, pIn) != 1)
+	{
+		gi.error("AI_LoadPLKFile: error when reading version from file\n");
+		fclose(pIn);
+		return false;
+	}
 
 	if( version != NAV_FILE_VERSION )
 	{
@@ -717,13 +722,32 @@ qboolean AI_LoadPLKFile( char *mapname )
 		return false;
 	}
 	
-	fread( &nav.num_nodes, sizeof(int), 1, pIn);
+	if (fread( &nav.num_nodes, sizeof(int), 1, pIn) != 1)
+	{
+		gi.error("AI_LoadPLKFile: error when reading num_nodes from file\n");
+		fclose(pIn);
+		return false;
+	}
 
 	for (i=0; i<nav.num_nodes; i++)
-		fread( &nodes[i], sizeof(nav_node_t), 1, pIn );
+	{
+		if (fread( &nodes[i], sizeof(nav_node_t), 1, pIn ) != 1)
+		{
+			gi.error("AI_LoadPLKFile: error when reading nodes from file\n");
+			fclose(pIn);
+			return false;
+		}
+	}
 	
 	for(i=0; i<nav.num_nodes;i++)
-		fread( &pLinks[i], sizeof(nav_plink_t), 1, pIn );
+	{
+		if (fread( &pLinks[i], sizeof(nav_plink_t), 1, pIn ) != 1)
+		{
+			gi.error("AI_LoadPLKFile: error when reading plinks from file\n");
+			fclose(pIn);
+			return false;
+		}
+	}
 
 	fclose(pIn);
 
