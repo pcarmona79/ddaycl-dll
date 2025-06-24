@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <stdio.h>
 
 field_t fields[] = {
 	{"classname", FOFS(classname), F_LSTRING},
@@ -476,8 +477,11 @@ void WriteField2 (FILE *f, field_t *field, byte *base)
 		if ( *(char **)p )
 		{
 			len = strlen(*(char **)p) + 1;
-			fwrite (*(char **)p, len, 1, f);
+			if (fwrite(*(char **)p, len, 1, f) != 1)
+				gi.error("WriteField2: error when writing to file\n");
 		}
+		break;
+	default:
 		break;
 	}
 }
@@ -505,7 +509,11 @@ void ReadField (FILE *f, field_t *field, byte *base)
 		else
 		{
 			*(char **)p = gi.TagMalloc (len, TAG_LEVEL);
-			fread (*(char **)p, len, 1, f);
+			if (fread(*(char **)p, len, 1, f) != 1)
+			{
+				gi.error("ReadField: error reading F_LSTRING field from file\n");
+				break;
+			}
 		}
 		break;
 	case F_GSTRING:
@@ -515,7 +523,11 @@ void ReadField (FILE *f, field_t *field, byte *base)
 		else
 		{
 			*(char **)p = gi.TagMalloc (len, TAG_GAME);
-			fread (*(char **)p, len, 1, f);
+			if (fread(*(char **)p, len, 1, f) != 1)
+			{
+				gi.error("ReadField: error reading F_GSTRING field from file\n");
+				break;
+			}
 		}
 		break;
 	case F_EDICT:
@@ -541,7 +553,7 @@ void ReadField (FILE *f, field_t *field, byte *base)
 		break;
 
 	default:
-		gi.error ("ReadEdict: unknown field type");
+		gi.error("ReadField: unknown field type %d\n", field->type);
 	}
 }
 
@@ -569,7 +581,11 @@ void WriteClient (FILE *f, gclient_t *client)
 	}
 
 	// write the block
-	fwrite (&temp, sizeof(temp), 1, f);
+	if (fwrite(&temp, sizeof(temp), 1, f) != 1)
+	{
+		gi.error("WriteClient: error when writing to file\n");
+		return;
+	}
 
 	// now write any allocated data following the edict
 	for (field=clientfields ; field->name ; field++)
@@ -589,7 +605,11 @@ void ReadClient (FILE *f, gclient_t *client)
 {
 	field_t		*field;
 
-	fread (client, sizeof(*client), 1, f);
+	if (fread(client, sizeof(*client), 1, f) != 1)
+	{
+		gi.error("ReadClient: error when reading from file\n");
+		return;
+	}
 
 	for (field=clientfields ; field->name ; field++)
 	{
@@ -626,10 +646,20 @@ void WriteGame (char *filename, qboolean autosave)
 
 	memset (str, 0, sizeof(str));
 	strcpy (str, __DATE__);
-	fwrite (str, sizeof(str), 1, f);
+	if (fwrite(str, sizeof(str), 1, f) != 1)
+	{
+		gi.error("WriteGame: error when writing to file\n");
+		fclose(f);
+		return;
+	}
 
 	game.autosaved = autosave;
-	fwrite (&game, sizeof(game), 1, f);
+	if (fwrite(&game, sizeof(game), 1, f) != 1)
+	{
+		gi.error("WriteGame: error when writing to file\n");
+		fclose(f);
+		return;
+	}
 	game.autosaved = false;
 
 	for (i=0 ; i<game.maxclients ; i++)
@@ -650,7 +680,12 @@ void ReadGame (char *filename)
 	if (!f)
 		gi.error ("Couldn't open %s", filename);
 
-	fread (str, sizeof(str), 1, f);
+	if (fread(str, sizeof(str), 1, f) != 1)
+	{
+		gi.error("ReadGame: error when reading date from file\n");
+		fclose(f);
+		return;
+	}
 	if (strcmp (str, __DATE__))
 	{
 		fclose (f);
@@ -660,7 +695,12 @@ void ReadGame (char *filename)
 	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
 	globals.edicts = g_edicts;
 
-	fread (&game, sizeof(game), 1, f);
+	if (fread(&game, sizeof(game), 1, f) != 1)
+	{
+		gi.error("ReadGame: error when reading game from file\n");
+		fclose(f);
+		return;
+	}
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
 	for (i=0 ; i<game.maxclients ; i++)
 		ReadClient (f, &game.clients[i]);
@@ -693,7 +733,11 @@ void WriteEdict (FILE *f, edict_t *ent)
 	}
 
 	// write the block
-	fwrite (&temp, sizeof(temp), 1, f);
+	if (fwrite(&temp, sizeof(temp), 1, f) != 1)
+	{
+		gi.error("WriteEdict: error when writing to file\n");
+		return;
+	}
 
 	// now write any allocated data following the edict
 	for (field=savefields ; field->name ; field++)
@@ -725,7 +769,11 @@ void WriteLevelLocals (FILE *f)
 	}
 
 	// write the block
-	fwrite (&temp, sizeof(temp), 1, f);
+	if (fwrite(&temp, sizeof(temp), 1, f) != 1)
+	{
+		gi.error("WriteLevelLocals: error when writing to file\n");
+		return;
+	}
 
 	// now write any allocated data following the edict
 	for (field=levelfields ; field->name ; field++)
@@ -746,7 +794,11 @@ void ReadEdict (FILE *f, edict_t *ent)
 {
 	field_t		*field;
 
-	fread (ent, sizeof(*ent), 1, f);
+	if (fread(ent, sizeof(*ent), 1, f) != 1)
+	{
+		gi.error("ReadEdict: error when reading from file\n");
+		return;
+	}
 
 	for (field=savefields ; field->name ; field++)
 	{
@@ -765,7 +817,11 @@ void ReadLevelLocals (FILE *f)
 {
 	field_t		*field;
 
-	fread (&level, sizeof(level), 1, f);
+	if (fread(&level, sizeof(level), 1, f) != 1)
+	{
+		gi.error("ReadLevelLocals: error when reading from file\n");
+		return;
+	}
 
 	for (field=levelfields ; field->name ; field++)
 	{
@@ -792,11 +848,21 @@ void WriteLevel (char *filename)
 
 	// write out edict size for checking
 	i = sizeof(edict_t);
-	fwrite (&i, sizeof(i), 1, f);
+	if (fwrite(&i, sizeof(i), 1, f) != 1)
+	{
+		gi.error("WriteLevel: error when writing edict to file\n");
+		fclose(f);
+		return;
+	}
 
 	// write out a function pointer for checking
 	base = (void *)InitGame;
-	fwrite (&base, sizeof(base), 1, f);
+	if (fwrite(&base, sizeof(base), 1, f) != 1)
+	{
+		gi.error("WriteLevel: error when writing base to file\n");
+		fclose(f);
+		return;
+	}
 
 	// write out level_locals_t
 	WriteLevelLocals (f);
@@ -807,11 +873,23 @@ void WriteLevel (char *filename)
 		ent = &g_edicts[i];
 		if (!ent->inuse)
 			continue;
-		fwrite (&i, sizeof(i), 1, f);
+
+		if (fwrite(&i, sizeof(i), 1, f) != 1)
+		{
+			gi.error("WriteLevel: error when writing edict %d to file\n", i);
+			fclose(f);
+			return;
+		}
 		WriteEdict (f, ent);
 	}
+
 	i = -1;
-	fwrite (&i, sizeof(i), 1, f);
+	if (fwrite(&i, sizeof(i), 1, f) != 1)
+	{
+		gi.error("WriteLevel: error when writing -1 to file\n");
+		fclose(f);
+		return;
+	}
 
 	fclose (f);
 }
@@ -857,19 +935,31 @@ void ReadLevel (char *filename)
 	globals.num_edicts = maxclients->value+1;
 
 	// check edict size
-	fread (&i, sizeof(i), 1, f);
+	if (fread(&i, sizeof(i), 1, f) != 1)
+	{
+		gi.error("ReadLevel: error when reading edict from file\n");
+		fclose(f);
+		return;
+	}
 	if (i != sizeof(edict_t))
 	{
 		fclose (f);
 		gi.error ("ReadLevel: mismatched edict size");
+		return;
 	}
 
 	// check function pointer base address
-	fread (&base, sizeof(base), 1, f);
+	if (fread(&base, sizeof(base), 1, f) != 1)
+	{
+		gi.error("ReadLevel: error when reading base from file\n");
+		fclose(f);
+		return;
+	}
 	if (base != (void *)InitGame)
 	{
 		fclose (f);
 		gi.error ("ReadLevel: function pointers have moved");
+		return;
 	}
 
 	// load the level locals
@@ -880,8 +970,9 @@ void ReadLevel (char *filename)
 	{
 		if (fread (&entnum, sizeof(entnum), 1, f) != 1)
 		{
-			fclose (f);
+			//fclose (f);
 			gi.error ("ReadLevel: failed to read entnum");
+			break;
 		}
 		if (entnum == -1)
 			break;
