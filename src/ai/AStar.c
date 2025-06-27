@@ -161,7 +161,7 @@ static void AStar_PutAdjacentsInOpen( int node ) // Faltaba definir como int a n
 			
 			plinkDist = AStar_PLinkDistance( node, addnode );
 			if( plinkDist == -1)
-				printf("WARNING: AStar_PutAdjacentsInOpen - Couldn't find distance between nodes\n");
+				gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:164 - Couldn't find distance between nodes\n");
 			
 			//compare G distances and choose best parent
 			else if( astarnodes[addnode].G > (astarnodes[node].G + plinkDist) )
@@ -178,11 +178,13 @@ static void AStar_PutAdjacentsInOpen( int node ) // Faltaba definir como int a n
 			if( plinkDist == -1)
 			{
 				plinkDist = AStar_PLinkDistance( addnode, node );
-				if( plinkDist == -1) 
+				if( plinkDist == -1)
+				{
 					plinkDist = 999;//jalFIXME
 
-				//ERROR
-				printf("WARNING: AStar_PutAdjacentsInOpen - Couldn't find distance between nodes\n");
+					//ERROR
+					gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:186 - Couldn't find distance between nodes\n");
+				}
 			}
 
 			//put in global list
