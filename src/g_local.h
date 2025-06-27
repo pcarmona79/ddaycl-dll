@@ -789,6 +789,10 @@ extern cvar_t  *fullbright;
 
 extern cvar_t  *campaign;
 
+// kernel: this will come from q2pro
+extern cvar_t *sys_basedir;
+extern cvar_t *sys_homedir;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])

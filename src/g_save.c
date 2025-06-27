@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
 #include <stdio.h>
 
 field_t fields[] = {
@@ -377,6 +378,10 @@ void InitGame (void)
 	campaign = gi.cvar ("campaign", "", CVAR_SERVERINFO | CVAR_LATCH);
 	nohud = gi.cvar ("nohud", "0", 0);
 	serverimg = gi.cvar ("serverimg", "", CVAR_SERVERINFO | CVAR_LATCH);
+
+	// kernel: q2pro directories
+	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
+	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
 
 	// items
 	InitItems ();
