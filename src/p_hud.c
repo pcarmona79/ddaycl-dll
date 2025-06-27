@@ -1433,22 +1433,32 @@ void ShowCampaign (edict_t *ent)
 			gi.dprintf("ShowCampaign: truncated string\n");
 
 		if (campaign_spots[i].owner == 0)
-			sprintf (string, "%su ", string);
+        {
+			if (snprintf(string, 1024, "%su ", string) > 1023)
+                gi.dprintf("ShowCampaign: truncated string\n");
+        }
 		else if (campaign_spots[i].owner == 1)
-			sprintf (string, "%sg ", string);
+        {
+			if (snprintf(string, 1024, "%sg ", string) > 1023)
+                gi.dprintf("ShowCampaign: truncated string\n");
+        }
 		else
 			strcat (string, "q ");
-
-
 	}
 
 	strcat (string, "xv 22 yv 36 picn u ");
 	strcat (string, "xv 37 yv 38 string \"");
-	sprintf (string, "%s%i", string, alliedplatoons);
+
+	if (snprintf(string, 1024, "%s%i", string, alliedplatoons) > 1023)
+        gi.dprintf("ShowCampaign: truncated string\n");
+
 	strcat (string, "\" ");
 	strcat (string, "xv 22 yv 56 picn g ");
 	strcat (string, "xv 37 yv 58 string \"");
-	sprintf (string, "%s%i", string, axisplatoons);
+
+	if (snprintf(string, 1024, "%s%i", string, axisplatoons) > 1023)
+        gi.dprintf("ShowCampaign: truncated string\n");
+
 	strcat (string, "\" ");
 
 
