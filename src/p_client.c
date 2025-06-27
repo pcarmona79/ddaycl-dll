@@ -3308,18 +3308,16 @@ qboolean Setup_Map_Vote (void)
 					c++;
 				}
 				else
-					gi.dprintf("WARNING: Map '%s' in maplist.txt not found on server!\n",s);
-
-
+					gi.dprintf("WARNING: Map '%s' in votemaps.txt not found on server!\n",s);
 
 				s = strtok (NULL, "\n");
 			}
 			else
-			{maplisttxt[c] = ""; 
-			c++;}
-
+			{
+				maplisttxt[c] = "";
+				c++;
+			}
 		}
-
 	}
 	else
 	{
@@ -3424,10 +3422,9 @@ qboolean Setup_Map_Vote (void)
 	}
 
 	//if nextmap was played in last 10 maps, list it 4th
-	if (level.nextmap)
-	{
-
-	}
+	//if (level.nextmap)
+	//{
+	//}
 	return true;
 }
 

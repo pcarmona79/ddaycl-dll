@@ -798,23 +798,26 @@ char *ReadEntFile(char *filename)
 	while (true) 
 	{
 		fp = fopen(filename, "r");
-		if (!fp) break;
+		if (!fp)
+			break;
 
 		for (i=0; (ch = fgetc(fp)) != EOF; i++)
-		;
+			;
 
 		filestring = gi.TagMalloc(i+1, TAG_LEVEL);
-		if (!filestring) break;
+		if (!filestring)
+			break;
 
 		fseek(fp, 0, SEEK_SET);
 		for (i=0; (ch = fgetc(fp)) != EOF; i++)
-		filestring[i] = ch;
+			filestring[i] = ch;
 		filestring[i] = '\0';
 
 		break;
 	}
 
-	if (fp) fclose(fp);
+	if (fp)
+		fclose(fp);
 
 	return(filestring);
 }
