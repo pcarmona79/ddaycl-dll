@@ -23,7 +23,11 @@ This program is a modification of the ACE Bot, and is therefore
 in NO WAY supported by Steve Yeager.
 */
 
+#ifndef __AI_NODES_LOCAL_H__
+#define __AI_NODES_LOCAL_H__
 
+#include "../game.h"
+#include "ai.h"
 #include "ai_nodes_shared.h"
 
 //=============================================================
@@ -86,3 +90,4 @@ typedef struct
 
 ai_navigation_t	nav;
 
+#endif /* __AI_NODES_LOCAL_H__ */

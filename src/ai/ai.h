@@ -22,6 +22,11 @@ the ACE Bot homepage, at http://www.axionfx.com/ace.
 This program is a modification of the ACE Bot, and is therefore
 in NO WAY supported by Steve Yeager.
 */
+
+#ifndef __AI_H__
+#define __AI_H__
+
+#include "../game.h"
 #include "AStar.h"
 
 //	declaration of botedict for the game
@@ -162,3 +167,5 @@ void		debug_printf(char *fmt, ...);
 void		safe_cprintf (edict_t *ent, int printlevel, char *fmt, ...);
 void		safe_centerprintf (edict_t *ent, char *fmt, ...);
 void		safe_bprintf (int printlevel, char *fmt, ...);
+
+#endif /* __AI_H__ */

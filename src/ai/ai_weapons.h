@@ -23,6 +23,11 @@ This program is a modification of the ACE Bot, and is therefore
 in NO WAY supported by Steve Yeager.
 */
 
+#ifndef __AI_WEAPONS_H__
+#define __AI_WEAPONS_H__
+
+#include "../g_local.h"
+
 enum
 {
 	AI_AIMSTYLE_INSTANTHIT,
@@ -55,3 +60,5 @@ typedef struct
 } ai_weapon_t;
 
 ai_weapon_t		AIWeapons[WEAP_TOTAL];
+
+#endif /* __AI_WEAPONS_H__ */

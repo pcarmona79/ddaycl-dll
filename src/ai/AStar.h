@@ -1,3 +1,5 @@
+#ifndef __ASTAR_H__
+#define __ASTAR_H__
 
 //==========================================
 // 
@@ -21,3 +23,5 @@ int	AStar_nodeIsInPath( int node );
 static int	AStar_ResolvePath ( int origin, int goal, int movetypes );
 //===========================================
 int AStar_GetPath( int origin, int goal, int movetypes, struct astarpath_s *path );
+
+#endif /* __ASTAR_H__ */
