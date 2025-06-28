@@ -160,11 +160,12 @@ static void AStar_PutAdjacentsInOpen( int node ) // Faltaba definir como int a n
 			int plinkDist;
 			
 			plinkDist = AStar_PLinkDistance( node, addnode );
-			if( plinkDist == -1)
-				gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:164 - Couldn't find distance between nodes\n");
-			
+			//if( plinkDist == -1)
+				//gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:164 - Couldn't find distance between nodes\n");
+
 			//compare G distances and choose best parent
-			else if( astarnodes[addnode].G > (astarnodes[node].G + plinkDist) )
+			//else
+			if ( astarnodes[addnode].G > (astarnodes[node].G + plinkDist) )
 			{
 				astarnodes[addnode].parent = node;
 				astarnodes[addnode].G = astarnodes[node].G + plinkDist;
@@ -183,7 +184,7 @@ static void AStar_PutAdjacentsInOpen( int node ) // Faltaba definir como int a n
 					plinkDist = 999;//jalFIXME
 
 					//ERROR
-					gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:186 - Couldn't find distance between nodes\n");
+					//gi.dprintf("WARNING: AStar_PutAdjacentsInOpen:186 - Couldn't find distance between nodes\n");
 				}
 			}
 
