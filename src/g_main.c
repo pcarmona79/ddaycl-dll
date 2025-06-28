@@ -345,7 +345,11 @@ qboolean TestMap(const char *basedir, const char *dir, const char *mapname, cons
 	FILE *check;
 	char filename[256];
 
-	snprintf(filename, 256, "%s/%s/%s.%s", basedir, dir, mapname, mapext);
+	if (snprintf(filename, 256, "%s/%s/%s.%s", basedir, dir, mapname, mapext) >= 256)
+	{
+		gi.dprintf("TestMap: filename truncated\n");
+		return false;
+	}
 
 	if ((check = fopen(filename, "r")))
 	{
@@ -360,17 +364,7 @@ qboolean MapExists (char *map)
 	FILE *check;
 	char dirname[256];
 
-	// first use basedir to search for maps
-	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp"))
-		return true;
-
-	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp.override"))
-		return true;
-
-	if (TestMap(sys_basedir->string, "baseq2/maps", map, "bsp"))
-		return true;
-
-	// kernel: try homedir instead
+	// kernel: first use homedir to search for maps
 	if (TestMap(sys_homedir->string, GAMEVERSION "/maps", map, "bsp"))
 		return true;
 
@@ -378,6 +372,16 @@ qboolean MapExists (char *map)
 		return true;
 
 	if (TestMap(sys_homedir->string, "baseq2/maps", map, "bsp"))
+		return true;
+
+	// kernel: try basedir instead
+	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp"))
+		return true;
+
+	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp.override"))
+		return true;
+
+	if (TestMap(sys_basedir->string, "baseq2/maps", map, "bsp"))
 		return true;
 
 	// kernel: if all failed try current directory
