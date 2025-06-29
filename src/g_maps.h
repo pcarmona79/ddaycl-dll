@@ -30,7 +30,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "game.h"
 
-FILE *DDay_OpenFile (char *filename_ptr);
+FILE *DDay_OpenFullPathFile(const char *path, const char *gamedir, const char *name, const char *mode);
+FILE *DDay_OpenFile (const char *filename_ptr);
 void DDay_CloseFile (FILE *fp);
 
 #define MAX_MAPS           64 

@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
 #include "stddef.h"
@@ -3271,7 +3272,16 @@ void Cmd_MOTD (edict_t *ent)
 	char motd[1000];
 	char line[100];
 
-	if (motd_file = fopen(GAMEVERSION "/motd.txt", "r") )
+	// kernel: try to open from q2 directories
+	motd_file = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(".", GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file != NULL)
 	{		
 		// we successfully opened the file "motd.txt"
 		if ( fgets(motd, 900, motd_file) )

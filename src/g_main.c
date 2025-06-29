@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include "g_maps.h"
 #include <stdio.h>
 
 game_locals_t	game;
@@ -402,8 +403,16 @@ void Write_Last_Maps()
 {
 	FILE *fp;
 	int i;
-	
-	fp = fopen ("dday/lastmaps.txt", "w");
+
+	// kernel: try to open from q2 directories
+	fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, "lastmaps.txt", "w");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, "lastmaps.txt", "w");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(".", GAMEVERSION, "lastmaps.txt", "w");
+
 	if (!fp)
 	{
 		gi.error ("Couldn't open dday/lastmaps.txt");
@@ -423,7 +432,7 @@ void Read_Last_Maps()
 	char	*s, *f;
 	char	*lastmaps;
 
-	lastmaps = ReadEntFile("dday/lastmaps.txt");
+	lastmaps = ReadEntFile("lastmaps.txt");
 
 	if (lastmaps)	{  
 		c = 0;
@@ -457,7 +466,7 @@ char *Get_Next_MaplistTxt_Map ()
 	char *maplisttxt[300];
 
 
-	maps = ReadEntFile("dday/maplist.txt");
+	maps = ReadEntFile("maplist.txt");
 
 	mapcount = 0;
 

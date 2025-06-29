@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
 #include "x_fire.h"
@@ -3288,7 +3289,7 @@ qboolean Setup_Map_Vote (void)
 	qboolean changefirstmap;
 
 
-	maps = ReadEntFile("dday/votemaps.txt");
+	maps = ReadEntFile("votemaps.txt");
 
 	mapcount = 0;
 
@@ -4543,7 +4544,7 @@ void Write_Player_Stats (edict_t *ent)
 		return;
 
 
-	sprintf(statsfilename, "dday/stats/%s.stats", ip);
+	sprintf(statsfilename, "stats/%s.stats", ip);
 
     statsc = ReadEntFile(statsfilename);
 
@@ -4696,8 +4697,17 @@ void Write_Player_Stats (edict_t *ent)
 	bot_kills = bot_kills + ent->client->resp.stat_bot_plus;
 	bot_deaths = bot_deaths + ent->client->resp.stat_bot_minus;
 	
-	sprintf(filename, "dday/stats/%s.stats", ip);
-	fn = fopen (filename, "w");
+	sprintf(filename, "stats/%s.stats", ip);
+
+	// kernel: try to open from q2 directories
+	fn = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "w");
+
+	if (!fn)
+		fn = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "w");
+
+	if (!fn)
+		fn = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "w");
+
 	if (!fn)
 	{
 		gi.error ("Couldn't open %s, you may need to create a 'dday/stats' folder.", filename);
@@ -4754,7 +4764,7 @@ void SetPlayerRating(edict_t *ent)
 		return;
 
 
-	sprintf(statsfilename, "dday/stats/%s.stats", ent->client->pers.ip);
+	sprintf(statsfilename, "stats/%s.stats", ent->client->pers.ip);
 
 	//gi.dprintf("%s   \n",statsfilename);
 

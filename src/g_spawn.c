@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
@@ -797,7 +798,15 @@ char *ReadEntFile(char *filename)
 
 	while (true) 
 	{
-		fp = fopen(filename, "r");
+		// kernel: try to open from q2 directories
+		fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
 		if (!fp)
 			break;
 
@@ -845,7 +854,7 @@ char *LoadEntFile(char *mapname, char *entities)
 	}
 
 
-	sprintf(entfilename, "dday/ents/%s.ent", mapname);
+	sprintf(entfilename, "ents/%s.ent", mapname);
 	// convert string to all lowercase (for Linux)
 	for (i = 0; entfilename[i]; i++)
 		entfilename[i] = tolower(entfilename[i]);
@@ -873,7 +882,7 @@ char *LoadCTCFile(char *mapname, char *entities)
 	
 
 
-	sprintf(entfilename, "dday/ents/%s.ctc", mapname);
+	sprintf(entfilename, "ents/%s.ctc", mapname);
 	// convert string to all lowercase (for Linux)
 	for (i = 0; entfilename[i]; i++)
 		entfilename[i] = tolower(entfilename[i]);
@@ -911,12 +920,12 @@ void LoadCampFile(void)
 
 	if (level.botfiles)
 	{
-		if (snprintf(cmpfilename, MAX_QPATH, "dday/navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
+		if (snprintf(cmpfilename, MAX_QPATH, "navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
 			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
 	}
 	else
 	{
-		if (snprintf(cmpfilename, MAX_QPATH, "dday/navigation/%s.cmp", level.mapname) >= MAX_QPATH)
+		if (snprintf(cmpfilename, MAX_QPATH, "navigation/%s.cmp", level.mapname) >= MAX_QPATH)
 			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
 	}
 
