@@ -24,7 +24,9 @@ in NO WAY supported by Steve Yeager.
 */
 
 #include "../g_local.h"
+#include "../g_maps.h"
 #include "ai_local.h"
+#include <stdio.h>
 
 
 //ACE
@@ -510,21 +512,58 @@ qboolean AI_SavePLKFile( char *mapname )
 	int			i;
 	int			version = NAV_FILE_VERSION;
 
-	Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", AI_MOD_FOLDER, AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION );
-	pOut = fopen (filename, "wb");
+	if (snprintf(filename, MAX_OSPATH, "%s/%s.%s", AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION) >= MAX_OSPATH)
+	{
+		gi.dprintf("AI_SavePLKFile: filename truncated\n");
+		return false;
+	}
+
+	// kernel: try to open from q2 directories
+	pOut = DDay_OpenFullPathFile(sys_homedir->string, AI_MOD_FOLDER, filename, "wb");
+
+	if (!pOut)
+		pOut = DDay_OpenFullPathFile(sys_basedir->string, AI_MOD_FOLDER, filename, "wb");
+
+	if (!pOut)
+		pOut = DDay_OpenFullPathFile(".", AI_MOD_FOLDER, filename, "wb");
+
 	if (!pOut)
 		return false;
 
-	fwrite(&version,sizeof(int),1,pOut);
-	fwrite(&nav.num_nodes,sizeof(int),1,pOut);
+	if (fwrite(&version, sizeof(int), 1, pOut) != 1)
+	{
+		gi.dprintf("AI_SavePLKFile: error when writing version to file\n");
+		fclose(pOut);
+		return false;
+	}
+	if (fwrite(&nav.num_nodes, sizeof(int), 1, pOut) != 1)
+	{
+		gi.dprintf("AI_SavePLKFile: error when writing num_nodes to file\n");
+		fclose(pOut);
+		return false;
+	}
 
 	// write out nodes
 	for(i=0; i<nav.num_nodes;i++)
-		fwrite(&nodes[i],sizeof(nav_node_t),1,pOut);
+	{
+		if (fwrite(&nodes[i], sizeof(nav_node_t), 1, pOut) != 1)
+		{
+			gi.dprintf("AI_SavePLKFile: error when writing nodes to file\n");
+			fclose(pOut);
+			return false;
+		}
+	}
 
 	// write out plinks array
 	for(i=0; i<nav.num_nodes;i++)
-		fwrite(&pLinks[i],sizeof(nav_plink_t),1,pOut);
+	{
+		if (fwrite(&pLinks[i], sizeof(nav_plink_t), 1, pOut) != 1)
+		{
+			gi.dprintf("AI_SavePLKFile: error when writing links to file\n");
+			fclose(pOut);
+			return false;
+		}
+	}
 
 	fclose(pOut);
 
@@ -577,27 +616,34 @@ void Camp_Spot( void )
 	char	filename[MAX_QPATH] = "";
 	FILE *f;
 
-	
 	if (!player.ent || !player.ent->client->resp.team_on)
 		return;
 
-
 	if (level.botfiles)
 	{
-		if (snprintf(filename, MAX_QPATH, "dday/navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
+		if (snprintf(filename, MAX_QPATH, "navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
 			gi.dprintf("LoadCampFile: filename truncated\n");
 	}
 	else
 	{
-		if (snprintf(filename, MAX_QPATH, "dday/navigation/%s.cmp", level.mapname) >= MAX_QPATH)
+		if (snprintf(filename, MAX_QPATH, "navigation/%s.cmp", level.mapname) >= MAX_QPATH)
 			gi.dprintf("LoadCampFile: filename truncated\n");
 	}
 
+	// kernel: try to open from q2 directories
+	f = DDay_OpenFullPathFile(sys_homedir->string, AI_MOD_FOLDER, filename, "a");
 
-
-	f = fopen (filename, "a");
 	if (!f)
+		f = DDay_OpenFullPathFile(sys_basedir->string, AI_MOD_FOLDER, filename, "a");
+
+	if (!f)
+		f = DDay_OpenFullPathFile(".", AI_MOD_FOLDER, filename, "a");
+
+	if (!f)
+	{
 		gi.error ("Couldn't open %s", filename);
+		return;
+	}
 
 	fprintf (f, "%i\n", player.ent->client->resp.team_on->index);
 	fprintf (f, "%i\n", (int)player.ent->s.origin[0]);
