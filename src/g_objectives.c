@@ -722,24 +722,17 @@ void SP_func_explosive_objective (edict_t *self)
 	gi.linkentity (self);
 }
 
-void GetMapObjective (void) {
-
-	FILE *map_file;
+void GetMapObjective(void)
+{
 	char filename[100];
 	
 	strcpy(filename, GAMEVERSION "/pics/objectives/");		
 	strcat(filename, level.mapname);
 	strcat(filename,".pcx");
 
-	gi.dprintf("Loading map objective pic %s...", filename);
-	if (map_file = fopen(filename, "r")) 
-	{
-		fclose(map_file);
-		level.objectivepic = filename;
-		gi.dprintf("done.\n");
-	} 
-	else
-		gi.dprintf("error.\n");
+	// kernel: there is no need to load objective pic in the server
+	gi.dprintf("Map objective pic is %s\n", filename);
+	level.objectivepic = filename;
 }
 
 //faf:  ctb code

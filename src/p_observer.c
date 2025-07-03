@@ -26,7 +26,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "p_menus.h"
+
 void Cmd_Objectives (edict_t *ent);
 void M_ChooseMOS(edict_t *ent);
 void Killed(edict_t * targ , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point ); 
@@ -1381,8 +1383,16 @@ void MapVote(edict_t *ent)
 		//gi.dprintf ("x%s\n",mapstring);
 		if (bots->value)
 		{
-			sprintf(filename, "dday/navigation/%s.cmp", votemaps[i]);
-			f = fopen (filename, "rb");
+			sprintf(filename, "navigation/%s.cmp", votemaps[i]);
+
+			// kernel: try to open from q2 directories
+			f = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "rb");
+
+			if (!f)
+				f = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "rb");
+
+			if (!f)
+				f = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "rb");
 
 			if (f){
 				fclose (f);
@@ -1396,8 +1406,8 @@ void MapVote(edict_t *ent)
 		else
 			add = "";
 
-			theText = gi.TagMalloc(sizeof("1234567890123456789012345"), TAG_GAME);
-			strcat(theText, va("      %s %s",add,votemaps[i]));
+		theText = gi.TagMalloc(sizeof("1234567890123456789012345"), TAG_GAME);
+		strcat(theText, va("      %s %s",add,votemaps[i]));
 
 		client_menu(ent, 7+(i*2),  theText,		PMENU_ALIGN_LEFT,	NULL, VoteMap );
 	}

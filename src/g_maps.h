@@ -25,7 +25,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
-FILE *DDay_OpenFile (char *filename_ptr); 
+#ifndef __G_MAPS_H__
+#define __G_MAPS_H__
+
+#include "game.h"
+
+FILE *DDay_OpenFullPathFile(const char *path, const char *gamedir, const char *name, const char *mode);
+FILE *DDay_OpenFile (const char *filename_ptr);
 void DDay_CloseFile (FILE *fp);
 
 #define MAX_MAPS           64 
@@ -51,7 +57,9 @@ maplist_t maplist;
 
 int  LoadMapList         (char *filename); 
 void ClearMapList        (); 
-void Cmd_Maplist_f       (edict_t *ent); 
+void Cmd_Maplist_f       (edict_t *ent);
 void Svcmd_Maplist_f     (); 
 void DisplayMaplistUsage (edict_t *ent); 
 void ShowCurrentMaplist  (edict_t *ent);
+
+#endif /* __G_MAPS_H__ */

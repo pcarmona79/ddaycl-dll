@@ -24,13 +24,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
- 
+
+#ifndef __X_FIRE_H__
+#define __X_FIRE_H__
+
  /*==========================================================================
 //  x_fire.h -- by Patrick Martin               Last updated:  6-18-1998
 //--------------------------------------------------------------------------
 //  This is the header file for x_fire.c.  Any files that use the
 //  functions in x_fire.c must include this file.
 //========================================================================*/
+
+#include "game.h"
+#include "q_shared.h"
 
 /***************/
 /*  CONSTANTS  */
@@ -153,3 +159,5 @@ void     PBM_FireFlameThrower
 
 #endif
 /*===========================/  END OF FILE  /===========================*/
+
+#endif /* __X_FIRE_H__ */

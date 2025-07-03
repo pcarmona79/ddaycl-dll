@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __G_LOCAL_H__
+#define __G_LOCAL_H__
+
 // g_local.h -- local definitions for game module
 #include "g_defines.h"
 #include "q_shared.h"
@@ -785,6 +788,10 @@ extern cvar_t  *knifefest;
 extern cvar_t  *fullbright;
 
 extern cvar_t  *campaign;
+
+// kernel: this will come from q2pro
+extern cvar_t *sys_basedir;
+extern cvar_t *sys_homedir;
 
 //extern	cvar_t	*crosshair;
 
@@ -2195,3 +2202,4 @@ void briefcase_warn (edict_t *ent);//faf;  ctb code
 qboolean Pickup_Briefcase (edict_t *ent, edict_t *other); 
 void Drop_Briefcase (edict_t *ent, gitem_t *item);
 
+#endif /* __G_LOCAL_H__ */

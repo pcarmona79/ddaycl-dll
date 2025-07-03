@@ -354,8 +354,17 @@ void WriteCampaignTxt(void)
 		return;
 	
 
-	sprintf(campaignfilename, "dday/campaigns/%s.campaign", campaign->string);
-	fp = fopen (campaignfilename, "wb");
+	sprintf(campaignfilename, "campaigns/%s.campaign", campaign->string);
+
+	// kernel: try to open from q2 directories
+	fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, campaignfilename, "wb");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, campaignfilename, "wb");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(".", GAMEVERSION, campaignfilename, "wb");
+
 	if (!fp)
 		gi.error ("Couldn't open %s", campaignfilename);
 
@@ -401,16 +410,24 @@ void SetupCampaign (qboolean restart)
 		return;
 
 
-	sprintf(campaignfilename, "dday/campaigns/%s.campaign", campaign->string);
+	sprintf(campaignfilename, "campaigns/%s.campaign", campaign->string);
 	
 	// convert string to all lowercase (for Linux)
 	for (i = 0; campaignfilename[i]; i++)
 		campaignfilename[i] = tolower(campaignfilename[i]);
 
+	// kernel: try to open from q2 directories
+	check = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, campaignfilename, "r");
 
-	if (restart == true || !(check = fopen(campaignfilename, "r") ))//no current campaign
+	if (!check)
+		check = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, campaignfilename, "r");
+
+	if (!check)
+		check = DDay_OpenFullPathFile(".", GAMEVERSION, campaignfilename, "r");
+
+	if (restart == true || !check) //no current campaign
 	{
-		sprintf(campaignfilename, "dday/campaigns/%s.cpgntemplate", campaign->string);
+		sprintf(campaignfilename, "campaigns/%s.cpgntemplate", campaign->string);
 	}
 
 

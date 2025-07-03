@@ -23,6 +23,9 @@ This program is a modification of the ACE Bot, and is therefore
 in NO WAY supported by Steve Yeager.
 */
 
+#ifndef __AI_LOCAL_H__
+#define __AI_LOCAL_H__
+
 //	local to acebot files
 //==========================================================
 
@@ -182,3 +185,5 @@ void		AI_InitAIWeapons (void);
 
 
 qboolean	AI_IsLadder(vec3_t origin, vec3_t v_angle, vec3_t mins, vec3_t maxs, edict_t *passent);
+
+#endif /* __AI_LOCAL_H__ */

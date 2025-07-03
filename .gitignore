@@ -1,4 +1,4 @@
-# Local 
+# Local
 .DS_Store
 .vscode
 .vs
@@ -60,3 +60,4 @@ CMakeFiles
 **/compile_commands.json
 
 include/divisible/*
+src/.cache/

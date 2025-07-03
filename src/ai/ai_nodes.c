@@ -24,7 +24,10 @@ in NO WAY supported by Steve Yeager.
 */
 
 #include "../g_local.h"
+#include "../g_maps.h"
 #include "ai_local.h"
+#include "ai_nodes_shared.h"
+#include <stdio.h>
 
 
 //ACE
@@ -702,14 +705,31 @@ qboolean AI_LoadPLKFile( char *mapname )
 	char		filename[MAX_OSPATH];
 	int			version;
 
-	Com_sprintf (filename, sizeof(filename), "%s/%s/%s.%s", AI_MOD_FOLDER, AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION);
+	if (snprintf(filename, MAX_OSPATH, "%s/%s.%s", AI_NODES_FOLDER, mapname, NAV_FILE_EXTENSION) >= MAX_OSPATH)
+	{
+		gi.dprintf("AI_LoadPLKFile: filename truncated\n");
+		return false;
+	}
 
-	pIn = fopen( filename, "rb" );
+	// kernel: try to open from q2 directories
+	pIn = DDay_OpenFullPathFile(sys_homedir->string, AI_MOD_FOLDER, filename, "rb");
+
+	if (!pIn)
+		pIn = DDay_OpenFullPathFile(sys_basedir->string, AI_MOD_FOLDER, filename, "rb");
+
+	if (!pIn)
+		pIn = DDay_OpenFullPathFile(".", AI_MOD_FOLDER, filename, "rb");
+
 	if( pIn  == NULL )
 		return false; 
 
 	// check version
-	fread( &version, sizeof(int), 1, pIn);
+	if (fread( &version, sizeof(int), 1, pIn) != 1)
+	{
+		gi.error("AI_LoadPLKFile: error when reading version from file\n");
+		fclose(pIn);
+		return false;
+	}
 
 	if( version != NAV_FILE_VERSION )
 	{
@@ -717,13 +737,32 @@ qboolean AI_LoadPLKFile( char *mapname )
 		return false;
 	}
 	
-	fread( &nav.num_nodes, sizeof(int), 1, pIn);
+	if (fread( &nav.num_nodes, sizeof(int), 1, pIn) != 1)
+	{
+		gi.error("AI_LoadPLKFile: error when reading num_nodes from file\n");
+		fclose(pIn);
+		return false;
+	}
 
 	for (i=0; i<nav.num_nodes; i++)
-		fread( &nodes[i], sizeof(nav_node_t), 1, pIn );
+	{
+		if (fread( &nodes[i], sizeof(nav_node_t), 1, pIn ) != 1)
+		{
+			gi.error("AI_LoadPLKFile: error when reading nodes from file\n");
+			fclose(pIn);
+			return false;
+		}
+	}
 	
 	for(i=0; i<nav.num_nodes;i++)
-		fread( &pLinks[i], sizeof(nav_plink_t), 1, pIn );
+	{
+		if (fread( &pLinks[i], sizeof(nav_plink_t), 1, pIn ) != 1)
+		{
+			gi.error("AI_LoadPLKFile: error when reading plinks from file\n");
+			fclose(pIn);
+			return false;
+		}
+	}
 
 	fclose(pIn);
 

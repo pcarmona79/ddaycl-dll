@@ -27,6 +27,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include "g_maps.h"
+#include <stdio.h>
 
 game_locals_t	game;
 level_locals_t	level;
@@ -149,6 +151,10 @@ cvar_t *knifefest;
 cvar_t *fullbright;
 
 cvar_t	*campaign;
+
+// kernel: q2pro directories
+cvar_t *sys_basedir;
+cvar_t *sys_homedir;
 
 // evil: global variables for countdown
 int countdownActive = 0;
@@ -335,54 +341,83 @@ edict_t *CreateTargetChangeLevel(char *map)
 	return ent;
 }
 
+qboolean TestMap(const char *basedir, const char *dir, const char *mapname, const char *mapext)
+{
+	FILE *check;
+	char filename[256];
 
+	if (snprintf(filename, 256, "%s/%s/%s.%s", basedir, dir, mapname, mapext) >= 256)
+	{
+		gi.dprintf("TestMap: filename truncated\n");
+		return false;
+	}
+
+	if ((check = fopen(filename, "r")))
+	{
+		fclose(check);
+		return true;
+	}
+	return false;
+}
 
 qboolean MapExists (char *map)
 {
 	FILE *check;
-   char filename[256];
+	char dirname[256];
 
-   strcpy(filename, GAMEVERSION "/maps/");
-   strcat(filename, map);
-   strcat(filename, ".bsp");
-
-   if (check = fopen(filename, "r") )
-   {
-		fclose (check);
+	// kernel: first use homedir to search for maps
+	if (TestMap(sys_homedir->string, GAMEVERSION "/maps", map, "bsp"))
 		return true;
-   }
 
-	strcpy(filename, "baseq2/maps/");
-	strcat(filename, map);
-	strcat(filename, ".bsp");
-	if (check = fopen(filename, "r") )
-	{
-		fclose (check);
+	if (TestMap(sys_homedir->string, GAMEVERSION "/maps", map, "bsp.override"))
 		return true;
-	}
 
-	strcpy(filename, GAMEVERSION "/maps/");
-	strcat(filename, map);
-	strcat(filename, ".bsp.override");
-
-	if (check = fopen(filename, "r") )
-	{		
-		fclose (check);
+	if (TestMap(sys_homedir->string, "baseq2/maps", map, "bsp"))
 		return true;
-	}
+
+	// kernel: try basedir instead
+	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp"))
+		return true;
+
+	if (TestMap(sys_basedir->string, GAMEVERSION "/maps", map, "bsp.override"))
+		return true;
+
+	if (TestMap(sys_basedir->string, "baseq2/maps", map, "bsp"))
+		return true;
+
+	// kernel: if all failed try current directory
+	if (TestMap(".", GAMEVERSION "/maps", map, "bsp"))
+		return true;
+
+	if (TestMap(".", GAMEVERSION "/maps", map, "bsp.override"))
+		return true;
+
+	if (TestMap(".", "baseq2/maps", map, "bsp"))
+		return true;
 
 	return false;
-
 }
 
 
-void Write_Last_Maps(void){
+void Write_Last_Maps()
+{
 	FILE *fp;
 	int i;
-	
-	fp = fopen ("dday/lastmaps.txt", "w");
+
+	// kernel: try to open from q2 directories
+	fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, "lastmaps.txt", "w");
+
 	if (!fp)
+		fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, "lastmaps.txt", "w");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(".", GAMEVERSION, "lastmaps.txt", "w");
+
+	if (!fp)
+	{
 		gi.error ("Couldn't open dday/lastmaps.txt");
+		return;
+	}
 
 	for (i=0; i<20 && last_maps_played[i]; i++)	{
 		fprintf (fp, "%s\n", last_maps_played[i]);
@@ -397,7 +432,7 @@ void Read_Last_Maps()
 	char	*s, *f;
 	char	*lastmaps;
 
-	lastmaps = ReadEntFile("dday/lastmaps.txt");
+	lastmaps = ReadEntFile("lastmaps.txt");
 
 	if (lastmaps)	{  
 		c = 0;
@@ -431,7 +466,7 @@ char *Get_Next_MaplistTxt_Map ()
 	char *maplisttxt[300];
 
 
-	maps = ReadEntFile("dday/maplist.txt");
+	maps = ReadEntFile("maplist.txt");
 
 	mapcount = 0;
 
@@ -453,16 +488,14 @@ char *Get_Next_MaplistTxt_Map ()
 				else
 					gi.dprintf("WARNING: Map '%s' in maplist.txt not found on server!\n",s);
 
-
-
 				s = strtok (NULL, "\n");
 			}
 			else
-			{maplisttxt[c] = ""; 
-			c++;}
-
+			{
+				maplisttxt[c] = "";
+				c++;
+			}
 		}
-
 	}
 	else
 	{
@@ -527,7 +560,7 @@ void EndDMLevel (void)
 {
 	char *s, *t, *f, *sb, *tb;// *fb;
 	static const char *seps = " ,\n\r";
-	char *mapname,*check;
+	char *mapname, check[20]; // kernel: check must be char[]
 	int i, axiscount=0,alliedcount=0;
 
 	char *nextmap;
@@ -694,7 +727,7 @@ void EndDMLevel (void)
 					}
 				}
 				if (!f)
-				f = t;
+					f = t;
 				t = strtok(NULL, seps);
 			}
 			s = strdup(sv_maplist->string);
@@ -730,8 +763,8 @@ void EndDMLevel (void)
 							}
 							else 
 							{
-								check = t;
-								strcat (check,"1");
+								// kernel: check if f+"1" can be a map
+								snprintf(check, 20, "%s1", f);
 								if (MapExists(check))
 								{
 									safe_bprintf (PRINT_HIGH, "Next map: %s \n", check);
@@ -753,8 +786,7 @@ void EndDMLevel (void)
 						{
 							//last_maplist_map_played = t;
 							//first_non_maplist_map = NULL;
-							check = t;
-							strcat (check,"1");
+							snprintf(check, 20, "%s1", t);
 							//gi.dprintf("%s kljfdsjlk\n",check);
 							if (MapExists(check))
 							{
@@ -806,8 +838,7 @@ void EndDMLevel (void)
 					}
 					else
 					{
-						check = tb;
-						strcat (check,"1");
+						snprintf(check, 20, "%s1", tb);
 						if (MapExists(check))
 						{
 							safe_bprintf (PRINT_HIGH, "Next map: %s \n", check);
@@ -816,6 +847,13 @@ void EndDMLevel (void)
 						}
 					}
 				}
+			}
+			else
+			{
+				// kernel: t was not found by MapExists, repeat the current map
+				safe_bprintf(PRINT_HIGH, "Next map: %s\n", level.mapname);
+				BeginIntermission(CreateTargetChangeLevel(level.mapname));
+				return;
 			}
 		}
 	}

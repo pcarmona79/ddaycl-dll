@@ -24,12 +24,18 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
- 
+
+#ifndef __X_FBOMB_H__
+#define __X_FBOMB_H__
+
  /*==========================================================================
 //  x_fbomb.h -- by Patrick Martin              Last updated:  3-5-1998
 //--------------------------------------------------------------------------
 //  This is the header file for x_fbomb.c.
 //========================================================================*/
+
+#include "game.h"
+#include "q_shared.h"
 
 static void FireGrenade_Explode (edict_t *ent);
 static void FireGrenade_Touch
@@ -48,3 +54,5 @@ void fire_flamerocket
 
 
 /*=============================  END OF FILE =============================*/
+
+#endif /* __X_FBOMB_H__ */

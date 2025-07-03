@@ -45,7 +45,7 @@ GunInfo_t gbrguninfo[MAX_TEAM_GUNS];
 //                              GBR.DLL ITEMS                                       //
 //////////////////////////////////////////////////////////////////////////////////////
 
-gitem_t gbritems[]=
+gitem_t gbritems[MAX_TEAM_ITEMS]=
 {
 /* Webley becomes the standard issue weapon */
 	{

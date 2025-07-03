@@ -23,6 +23,10 @@ This program is a modification of the ACE Bot, and is therefore
 in NO WAY supported by Steve Yeager.
 */
 
+#ifndef __AI_NODES_SHARED_H__
+#define __AI_NODES_SHARED_H__
+
+#include "../q_shared.h"
 
 //=============================================================
 //
@@ -97,3 +101,4 @@ typedef struct nav_node_s
 
 } nav_node_t;
 
+#endif /* __AI_NODES_SHARED_H__ */

@@ -25,6 +25,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __P_OBSERVER_H__
+#define __P_OBSERVER_H__
+
+#include "game.h"
+#include "p_menu.h"
+#include "q_shared.h"
+
 void ChooseMOS(edict_t *ent,qboolean smos);
 void ChooseTeam(edict_t *ent);
 void SyncUserInfo(edict_t *ent, qboolean pers);
@@ -48,3 +55,5 @@ void M_View_Credits_etc (edict_t *ent, pmenu_t *p, int choice);
 void M_Class_Choose (edict_t *ent, pmenu_t *p, int choice);
 void Cmd_FlyingNunMode_f(edict_t *ent);
 void Cmd_DDHelp_f(edict_t *ent);
+
+#endif /* __P_OBSERVER_H__ */

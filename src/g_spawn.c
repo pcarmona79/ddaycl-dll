@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
+#include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 //Ok, since we are modifying this file, we might as well declare the
@@ -796,24 +798,35 @@ char *ReadEntFile(char *filename)
 
 	while (true) 
 	{
-		fp = fopen(filename, "r");
-		if (!fp) break;
+		// kernel: try to open from q2 directories
+		fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+		if (!fp)
+			fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+		if (!fp)
+			break;
 
 		for (i=0; (ch = fgetc(fp)) != EOF; i++)
-		;
+			;
 
 		filestring = gi.TagMalloc(i+1, TAG_LEVEL);
-		if (!filestring) break;
+		if (!filestring)
+			break;
 
 		fseek(fp, 0, SEEK_SET);
 		for (i=0; (ch = fgetc(fp)) != EOF; i++)
-		filestring[i] = ch;
+			filestring[i] = ch;
 		filestring[i] = '\0';
 
 		break;
 	}
 
-	if (fp) fclose(fp);
+	if (fp)
+		fclose(fp);
 
 	return(filestring);
 }
@@ -841,7 +854,7 @@ char *LoadEntFile(char *mapname, char *entities)
 	}
 
 
-	sprintf(entfilename, "dday/ents/%s.ent", mapname);
+	sprintf(entfilename, "ents/%s.ent", mapname);
 	// convert string to all lowercase (for Linux)
 	for (i = 0; entfilename[i]; i++)
 		entfilename[i] = tolower(entfilename[i]);
@@ -869,7 +882,7 @@ char *LoadCTCFile(char *mapname, char *entities)
 	
 
 
-	sprintf(entfilename, "dday/ents/%s.ctc", mapname);
+	sprintf(entfilename, "ents/%s.ctc", mapname);
 	// convert string to all lowercase (for Linux)
 	for (i = 0; entfilename[i]; i++)
 		entfilename[i] = tolower(entfilename[i]);
@@ -906,9 +919,15 @@ void LoadCampFile(void)
 
 
 	if (level.botfiles)
-		sprintf(cmpfilename, "dday/navigation/%s.cmp", level.botfiles);
+	{
+		if (snprintf(cmpfilename, MAX_QPATH, "navigation/%s.cmp", level.botfiles) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
+	}
 	else
-		sprintf(cmpfilename, "dday/navigation/%s.cmp", level.mapname);
+	{
+		if (snprintf(cmpfilename, MAX_QPATH, "navigation/%s.cmp", level.mapname) >= MAX_QPATH)
+			gi.dprintf("LoadCampFile: cmpfilename truncated\n");
+	}
 
 	//gi.dprintf("sdfl %s\n", cmpfilename);
 

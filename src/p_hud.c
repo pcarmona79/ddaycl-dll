@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include <stdio.h>
 
 
 /*
@@ -598,7 +599,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
                 int score, total[TEAM_TOP], totalscore[TEAM_TOP];
                 int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
                 int stoppedat[TEAM_TOP];
-char pingstring[3];
+char pingstring[4];
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
@@ -660,7 +661,16 @@ char pingstring[3];
         else
         // if teams are anything else or grm|usa, display the split graphics:
         {
-                strcpy(scoreleftpic, "yv 80 xv   0 picn ");
+			snprintf(string, 1400,
+					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
+					"      xv 160 picn %s_score  ",    // scorerightpic
+					team_list[0]->teamid,
+					team_list[1]->teamid,
+					team_list[0]->teamid,
+					team_list[1]->teamid);
+                /*strcpy(scoreleftpic, "yv 80 xv   0 picn ");
                 strcat(scoreleftpic, team_list[0]->teamid);
                 strcat(scoreleftpic, "_score  ");
 
@@ -680,7 +690,7 @@ char pingstring[3];
                 sprintf(string, scoretopleftpic); //team 0
                 strcat(string, scoretoprightpic); // team 1
                 strcat(string, scoreleftpic); //background left list pic
-                strcat(string, scorerightpic); // background right list pic
+                strcat(string, scorerightpic); // background right list pic  */
         }
 		if (team_list[0]->kills_and_points)
 			strcat(string, "xv 90 yv 20 string \"&\" ");
@@ -777,12 +787,11 @@ char pingstring[3];
         
 								if (cl_ent->ai)
 									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM1][i]].ping<10)
-									sprintf(pingstring, "  %i", game.clients[sorted[TEAM1][i]].ping);
-								else if (game.clients[sorted[TEAM1][i]].ping<100)
-									sprintf(pingstring, " %i", game.clients[sorted[TEAM1][i]].ping);
 								else if (game.clients[sorted[TEAM1][i]].ping<1000)
-									sprintf(pingstring, "%i", game.clients[sorted[TEAM1][i]].ping);
+								{
+									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM1][i]].ping % 1000) > 3)
+										sprintf(pingstring , "999");
+								}
 								else
 									sprintf(pingstring , "999");
 
@@ -825,12 +834,11 @@ char pingstring[3];
     	
 								if (cl_ent->ai)
 									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM2][i]].ping<10)
-									sprintf(pingstring, "  %i", game.clients[sorted[TEAM2][i]].ping);
-								else if (game.clients[sorted[TEAM2][i]].ping<100)
-									sprintf(pingstring, " %i", game.clients[sorted[TEAM2][i]].ping);
 								else if (game.clients[sorted[TEAM2][i]].ping<1000)
-									sprintf(pingstring, "%i", game.clients[sorted[TEAM2][i]].ping);
+								{
+									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM2][i]].ping % 1000) > 3)
+										sprintf(pingstring , "999");
+								}
 								else
 									sprintf(pingstring , "999");
 
@@ -989,7 +997,16 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
         else
         // if teams are anything else or grm|usa, display the split graphics:
         {
-                strcpy(scoreleftpic, "yv 80 xv   0 picn ");
+			snprintf(string, 1400,
+					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
+					"      xv 160 picn %s_score  ",    // scorerightpic
+					team_list[0]->teamid,
+					team_list[1]->teamid,
+					team_list[0]->teamid,
+					team_list[1]->teamid);
+                /* strcpy(scoreleftpic, "yv 80 xv   0 picn ");
                 strcat(scoreleftpic, team_list[0]->teamid);
                 strcat(scoreleftpic, "_score  ");
 
@@ -1009,7 +1026,7 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
                 sprintf(string, scoretopleftpic); //team 0
                 strcat(string, scoretoprightpic); // team 1
                 strcat(string, scoreleftpic); //background left list pic
-                strcat(string, scorerightpic); // background right list pic
+                strcat(string, scorerightpic); // background right list pic */
         }
 
 
@@ -1401,32 +1418,47 @@ void ShowCampaign (edict_t *ent)
 	// send the layout
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	sprintf (string, "%sxv 7 yv 7 picn %s ", string, level.campaign);
+	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, level.campaign) > 1023)
+		gi.dprintf("ShowCampaign: truncated string\n");
 
 	if (curx && cury)
-		sprintf (string, "%sxv %i yv %i picn o ", string, curx, cury);
+	{
+		if (snprintf(string, 1024, "%sxv %i yv %i picn o ", string, curx, cury) > 1023)
+			gi.dprintf("ShowCampaign: truncated string\n");
+	}
 
 	for (i = 0; campaign_spots[i].bspname; i++)
 	{
-		sprintf (string, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos);
+		if (snprintf(string, 1024, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos) > 1023)
+			gi.dprintf("ShowCampaign: truncated string\n");
 
 		if (campaign_spots[i].owner == 0)
-			sprintf (string, "%su ", string);
+        {
+			if (snprintf(string, 1024, "%su ", string) > 1023)
+                gi.dprintf("ShowCampaign: truncated string\n");
+        }
 		else if (campaign_spots[i].owner == 1)
-			sprintf (string, "%sg ", string);
+        {
+			if (snprintf(string, 1024, "%sg ", string) > 1023)
+                gi.dprintf("ShowCampaign: truncated string\n");
+        }
 		else
 			strcat (string, "q ");
-
-
 	}
 
 	strcat (string, "xv 22 yv 36 picn u ");
 	strcat (string, "xv 37 yv 38 string \"");
-	sprintf (string, "%s%i", string, alliedplatoons);
+
+	if (snprintf(string, 1024, "%s%i", string, alliedplatoons) > 1023)
+        gi.dprintf("ShowCampaign: truncated string\n");
+
 	strcat (string, "\" ");
 	strcat (string, "xv 22 yv 56 picn g ");
 	strcat (string, "xv 37 yv 58 string \"");
-	sprintf (string, "%s%i", string, axisplatoons);
+
+	if (snprintf(string, 1024, "%s%i", string, axisplatoons) > 1023)
+        gi.dprintf("ShowCampaign: truncated string\n");
+
 	strcat (string, "\" ");
 
 
@@ -1453,8 +1485,8 @@ void ShowServerImg (edict_t *ent)
 	// send the layout
 	Com_sprintf (string, sizeof(string), "");
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	sprintf (string, "%sxv 7 yv 7 picn %s ", string, serverimg->string);
-
+	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, serverimg->string) > 1023)
+		gi.dprintf("ShowServerImg: truncated string\n");
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);

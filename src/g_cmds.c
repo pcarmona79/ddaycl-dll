@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
 #include "stddef.h"
@@ -237,9 +238,9 @@ g_cmds_t id_GameCmds[NUM_ID_CMDS] = // remember to set back to NUM_ID_COMDS
 	"list_team",	1,	Cmd_List_team,
 //	"quit_team",	1,	Cmd_Quit_team,
 //	"feed_ammo",	1,	Feed_Ammo,
-	"reload",		1,	(void *)Cmd_Reload_f,
+	"reload",		1,	Cmd_Reload_f,
 //	"begin_mission",1,	EndObserverMode,
-	"scope",		2,	Cmd_Scope_f,
+	"scope",		2,	(void *)Cmd_Scope_f,
 	"shout",		3,	Cmd_Shout_f,
 	"aliciamode",	1,	Cmd_AliciaMode_f,
 	"iwannabeanarchy",1,Cmd_SexPistols_f,
@@ -2426,10 +2427,11 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 
 	if (ent->client->resp.team_on)
 	{
-		sprintf (teamname, "%s ",ent->client->resp.team_on->playermodel);
+		if (snprintf(teamname, 5, "%s ", ent->client->resp.team_on->playermodel) >= 5)
+			gi.dprintf("Cmd_Say_f: teamname truncated\n");
 	}
-	else
-		sprintf (teamname,"");
+	//else
+	//	sprintf (teamname,"");
 
 
 	if (saved)
@@ -3270,7 +3272,16 @@ void Cmd_MOTD (edict_t *ent)
 	char motd[1000];
 	char line[100];
 
-	if (motd_file = fopen(GAMEVERSION "/motd.txt", "r") )
+	// kernel: try to open from q2 directories
+	motd_file = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(".", GAMEVERSION, "motd.txt", "r");
+
+	if (motd_file != NULL)
 	{		
 		// we successfully opened the file "motd.txt"
 		if ( fgets(motd, 900, motd_file) )
