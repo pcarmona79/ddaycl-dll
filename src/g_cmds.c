@@ -2103,7 +2103,7 @@ void Cmd_Wave_f (edict_t *ent, int wave)
 //faf:  based on aq2 code
 void GetNearbyTeammates(edict_t *self, char *buf)
 {
-        unsigned char nearby_teammates[10][16];
+        char nearby_teammates[10][16];
         int nearby_teammates_num, l;
         edict_t *ent = NULL;
 
@@ -2346,7 +2346,7 @@ char *SeekBufEnd(char *buf)
 
 void ParseSayText(edict_t *ent, char *text)
 {
-        static unsigned char buf[10240], infobuf[10240];
+        static char buf[10240], infobuf[10240];
         char *p, *pbuf;
 
         p = text;
@@ -2419,8 +2419,8 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 		if (snprintf(teamname, 5, "%s ", ent->client->resp.team_on->playermodel) >= 5)
 			gi.dprintf("Cmd_Say_f: teamname truncated\n");
 	}
-	//else
-	//	sprintf (teamname,"");
+	else
+		memset(teamname, 0, sizeof(teamname));
 
 
 	if (saved)
@@ -3057,7 +3057,7 @@ qboolean Cmd_Reload (edict_t *ent)
 			(mags_left==1)
 		  /*(ent->client->pers.inventory[ent->client->ammo_index] < rds_left)*/)
 		{
-			if (ent->client->pers.weapon->classnameb = WEAPON_SHOTGUN)
+			if (ent->client->pers.weapon->classnameb == WEAPON_SHOTGUN)
 				safe_cprintf(ent, PRINT_HIGH, "Last Shell!\n");
 //			else if (!strcmp(ent->client->pers.weapon->classname, "weapon_m1carb"))
 //				safe_cprintf(ent, PRINT_HIGH, "Last Magazine!\n");
