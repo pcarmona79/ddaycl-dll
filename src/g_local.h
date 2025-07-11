@@ -51,8 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-//#define DEVVERSION "5.0"//faf
-#define DEVVERSION	"5.04"
+#define DEVVERSION	"5.041" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages

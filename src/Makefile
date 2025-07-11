@@ -43,6 +43,10 @@ CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointe
 # Nick - Use 'make build_debug' to use this.
 CFLAGS_DEBUG=$(BASE_CFLAGS) -g -DDEBUG
 
+# uncomment for ARM64 cross-compilation
+#ARCH=aarch64
+#CC=aarch64-linux-gnu-gcc -fcommon
+
 # Always uncommented
 LDFLAGS=-ldl -lm
 SHLIBEXT=so
