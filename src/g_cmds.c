@@ -570,10 +570,10 @@ return false;
 	}
 
 
-if (!ent->client->aim &&
-	ent->client->pers.weapon->classnameb == WEAPON_FISTS &&
-	!ent->client->pers.inventory[ITEM_INDEX(FindItem("Helmet"))])
-	return true;
+	if (!ent->client->aim &&
+		ent->client->pers.weapon->classnameb == WEAPON_FISTS &&
+		!ent->client->pers.inventory[ITEM_INDEX(FindItem("Helmet"))])
+		return true;
 
 
 	if (ent->client->pers.weapon->classnameb == WEAPON_BINOCULARS)
@@ -1214,8 +1214,8 @@ void Cmd_Use_f (edict_t *ent)
 
 	if (Q_stricmp(s, "gibmachine") == 0)
 	{
-	if(easter_egg->value==0)
-		return;
+		if(easter_egg->value==0)
+			return;
 		
 		if (ent->client->gibmachine == flame_normal)
 		{
@@ -1227,7 +1227,7 @@ void Cmd_Use_f (edict_t *ent)
 			safe_cprintf(ent, PRINT_HIGH, "Goodbye gib machine!.\n");
 			ent->client->gibmachine = flame_normal;
 		}
-	return;
+		return;
 	}
 
 
@@ -1676,7 +1676,7 @@ void Cmd_Objectives (edict_t *ent)
 			e->obj_owner == ent->client->resp.team_on->index)
 			Com_sprintf (entry, sizeof(entry),	"xr -200 yt %i string2 \" %-22.22s\" ",120+(y*10),objective_name);
 		else
-		Com_sprintf (entry, sizeof(entry),	"xr -200 yt %i string \"%s%-22.22s\" ",120+(y*10),  bp, objective_name);
+			Com_sprintf (entry, sizeof(entry),	"xr -200 yt %i string \"%s%-22.22s\" ",120+(y*10),  bp, objective_name);
 
 		j = strlen(entry);
 		if (stringlength + j > 1024)
@@ -1963,7 +1963,6 @@ void Cmd_Kill_f (edict_t *ent)
 
 	//T_Damage(ent,ent,ent, ent->maxs, ent->s.origin, NULL, 999, 0,  DAMAGE_NO_PROTECTION,
 	//			MOD_SUICIDE);
-	/*
 	ent->flags &= ~FL_GODMODE;
 	ent->health = 0;
 	meansOfDeath = MOD_SUICIDE;
@@ -2103,60 +2102,59 @@ void Cmd_Wave_f (edict_t *ent, int wave)
 //faf:  based on aq2 code
 void GetNearbyTeammates(edict_t *self, char *buf)
 {
-        unsigned char nearby_teammates[10][16];
-        int nearby_teammates_num, l;
-        edict_t *ent = NULL;
+	char nearby_teammates[10][16];
+	int nearby_teammates_num, l;
+	edict_t *ent = NULL;
 
-        nearby_teammates_num = 0;
-        
-        while ((ent = findradius(ent, self->s.origin, 750)) != NULL)
-        {
-                if (ent == self || !ent->client || !CanDamage(ent, self) || 
-                        !OnSameTeam(ent, self))
-                        continue;
+	nearby_teammates_num = 0;
 
-                strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
-                nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
-                nearby_teammates_num++;
-                if (nearby_teammates_num >= 10)
-                        break;
-        }
-        
-        if (nearby_teammates_num == 0)
-        {
-                strcpy(buf, "");
-                return;
-        }
+	while ((ent = findradius(ent, self->s.origin, 750)) != NULL)
+	{
+		if (ent == self || !ent->client || !CanDamage(ent, self) ||
+			!OnSameTeam(ent, self))
+			continue;
 
-        for (l = 0; l < nearby_teammates_num; l++)
-        {
-                if (l == 0)
-                {
-                        strcpy(buf, nearby_teammates[l]);
-                }
-                        else
-                {
-                        if (nearby_teammates_num == 2)
-                        {
-                                strcat(buf, " and ");
-                                strcat(buf, nearby_teammates[l]);
-                        }
-                                else
-                        {
-                                if (l == (nearby_teammates_num - 1))
-                                {
-                                        strcat(buf, ", and ");
-                                        strcat(buf, nearby_teammates[l]);
-                                }
-                                        else
-                                {
-                                        strcat(buf, ", ");
-                                        strcat(buf, nearby_teammates[l]);
-                                }
-                        }
-                }
-                
-        }
+		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
+		nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
+		nearby_teammates_num++;
+		if (nearby_teammates_num >= 10)
+			break;
+	}
+
+	if (nearby_teammates_num == 0)
+	{
+		strcpy(buf, "");
+		return;
+	}
+
+	for (l = 0; l < nearby_teammates_num; l++)
+	{
+		if (l == 0)
+		{
+			strcpy(buf, nearby_teammates[l]);
+		}
+		else
+		{
+			if (nearby_teammates_num == 2)
+			{
+				strcat(buf, " and ");
+				strcat(buf, nearby_teammates[l]);
+			}
+			else
+			{
+				if (l == (nearby_teammates_num - 1))
+				{
+					strcat(buf, ", and ");
+					strcat(buf, nearby_teammates[l]);
+				}
+				else
+				{
+					strcat(buf, ", ");
+					strcat(buf, nearby_teammates[l]);
+				}
+			}
+		}
+	}
 }
 
 //faf
@@ -2346,7 +2344,7 @@ char *SeekBufEnd(char *buf)
 
 void ParseSayText(edict_t *ent, char *text)
 {
-        static unsigned char buf[10240], infobuf[10240];
+        static char buf[10240], infobuf[10240];
         char *p, *pbuf;
 
         p = text;
@@ -2419,8 +2417,8 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 		if (snprintf(teamname, 5, "%s ", ent->client->resp.team_on->playermodel) >= 5)
 			gi.dprintf("Cmd_Say_f: teamname truncated\n");
 	}
-	//else
-	//	sprintf (teamname,"");
+	else
+		memset(teamname, 0, sizeof(teamname));
 
 
 	if (saved)
@@ -3057,7 +3055,7 @@ qboolean Cmd_Reload (edict_t *ent)
 			(mags_left==1)
 		  /*(ent->client->pers.inventory[ent->client->ammo_index] < rds_left)*/)
 		{
-			if (ent->client->pers.weapon->classnameb = WEAPON_SHOTGUN)
+			if (ent->client->pers.weapon->classnameb == WEAPON_SHOTGUN)
 				safe_cprintf(ent, PRINT_HIGH, "Last Shell!\n");
 //			else if (!strcmp(ent->client->pers.weapon->classname, "weapon_m1carb"))
 //				safe_cprintf(ent, PRINT_HIGH, "Last Magazine!\n");

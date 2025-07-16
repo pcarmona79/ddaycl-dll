@@ -302,9 +302,8 @@ void InitGame (void)
 
 
 
-	gi.cvar ("dll_version", "Dday 5.041 Chile",  CVAR_SERVERINFO | CVAR_LATCH); //faf
-
-	gi.cvar ("website", "http://www.DdayDev.com",  CVAR_SERVERINFO | CVAR_LATCH); //faf
+	gi.cvar ("dll_version", DEVVERSION " Chile",  CVAR_SERVERINFO | CVAR_LATCH); //ddaychile
+	gi.cvar ("website", "http://www.dday.cl",  CVAR_SERVERINFO | CVAR_LATCH); //ddaychile
 
 	sv_maplist = gi.cvar ("sv_maplist", "dday inland invade soviet desert poldday itadday", 0); //faf: from q2 code
 
