@@ -125,15 +125,6 @@ void Weapon_Enfield (edict_t *ent)
 	ent->client->crosshair = false;
 
 
-	if (ent->client->ps.gunframe == 96)
-	{
-		ent->client->crosshair_offset_x = random() * 4 - 2;
-		ent->client->crosshair_offset_y = random() * 2;
-	}
-
-
-    
-
 	if (ent->client->weaponstate != WEAPON_RELOADING &&
 		ent->client->ps.gunframe > 98 &&
 		ent->client->ps.gunframe < 105 &&

@@ -104,11 +104,6 @@ void Weapon_Arisaka (edict_t *ent)
 	ent->client->p_rnd= &ent->client->mags[jpn_index].rifle_rnd;
 
 	ent->client->crosshair = false;
-	if (ent->client->ps.gunframe == 69)
-	{
-		ent->client->crosshair_offset_x = random() * 4 - 2;
-		ent->client->crosshair_offset_y = random() * 2;
-	}
 
 	//faf
 	if (ent->client->ps.gunframe == 9 ||
