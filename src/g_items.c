@@ -105,7 +105,7 @@ gitem_t	*FindItemByClassname (char *classname)
 /*
 ===============
 FindItem
-
+Find items by pickup name
 ===============
 */
 gitem_t	*FindItem (char *pickup_name)
@@ -123,6 +123,56 @@ gitem_t	*FindItem (char *pickup_name)
 	}
 
 	return NULL;
+}
+
+// kernel: like FindItem but filtering by team
+gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
+{
+	int		i;
+	gitem_t	*it;
+
+	it = itemlist;
+	for (i=0 ; i<game.num_items ; i++, it++)
+	{
+		if (!it->pickup_name)
+			continue;
+		if (dllname != NULL && it->dllname != NULL) {
+			if (!Q_stricmp(it->pickup_name, pickup_name)
+					&& !Q_stricmp(it->dllname, dllname))
+				return it;
+		} else {
+			if (!Q_stricmp(it->pickup_name, pickup_name))
+				return it;
+		}
+	}
+
+	// try to not return null pointer
+	return FindItem(pickup_name);
+}
+
+// kernel: like FindItemByClassname but filtering by team
+gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
+{
+	int		i;
+	gitem_t	*it;
+
+	it = itemlist;
+	for (i=0 ; i<game.num_items ; i++, it++)
+	{
+		if (!it->classname)
+			continue;
+		if (dllname != NULL && it->dllname != NULL) {
+			if (!Q_stricmp(it->classname, classname)
+					&& !Q_stricmp(it->dllname, dllname))
+				return it;
+		} else {
+			if (!Q_stricmp(it->classname, classname))
+				return it;
+		}
+	}
+
+	// try to not return null pointer
+	return FindItemByClassname(classname);
 }
 
 gitem_t *FindTeamItem (char *dllname, int position)  //faf:  added for team dll support.  Finds item by dll name and 'position'.  Not 100% sure if it works yet...
@@ -573,7 +623,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	}
 
 	//Wheaty: Clear inventory of any grenades (even though you only drop 1)
-	if (!item->tag == AMMO_TYPE_GRENADES)
+	if (!(item->tag == AMMO_TYPE_GRENADES))
 		ent->client->pers.inventory[index] -= dropped->count;
 	else
 		ent->client->pers.inventory[index] = 0;

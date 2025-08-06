@@ -481,10 +481,19 @@ void ChangeWeapon (edict_t *ent)
 
 	ent->client->ps.fov = STANDARD_FOV;
 
-	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo)
-		ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
-	else
+	if (ent->client->pers.weapon && ent->client->pers.weapon->ammo) {
+		//ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
+		// kernel: this will force to search in team's items first
+		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
+				ent->client->resp.team_on->teamid);
+
+		if (item)
+			ent->client->ammo_index = ITEM_INDEX(item);
+		else
+			ent->client->ammo_index = 0;
+	} else {
 		ent->client->ammo_index = 0;
+	}
 	//gi.dprintf("ammo_index: %i\n", ent->client->ammo_index);
 
 	if (!ent->client->pers.weapon || ent->s.modelindex != 255) //pbowens: v_wep
@@ -633,7 +642,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 
 	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
 	{
-		ammo_item = FindItem(item->ammo);
+		ammo_item = FindItemInTeam(item->ammo, item->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 
 		if (!strcmp(item->ammo, "p38_mag"))
@@ -974,9 +983,10 @@ void weapon_grenade_prime (edict_t *ent, int team)
 
 	if (ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_GRENADES)
 		grenade->item = ent->client->pers.weapon;
-	else
-		grenade->item = FindItem(va("%s", (team) ? "Potato Masher" : "Mk 2 Grenade" ));
-	
+	else {
+		grenade->item = FindItemInTeam(va("%s", (team) ? "Potato Masher" : "Mk 2 Grenade" ),
+				ent->client->resp.team_on->teamid);
+	}
 	dudchance = rand() % 100;
 	//gi.dprintf("chance: %f", dudchance);
 
@@ -1006,14 +1016,16 @@ void Weapon_Grenade (edict_t *ent)
 //buggy, changed back to old way, watch for crash?		(ent->client->grenade_index) )//jpn crash here
 	if(	(!ent->client->grenade_index && !ent->client->pers.inventory[ent->client->ammo_index]) || 
 		(ent->client->grenade_index && !ent->client->pers.inventory[ent->client->grenade_index] && ent->client->weaponstate != WEAPON_FIRING) )
-
 	{
-	//	gi.dprintf("next\n");
+		// kernel: switch to team's main weapon when no grenades
+		char *weapon1 = ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1;
+		gitem_t *weapon_item = FindItemInTeam(weapon1, ent->client->resp.team_on->teamid);
+		int weapon_index = ITEM_INDEX(weapon_item);
 		
-		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1 &&
-			ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))])
+		if (weapon1 && weapon_index >= 0 &&
+			ent->client->pers.inventory[weapon_index])
 		{
-			ent->client->newweapon = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
+			ent->client->newweapon = weapon_item;
 			ChangeWeapon(ent);
 		} else
 			Cmd_WeapNext_f(ent);
