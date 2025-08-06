@@ -93,7 +93,7 @@ void Weapon_Generic (edict_t *ent,
 
 	if(ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}
@@ -371,9 +371,8 @@ void Weapon_Generic (edict_t *ent,
 			ChangeWeapon (ent);
 			return;
 		}		
-        else if((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
+        else if ((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
 				&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
-
         {
             ent->client->anim_priority = ANIM_REVERSE;
 
@@ -424,7 +423,7 @@ void Weapon_Generic (edict_t *ent,
 				if((ent->client->p_fract)&&(*ent->client->p_fract));
 				else
 				{ //load the weapon initially.
-					ammo_item=FindItem(ent->client->pers.weapon->ammo);
+					ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 
 					// Next two lines commented to fix reload bug.
 					// Forces user to load his own damn guns.

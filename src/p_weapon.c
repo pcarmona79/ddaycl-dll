@@ -177,7 +177,7 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		// give them some ammo with it
 		if(ent->item->ammo)
 		{
-			ammo = FindItem (ent->item->ammo);
+			ammo = FindItemInTeam(ent->item->ammo, ent->item->dllname);
 //			if ( (int)dmflags->value & DF_INFINITE_AMMO )
 //				Add_Ammo (other, ammo, 1000);
 //			else
