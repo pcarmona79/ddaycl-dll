@@ -441,7 +441,7 @@ void ED_CallSpawn (edict_t *ent)
 	}
 
 	// check item spawn functions
-	for (i=0,item=itemlist ; i<game.num_items ; i++,item++)
+	for (i = 0, item = itemlist; i <= game.num_items; i++, item++)
 	{
 		if (!item->classname)
 			continue;
