@@ -2742,7 +2742,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		char skin[64];
 
-		if (ent->client->resp.team_on && ent->client->resp.mos) 
+		if (ent->client &&
+			ent->client->resp.team_on && ent->client->resp.mos)
 		{
 			//faf:  has the mapper set a custom skin?
 /*			if (team_list[ent->client->resp.team_on->index]->skin)

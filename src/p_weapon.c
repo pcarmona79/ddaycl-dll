@@ -420,7 +420,9 @@ void ShowGun( edict_t *ent)
 	{
 		ent->s.modelindex2 = gi.modelindex ("players/usa/w_fists.md2");
 	}	
-	else if (ent->client->pers.weapon->position == LOC_FLAME && !strcmp(ent->client->resp.team_on->teamid, "gbr"))
+	else if (ent->client->pers.weapon->position == LOC_FLAME &&
+			 ent->client->resp.team_on &&
+			 !strcmp(ent->client->resp.team_on->teamid, "gbr"))
 	{
 		ent->s.modelindex2 = gi.modelindex (va("players/%s/%s.md2", ent->client->resp.team_on->playermodel, pszIcon));
 	}

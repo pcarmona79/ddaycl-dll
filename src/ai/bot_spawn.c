@@ -749,6 +749,8 @@ void BOT_SpawnBot (int team, char *name, char *skin, char *userinfo)
 
 
 
+	InitClientResp(bot->client);
+
 	// To allow bots to respawn
 	if(userinfo == NULL)
 		BOT_SetName(bot, name, skin, team);
@@ -763,7 +765,7 @@ void BOT_SpawnBot (int team, char *name, char *skin, char *userinfo)
 	G_SpawnAI(bot); //jabot092(2)
 	bot->ai->is_bot = true;
 
-	InitClientResp (bot->client);
+	//InitClientResp (bot->client);
 
 	PutClientInServer(bot);
 	BOT_StartAsSpectator (bot);
