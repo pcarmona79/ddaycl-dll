@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "p_classes.h"
+#include "q_shared.h"
 
 // g_classes.c
 // D-Day: Normandy Player Classes
@@ -202,11 +203,17 @@ void Give_Class_Weapon(edict_t *ent)
 	if (item)
 	{
 		ammo_item = FindItemInTeam(item->ammo, item->dllname);
-		if (!strcmp(item->dllname, team_list[1]->teamid) && item->position == LOC_PISTOL)
-			ent->client->mags[1].pistol_rnd = ammo_item->quantity;
-		else if (!strcmp(item->dllname, team_list[0]->teamid) && item->position == LOC_PISTOL)
-			ent->client->mags[0].pistol_rnd = ammo_item->quantity;
-
+		if (ammo_item)
+		{
+			if (!strcmp(item->dllname, team_list[1]->teamid) && item->position == LOC_PISTOL)
+				ent->client->mags[1].pistol_rnd = ammo_item->quantity;
+			else if (!strcmp(item->dllname, team_list[0]->teamid) && item->position == LOC_PISTOL)
+				ent->client->mags[0].pistol_rnd = ammo_item->quantity;
+		}
+		else
+		{
+			safe_cprintf(ent, PRINT_HIGH, "Ammo item %s not found in team %s!\n", item->ammo, item->dllname);
+		}
 		/*
 		ammo_item = FindItem(item->ammo);
 		if (!strcmp(item->ammo, "p38_mag"))
@@ -252,21 +259,38 @@ void Give_Class_Ammo(edict_t *ent)
 		else
 			item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
 								  ent->client->resp.team_on->teamid);
-		ammo_item = FindItemInTeam(item->ammo, item->dllname);
-		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1))
-			safe_cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
+
+		if (item)
+		{
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
+			if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo1))
+				safe_cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
+		}
+		else
+		{
+			safe_cprintf(ent, PRINT_HIGH, "WARNING: in Give_Class_Ammo() item %s is NULL for team %s\n",
+						 ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+						 ent->client->resp.team_on->teamid);
+		}
 	}
 
 	if (ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2 )
 	{
 		item = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
 							  ent->client->resp.team_on->teamid);
-		ammo_item = FindItemInTeam(item->ammo, item->dllname);
-		if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2))
-			safe_cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
+		if (item)
+		{
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
+			if (!Add_Ammo(ent, ammo_item, ent->client->resp.team_on->mos[ent->client->resp.mos]->ammo2))
+				safe_cprintf(ent, PRINT_HIGH, "No ammo for %s\n", item->pickup_name);
+		}
+		else
+		{
+			safe_cprintf(ent, PRINT_HIGH, "WARNING: in Give_Class_Ammo() item %s is NULL for team %s\n",
+						 ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+						 ent->client->resp.team_on->teamid);
+		}
 	}
-	
-	
 }
 
 
