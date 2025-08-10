@@ -88,12 +88,12 @@ void Weapon_B3842_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 
 //	if (ent->client->pers.weapon->position == LOC_SUBMACHINEGUN)
