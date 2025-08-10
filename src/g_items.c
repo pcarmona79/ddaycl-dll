@@ -171,8 +171,8 @@ gitem_t	*FindItemByClassnameInTeam(char *classname, char *dllname)
 		}
 	}
 
-	// try to not return null pointer
-	return FindItemByClassname(classname);
+	// return null when not found
+	return NULL;
 }
 
 gitem_t *FindTeamItem (char *dllname, int position)  //faf:  added for team dll support.  Finds item by dll name and 'position'.  Not 100% sure if it works yet...
