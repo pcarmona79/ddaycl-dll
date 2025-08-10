@@ -1155,15 +1155,15 @@ gitem_t	*FindNextPickup (edict_t *ent, int location)
 		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
 				ent->client->resp.team_on->teamid))
 			continue;
-//		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2 &&
-//			it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) )
-//			continue;
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+				ent->client->resp.team_on->teamid))
+			continue;
 		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades,
 				ent->client->resp.team_on->teamid))
 			continue;
-//		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->special &&
-//			it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special) )
-//			continue;
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+				ent->client->resp.team_on->teamid))
+			continue;
 		if (it == FindItem("Knife") )
 			continue;
 		if (it == FindItem("Fists") )
