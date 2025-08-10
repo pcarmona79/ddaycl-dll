@@ -65,6 +65,16 @@ gitem_t *InsertItem(gitem_t *it, spawn_t *spawnInfo)
 	inc_items = 0;
 	spot = NULL;
 
+	// kernel: check if the element already exists
+	spot = FindItemByClassnameInTeam(it->classname, it->dllname);
+
+	if (spot)
+	{
+		// kernel: item already in list
+		PrecacheItem (it); //pbowens: precache team items
+		return spot;
+	}
+
 	// kernel: adds new element to the end of the array
 	if (game.num_items < MAX_ITEMS - 1)
 	{

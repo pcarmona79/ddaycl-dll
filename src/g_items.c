@@ -1631,10 +1631,7 @@ gitem_t	itemlist[MAX_ITEMS] =
 		"jpn",
 		0,
 		0
-		},
-{
-	NULL
-},
+		}
 	// end of list marker
 
 };
@@ -1709,14 +1706,16 @@ void SP_item_health_mega (edict_t *self)
 
 void InitItems (void)
 {
-//	game.num_items = sizeof(itemlist)/sizeof(itemlist[0]) - 1;
 	gitem_t *it;
-	int i,count=0;
-	it=itemlist;
+	int i, count = 0;
+	it = itemlist;
 
-	for(i=0;i<=MAX_ITEMS;i++,it++)
-		if(it && it->pickup_name) count++;
-	game.num_items = count;// +1;
+	for (i = 0; i < MAX_ITEMS; i++, it++)
+	{
+		if (it->pickup_name)
+			count++;
+	}
+	game.num_items = count;
 }
 
 

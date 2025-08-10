@@ -750,7 +750,7 @@ void SelectNextItem (edict_t *ent, int itflags)
 
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (cl->pers.selected_item + i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -794,7 +794,7 @@ void SelectPrevItem (edict_t *ent, int itflags)
 
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (cl->pers.selected_item + MAX_ITEMS - i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -1800,7 +1800,7 @@ void Cmd_WeapPrev_f (edict_t *ent)
 	selected_weapon = ITEM_INDEX(cl->pers.weapon);
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (selected_weapon + i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -1860,7 +1860,7 @@ void Cmd_WeapNext_f (edict_t *ent)
 		selected_weapon = ITEM_INDEX(FindItem("Knife"));
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (selected_weapon + MAX_ITEMS - i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
