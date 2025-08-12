@@ -957,7 +957,7 @@ void TossClientWeapon (edict_t *self)
 			gitem_t *ammo_item;
 			int		 ammo_index;
 
-			ammo_item	= FindItem(item->ammo);
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (self->client->pers.inventory[ammo_index])
@@ -2742,7 +2742,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 	{
 		char skin[64];
 
-		if (ent->client->resp.team_on && ent->client->resp.mos) 
+		if (ent->client &&
+			ent->client->resp.team_on && ent->client->resp.mos)
 		{
 			//faf:  has the mapper set a custom skin?
 /*			if (team_list[ent->client->resp.team_on->index]->skin)

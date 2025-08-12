@@ -137,7 +137,9 @@ if ((ent->client->weaponstate == WEAPON_FIRING || ent->client->weaponstate == WE
 #define FRAME_crpain4         	172
 #define FRAME_crawlpain01		230
 #define FRAME_crawlpain04		233
-gitem_t	*FindItem (char *pickup_name);
+
+gitem_t	*FindItemInTeam(char *pickup_name, char *dllname);
+
 void Shotgun_Reload (edict_t *ent, 
 					 int FRAME_ACTIVATE_LAST,	int FRAME_LFIRE_LAST,	int FRAME_LIDLE_LAST, 
 					 int FRAME_RELOAD_LAST,		int FRAME_LASTRD_LAST,	int FRAME_DEACTIVATE_LAST,
@@ -150,7 +152,7 @@ void Shotgun_Reload (edict_t *ent,
 
 	if(ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ent->client->ammo_index;
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}

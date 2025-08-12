@@ -1746,7 +1746,9 @@ if (!self->client->newweapon && self->client->resp.team_on && self->client->pers
 
 if (!self->enemy && self->ai->last_enemy_time < level.time -5 && self->ai->last_reload_try < level.time - 5)
 {
-	if (self->client->pers.weapon && self->client->p_rnd && *self->client->p_rnd)	{
+	if (self->client->pers.weapon &&
+		self->client->p_rnd &&
+		*self->client->p_rnd)	{
 		if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
 			self->client->pers.weapon->position == LOC_SUBMACHINEGUN2 ||
 			self->client->pers.weapon->position == LOC_L_MACHINEGUN){

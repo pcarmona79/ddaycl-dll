@@ -750,7 +750,7 @@ void SelectNextItem (edict_t *ent, int itflags)
 
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (cl->pers.selected_item + i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -794,7 +794,7 @@ void SelectPrevItem (edict_t *ent, int itflags)
 
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (cl->pers.selected_item + MAX_ITEMS - i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -868,7 +868,7 @@ void Cmd_Give_f (edict_t *ent)
 
 	if (give_all || Q_stricmp(name, "weapons") == 0)
 	{
-		for (i=0 ; i<game.num_items ; i++)
+		for (i = 0; i <= game.num_items; i++)
 		{
 			it = itemlist + i;
 			if (!it->pickup)
@@ -883,7 +883,7 @@ void Cmd_Give_f (edict_t *ent)
 
 	if (give_all || Q_stricmp(name, "ammo") == 0)
 	{
-		for (i=0 ; i<game.num_items ; i++)
+		for (i = 0; i <= game.num_items; i++)
 		{
 			it = itemlist + i;
 			if (!it->pickup)
@@ -910,7 +910,7 @@ void Cmd_Give_f (edict_t *ent)
 */	
 	if (give_all)
 	{
-		for (i=0 ; i<game.num_items ; i++)
+		for (i = 0; i <= game.num_items; i++)
 		{
 			it = itemlist + i;
 			if (!it->pickup)
@@ -1152,19 +1152,18 @@ gitem_t	*FindNextPickup (edict_t *ent, int location)
 		else if (location)	// Skip the stuff below if its looking for a specific position
 			continue;
 
-
-
-		if (it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+				ent->client->resp.team_on->teamid))
 			continue;
-//		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2 &&
-//			it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2) )
-//			continue;
-		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades &&
-			it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades) )
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+				ent->client->resp.team_on->teamid))
 			continue;
-//		if (ent->client->resp.team_on->mos[ent->client->resp.mos]->special &&
-//			it == FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special) )
-//			continue;
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->grenades,
+				ent->client->resp.team_on->teamid))
+			continue;
+		if (it == FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+				ent->client->resp.team_on->teamid))
+			continue;
 		if (it == FindItem("Knife") )
 			continue;
 		if (it == FindItem("Fists") )
@@ -1196,8 +1195,7 @@ void Cmd_Use_f (edict_t *ent)
 	char		*s;
 
 	s = gi.args();
-	it = FindItem (s);
-
+	//it = FindItem (s); // kernel: I think this is unnecessary
 
 	if (ent->client->chasetarget)
 	{
@@ -1231,8 +1229,8 @@ void Cmd_Use_f (edict_t *ent)
 	}
 
 
-	if (!it)
-	{
+	//if (!it)
+	//{
 //////////////
 /// NEW USE SYSTEM
 //////////////
@@ -1247,16 +1245,16 @@ void Cmd_Use_f (edict_t *ent)
 		}
 		else if (Q_stricmp(s,"weapon1")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon1,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"weapon2")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->weapon2,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		/*
@@ -1270,74 +1268,74 @@ void Cmd_Use_f (edict_t *ent)
 		*/
 		else if (Q_stricmp(s,"special")==0) 
 		{
-			if (it = FindItem(ent->client->resp.team_on->mos[ent->client->resp.mos]->special))
-				strcpy(s, ent->client->resp.team_on->mos[ent->client->resp.mos]->special);
-			else
+			it = FindItemInTeam(ent->client->resp.team_on->mos[ent->client->resp.mos]->special,
+					ent->client->resp.team_on->teamid);
+			if (!it)
 				it = ent->client->pers.weapon;
 		}
 		else if (Q_stricmp(s,"grenades")==0) 
 		{
 			it = FindNextPickup(ent, LOC_GRENADES);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"melee")==0) 
 		{
 			it = FindNextPickup(ent, LOC_KNIFE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		else if (Q_stricmp(s,"pickup")==0) 
 		{
 			it = FindNextPickup(ent, LOC_NONE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}	
 		
 		//faf
 		else if (Q_stricmp(s,"sniper")==0) 
 		{
 			it = FindNextPickup(ent, LOC_SNIPER);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name); // kernel: it could be null!
 		}					
 		
 		else if (Q_stricmp(s,"pistol")==0) 
 		{
 			it = FindNextPickup(ent, LOC_PISTOL);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"rifle")==0) 
 		{
 			it = FindNextPickup(ent, LOC_RIFLE);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 
 		else if (Q_stricmp(s,"smg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN2);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 			it = FindNextPickup(ent, LOC_SUBMACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"lmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_L_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		
 		else if (Q_stricmp(s,"hmg")==0) 
 		{
 			it = FindNextPickup(ent, LOC_H_MACHINEGUN);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"rocket")==0) 
 		{
 			it = FindNextPickup(ent, LOC_ROCKET);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}	
 		else if (Q_stricmp(s,"flamer")==0)
 		{
 			it = FindNextPickup(ent, LOC_FLAME);
-			strcpy(s, it->pickup_name);
+			//strcpy(s, it->pickup_name);
 		}
 		//end faf
 
@@ -1348,8 +1346,14 @@ void Cmd_Use_f (edict_t *ent)
 			return;
 		}
 				
+	//}
+	if (!it)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Item '%s' not found\n", s);
+		return;
 	}
-	if (!it || (it && !it->use))
+
+	if (!it->use)
 	{
 		safe_cprintf (ent, PRINT_HIGH, "Item %s is not usable.\n", it->pickup_name);
 		return;
@@ -1384,8 +1388,8 @@ void Cmd_Drop_f (edict_t *ent)
 	if (!ent->client->resp.team_on || !ent->client->resp.mos || ent->client->grenade || ent->client->grenade_index )
 		return;
 
-	s = gi.args();	
-	it = FindItem (s);
+	s = gi.args(); 
+	it = FindItemInTeam(s, ent->client->resp.team_on->teamid);
 
 //bcass start - drop
 	if (Q_stricmp(s, "gun") == 0 || //pbowens: do the same thing if it is the current weapon
@@ -1433,7 +1437,7 @@ void Cmd_Drop_f (edict_t *ent)
 			return;
 
 		// rezmoth - ammo_item definition has crashed the server twice
-		ammo_item	= FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index	= ITEM_INDEX(ammo_item);
 
 		if (!ent->client->pers.inventory[ammo_index] || !ammo_item->drop)
@@ -1491,7 +1495,7 @@ void Cmd_Drop_f (edict_t *ent)
 			gitem_t *ammo_item;
 			int		 ammo_index;
 
-			ammo_item	= FindItem(item->ammo);
+			ammo_item = FindItemInTeam(item->ammo, item->dllname);
 			ammo_index	= ITEM_INDEX(ammo_item);
 
 			if (ent->client->pers.inventory[ammo_index])
@@ -1796,7 +1800,7 @@ void Cmd_WeapPrev_f (edict_t *ent)
 	selected_weapon = ITEM_INDEX(cl->pers.weapon);
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (selected_weapon + i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -1856,7 +1860,7 @@ void Cmd_WeapNext_f (edict_t *ent)
 		selected_weapon = ITEM_INDEX(FindItem("Knife"));
 
 	// scan  for the next valid one
-	for (i=1 ; i<=MAX_ITEMS ; i++)
+	for (i=1 ; i<MAX_ITEMS ; i++)
 	{
 		index = (selected_weapon + MAX_ITEMS - i)%MAX_ITEMS;
 		if (!cl->pers.inventory[index])
@@ -3012,7 +3016,7 @@ qboolean Cmd_Reload (edict_t *ent)
 
 	if (ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItem(ent->client->pers.weapon->ammo);
+		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount = &ent->client->pers.inventory[ammo_index];
 	}
@@ -3035,7 +3039,8 @@ qboolean Cmd_Reload (edict_t *ent)
 			return true;
 		}
 
-		mags_left= ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo))];
+		gitem_t *mags_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		mags_left = ent->client->pers.inventory[ITEM_INDEX(mags_item)];
 	} else
 		return true;
 

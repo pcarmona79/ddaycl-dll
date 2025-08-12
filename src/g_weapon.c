@@ -2738,12 +2738,12 @@ void Weapon_Submachinegun_Fire (edict_t *ent)
 	}
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	ent->client->machinegun_shots++;
-	if (ent->client->machinegun_shots > 7)
-		ent->client->machinegun_shots = 7;
-//	}
+	if (!chile->value)
+	{
+		ent->client->machinegun_shots++;
+		if (ent->client->machinegun_shots > 7)
+			ent->client->machinegun_shots = 7;
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
@@ -3352,7 +3352,8 @@ void Weapon_MG42_Fire (edict_t *ent)
 		ent->client->mags[mag_index].hmg_rnd= 0;
 
 		//ent->client->mg42_temperature =0;
-		ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo))]=0;
+		gitem_t* ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		ent->client->pers.inventory[ITEM_INDEX(ammo_item)] = 0;
 
 		ent->client->mg42_temperature = 43;
 
@@ -4661,15 +4662,15 @@ void Weapon_Sten_Fire (edict_t *ent)
 	}
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
+	if (!chile->value)
+	{
 	
 	if (!ent->ai)
 		ent->client->machinegun_shots++;
 
 	if (ent->client->machinegun_shots > 9)
 		ent->client->machinegun_shots = 9;
-//	}
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
@@ -4827,42 +4828,38 @@ void Weapon_Bren_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if (!ent->ai &&
-		((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
-		ent->client->machinegun_shots++;
-
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-	else
+	if (!chile->value)
 	{
-		trace_t tr; 
-		vec3_t end;
+		if (!ent->ai &&
+			((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
+			ent->client->machinegun_shots++;
 
-		if (ent->stanceflags == STANCE_STAND && (ent->client->buttons & BUTTON_ATTACK))
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+		else
 		{
-			AngleVectors (ent->client->v_angle, forward, right, NULL);
-			VectorSet(offset, 24, 8, ent->viewheight-25);
-			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-			VectorScale (forward, -2, ent->client->kick_origin);
-			VectorMA (start, 15, forward, end);  //calculates the range vector  //faf: 10 = range
-			tr = gi.trace (ent->s.origin, NULL, NULL, end, ent, MASK_SHOT);// figures out what in front of the player up till "end"
+			trace_t tr;
+			vec3_t end;
 
-			if (!(ent->client->movement || tr.fraction >= 1.0 || ent->client->v_angle[0] > 40))
+			if (ent->stanceflags == STANCE_STAND && (ent->client->buttons & BUTTON_ATTACK))
 			{
-				ent->client->machinegun_shots = 0;
+				AngleVectors (ent->client->v_angle, forward, right, NULL);
+				VectorSet(offset, 24, 8, ent->viewheight-25);
+				P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+				VectorScale (forward, -2, ent->client->kick_origin);
+				VectorMA (start, 15, forward, end);  //calculates the range vector  //faf: 10 = range
+				tr = gi.trace (ent->s.origin, NULL, NULL, end, ent, MASK_SHOT);// figures out what in front of the player up till "end"
+
+				if (!(ent->client->movement || tr.fraction >= 1.0 || ent->client->v_angle[0] > 40))
+				{
+					ent->client->machinegun_shots = 0;
+				}
 			}
 		}
 	}
-
-
-
-
-//	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
@@ -5588,7 +5585,7 @@ void Weapon_Molotov_Fire (edict_t *ent)
 	if (ent->client->pers.inventory[ent->client->ammo_index] ==0)
 	{
 		ent->client->weaponstate=WEAPON_LOWER;
-		Use_Weapon (ent, FindItem("fists"));
+		Use_Weapon (ent, FindItem("Fists"));
 		return;
 	} 
 	
@@ -5663,14 +5660,14 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if (!ent->ai)
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if (!ent->ai)
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
-//	}
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
+	}
 
 	//faf: adding this to alternate firing sounds
 	++ent->numfired;
@@ -5811,20 +5808,19 @@ void Weapon_Pps43_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-//	if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
+	if (!chile->value)
+	{
+		//if ((ent->stanceflags == STANCE_STAND) || (!ent->client->aim))
 	
-	if (!ent->ai)
-		ent->client->machinegun_shots++;
+		if (!ent->ai)
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-//	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-//		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	// vspread
 	//VectorSet(offset, 0, (ent->client->aim)?0:8, ent->viewheight-8 + (crandom() * 15));
@@ -6299,19 +6295,18 @@ void Weapon_Breda_Fire (edict_t *ent)
 
 
 	// raise the gun as it is firing
-//	if (!deathmatch->value)
-//	{
-	if (!ent->ai &&
-		((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
-		ent->client->machinegun_shots++;
+	if (!chile->value)
+	{
+		if (!ent->ai &&
+			((ent->stanceflags == STANCE_STAND) || (!ent->client->aim)))
+			ent->client->machinegun_shots++;
 
-	if (ent->client->machinegun_shots > 9)
-		ent->client->machinegun_shots = 9;
+		if (ent->client->machinegun_shots > 9)
+			ent->client->machinegun_shots = 9;
 
-	if ((!ent->stanceflags == STANCE_STAND) && (ent->client->aim))
-		ent->client->machinegun_shots = 0;
-
-//	}
+		if (!(ent->stanceflags == STANCE_STAND) && (ent->client->aim))
+			ent->client->machinegun_shots = 0;
+	}
 
 	if (ent->client->pers.weapon->position == LOC_H_MACHINEGUN)
 		VectorSet(offset, 0, 0, ent->viewheight - 0);	//10
