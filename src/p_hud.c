@@ -1755,11 +1755,11 @@ void G_SetStats (edict_t *ent)
 	//
 	if (level.objectivepic && ent->client->display_info) 
     {
-		char pic[26];
-		strcpy (pic, "objectives\\");
-		strcat (pic, level.mapname);
-
-		ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
+		char pic[75];
+		if (snprintf(pic, 75, "objectives/%s", level.mapname) >= 75)
+			ent->client->ps.stats[STAT_OBJECTIVE] = 0;
+		else
+			ent->client->ps.stats[STAT_OBJECTIVE] = gi.imageindex (pic);
 	} else 
 		ent->client->ps.stats[STAT_OBJECTIVE] = 0;
 
