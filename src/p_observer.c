@@ -503,7 +503,8 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 		break;
 	}
 
-	if (mapclasslimits[team->index][class].limit)
+	if (mapclasslimits[team->index][class].limit
+		|| force_limits->value)
 	{
 		spots = mapclasslimits[team->index][class].limit;
 		team->mos[class]->available = spots - taken;
@@ -777,7 +778,8 @@ continue;
 			break;
 		}
 
-		if (mapclasslimits[ent->client->resp.team_on->index][i].limit)
+		if (mapclasslimits[ent->client->resp.team_on->index][i].limit
+			|| force_limits->value)
 		{
 			maxSlots = mapclasslimits[ent->client->resp.team_on->index][i].limit;
 			ent->client->resp.team_on->mos[i]->available = maxSlots - taken;
