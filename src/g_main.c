@@ -1293,7 +1293,13 @@ void CheckDMRules (void)
 
 	if (fraglimit->value)
 	{
-		for (i=0 ; i<maxclients->value ; i++)
+		// kernel: check if fraglimit changed its value to update need_kills properties
+		for (i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (team_list[i]->need_kills != (int) fraglimit->value)
+				team_list[i]->need_kills = (int) fraglimit->value;
+		}
+		/*for (i=0 ; i<maxclients->value ; i++)
 		{
 			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
@@ -1306,7 +1312,7 @@ void CheckDMRules (void)
 				EndDMLevel ();
 				return;
 			}
-		}
+		}*/
 	}
 }
 
