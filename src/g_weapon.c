@@ -1917,17 +1917,13 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000/speed;
+		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
-	//Nuevos valores al daño del rocket --- Hans
 
-	//rocket->dmg = damage;
-	rocket->dmg = 400;
-	//rocket->radius_dmg = radius_damage;
-	rocket->radius_dmg = 300;
-	//rocket->dmg_radius = damage_radius;
-	rocket->dmg_radius = 200;
+	rocket->dmg = damage;
+	rocket->radius_dmg = radius_damage;
+	rocket->dmg_radius = damage_radius;
 	rocket->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	rocket->classname = "rocket";
 	rocket->classnameb = ROCKET;
@@ -1989,7 +1985,7 @@ void fire_rocket_piat (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 
 	rocket->gravity =  gravity;//1;//.9; //faf
 	
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	
 	//faf
@@ -2004,7 +2000,7 @@ void fire_rocket_piat (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000/speed;
+		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 	
@@ -2049,7 +2045,7 @@ void fire_rocket_panzerfaust (edict_t *self, vec3_t start, vec3_t dir, int damag
 
 	rocket->gravity =  gravity;//1;//.9; //faf
 	
-	rocket->nextthink = level.time + 8000/speed;
+	rocket->nextthink = level.time + 8000.0/speed;
 	rocket->think = G_FreeEdict;
 	
 	//faf
@@ -2064,7 +2060,7 @@ void fire_rocket_panzerfaust (edict_t *self, vec3_t start, vec3_t dir, int damag
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000/speed;
+		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 	
@@ -2111,7 +2107,7 @@ void fire_airstrike (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	airstrike->s.modelindex = gi.modelindex ("models/objects/rocket/tris.md2");
 	airstrike->owner = self;
 	airstrike->touch = airstrike_touch;
-	airstrike->nextthink = level.time + 8000/speed;
+	airstrike->nextthink = level.time + 8000.0/speed;
 	airstrike->think = G_FreeEdict;
 	airstrike->dmg = damage;
 	airstrike->radius_dmg = radius_damage;
@@ -3556,7 +3552,7 @@ void Weapon_Rocket_Fire (edict_t *ent)
 	}
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -3633,8 +3629,7 @@ void Weapon_Rocket_Fire (edict_t *ent)
 //	VectorAdd (forward, right, forward);
 //	forward[2] += -.0175 * ent->client->crosshair_offset_y;// (forward, right, forward);
 
-	fire_rocket (ent, start, forward, damage, 800, damage_radius, 170);
-	//fire_rocket (ent, start, forward, damage, 1000, damage_radius, radius_damage);
+	fire_rocket (ent, start, forward, damage, 1000, damage_radius, radius_damage);
 	// rezmoth - cosmetic recoil
 		ent->client->kick_angles[0] -= 7;
 		ent->client->kick_origin[2] -= 5;
@@ -4483,7 +4478,7 @@ void Weapon_PIAT_Fire (edict_t *ent)
 	}
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//faf 225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -6502,7 +6497,7 @@ void Weapon_Panzerfaust_Fire (edict_t *ent)
 
 
 	// pbowens: rasied rocket dmg from 175 to 225
-	damage_radius = 175;//faf 225;
+	damage_radius = 225;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorScale (forward, -2, ent->client->kick_origin);
