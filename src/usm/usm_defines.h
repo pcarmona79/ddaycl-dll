@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __USM_DEFINES_H__
+#define __USM_DEFINES_H__
+
 #define COLT45MAG		7
 #define SHOTGUNMAG		6
 #define M1_MAG			8
@@ -52,3 +55,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_BAZOOKA_RAD	500
 #define DAMAGE_M1903		100
 #define DAMAGE_THOMPSON		25 // wheaty: was 20
+
+#endif /* __USM_DEFINES_H__ */

@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __JPN_DEFINES_H__
+#define __JPN_DEFINES_H__
+
 #define NAMBU_MAG			8
 #define TYPE_100_MAG		30
 #define ARISAKA_MAG			5
@@ -48,3 +51,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //#define DAMAGE_M1CARB			35
 #define DAMAGE_ARISAKAS		100
 #define DAMAGE_MG42			50
+
+#endif /* __JPN_DEFINES_H__ */

@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GBR_DEFINES_H__
+#define __GBR_DEFINES_H__
+
 #define WebleyMAG		6
 #define StenMAG		    32
 #define Enfield_MAG			10       // lee enfield
@@ -49,3 +52,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_PIAT_HIT	1000 
 #define DAMAGE_PIAT_RAD	500
 #define DAMAGE_Enfields		100
+
+#endif /* __GBR_DEFINES_H__ */

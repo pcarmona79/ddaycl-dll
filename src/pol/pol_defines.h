@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __POL_DEFINES_H__
+#define __POL_DEFINES_H__
+
 #define VIS_MAG			8
 //#define STEN_MAG		32
 #define MORS_MAG		25
@@ -53,3 +56,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_PIAT_HIT	1000 
 #define DAMAGE_PIAT_RAD	500
 #define DAMAGE_M98KS		100
+
+#endif /* __POL_DEFINES_H__ */

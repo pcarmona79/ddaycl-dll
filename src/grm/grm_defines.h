@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GRM_DEFINES_H__
+#define __GRM_DEFINES_H__
+
 #define P38_MAG			8
 #define MP40_MAG		32
 #define MC_MAG			5
@@ -49,3 +52,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_PANZER_HIT	1000 // bridges default to 2000 with cast's maps =)
 #define DAMAGE_PANZER_RAD	500
 #define DAMAGE_M98KS		100
+
+#endif /* __GRM_DEFINES_H__ */

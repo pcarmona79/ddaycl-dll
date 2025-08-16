@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __USA_CLASSES_H__
+#define __USA_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -231,3 +236,5 @@ SMos_t USA_MOS_List[NUM_CLASSES]=
 		"info_flamethrower_start"
 	}
 };
+
+#endif /* __USA_CLASSES_H__ */
