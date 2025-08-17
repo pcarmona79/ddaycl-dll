@@ -493,8 +493,43 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 		break;
 	}
 
-	if (mapclasslimits[team->index][class].limit
-		|| force_limits->value)
+	if (force_limits->value > 0)
+	{
+		switch (class)
+		{
+		case INFANTRY:
+			team->mos[INFANTRY]->available = limit_infantry->value - taken;
+			break;
+		case OFFICER:
+			team->mos[OFFICER]->available = limit_officer->value - taken;
+			break;
+		case L_GUNNER:
+			team->mos[L_GUNNER]->available = limit_lgunner->value - taken;
+			break;
+		case H_GUNNER:
+			team->mos[H_GUNNER]->available = limit_hgunner->value - taken;
+			break;
+		case SNIPER:
+			team->mos[SNIPER]->available = limit_sniper->value - taken;
+			break;
+		case SPECIAL:
+			team->mos[SPECIAL]->available = limit_special->value - taken;
+			break;
+		case ENGINEER:
+			team->mos[ENGINEER]->available = limit_engineer->value - taken;
+			break;
+		case MEDIC:
+			team->mos[MEDIC]->available = limit_medic->value - taken;
+			break;
+		case FLAMER:
+			team->mos[FLAMER]->available = limit_flamer->value - taken;
+			break;
+		default:
+			team->mos[class]->available = 0;
+			break;
+		}
+	}
+	else if (!(force_limits->value > 0) && mapclasslimits[team->index][class].limit)
 	{
 		int spots = mapclasslimits[team->index][class].limit;
 		team->mos[class]->available = spots - taken;
@@ -745,8 +780,43 @@ continue;
 			break;
 		}
 
-		if (mapclasslimits[ent->client->resp.team_on->index][i].limit
-			|| force_limits->value)
+		if (force_limits->value > 0)
+		{
+			switch (ent->client->resp.team_on->mos[i]->mos)
+			{
+			case INFANTRY:
+				maxSlots = limit_infantry->value;
+				break;
+			case OFFICER:
+				maxSlots = limit_officer->value;
+				break;
+			case L_GUNNER:
+				maxSlots = limit_lgunner->value;
+				break;
+			case H_GUNNER:
+				maxSlots = limit_hgunner->value;
+				break;
+			case SNIPER:
+				maxSlots = limit_sniper->value;
+				break;
+			case SPECIAL:
+				maxSlots = limit_special->value;
+				break;
+			case ENGINEER:
+				maxSlots = limit_engineer->value;
+				break;
+			case MEDIC:
+				maxSlots = limit_medic->value;
+				break;
+			case FLAMER:
+				maxSlots = limit_flamer->value;
+				break;
+			default:
+				maxSlots = 0;
+				break;
+			}
+		}
+		else if (!(force_limits->value > 0) && mapclasslimits[ent->client->resp.team_on->index][i].limit)
 		{
 			maxSlots = mapclasslimits[ent->client->resp.team_on->index][i].limit;
 		}

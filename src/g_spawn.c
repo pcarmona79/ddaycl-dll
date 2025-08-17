@@ -1023,22 +1023,6 @@ void LoadCampFile(void)
 	}
 }
 
-// kernel: apply class limits to map limits
-void LimitMapClasses()
-{
-	for (int i = 0; i < MAX_TEAMS; i++)
-	{
-		mapclasslimits[i][INFANTRY].limit = (int) limit_infantry->value;
-		mapclasslimits[i][OFFICER].limit = (int) limit_officer->value;
-		mapclasslimits[i][L_GUNNER].limit = (int) limit_lgunner->value;
-		mapclasslimits[i][H_GUNNER].limit = (int) limit_hgunner->value;
-		mapclasslimits[i][SNIPER].limit = (int) limit_sniper->value;
-		mapclasslimits[i][ENGINEER].limit = (int) limit_engineer->value;
-		mapclasslimits[i][MEDIC].limit = (int) limit_medic->value;
-		mapclasslimits[i][SPECIAL].limit = (int) limit_special->value;
-		mapclasslimits[i][FLAMER].limit = (int) limit_flamer->value;
-	}
-}
 
 void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 {
@@ -1155,10 +1139,6 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 
 	//pbowens: this is actually very handy
 	gi.dprintf("server map: %s\n", mapname);
-
-	// kernel: check if we need to force class limits
-	if (force_limits->value)
-		LimitMapClasses();
 
 	LoadCampFile();
 
