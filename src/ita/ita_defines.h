@@ -24,7 +24,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-	
+#ifndef __ITA_DEFINES_H__
+#define __ITA_DEFINES_H__
+
 #define B34_MAG				9
 #define B38_MAG				40
 #define MC_MAG				6
@@ -53,3 +55,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_PANZER_RAD	450
 #define DAMAGE_M98KS		100
 #define DAMAGE_BREDA			45
+
+#endif /* __ITA_DEFINES_H__ */

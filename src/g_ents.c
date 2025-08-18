@@ -593,7 +593,10 @@ void SP_info_team_start(edict_t *ent)
 	else
 		team_list[i]->need_points = 0;
 
-	if (ent->dmg)
+	// kernel: applies fraglimit if setted
+	if (fraglimit->value > 0)
+		team_list[i]->need_kills = (int) fraglimit->value;
+	else if (ent->dmg)
 		team_list[i]->need_kills = ent->dmg;
 
 	//set chute 1 to give all players on team parachute

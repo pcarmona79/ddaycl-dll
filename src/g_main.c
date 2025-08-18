@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "g_cmds.h"
 #include "g_maps.h"
+#include "q_shared.h"
 #include <stdio.h>
 
 game_locals_t	game;
@@ -155,6 +156,18 @@ cvar_t	*campaign;
 // kernel: q2pro directories
 cvar_t *sys_basedir;
 cvar_t *sys_homedir;
+
+// kernel: global class limits
+cvar_t *force_limits;
+cvar_t *limit_infantry;
+cvar_t *limit_officer;
+cvar_t *limit_lgunner;
+cvar_t *limit_hgunner;
+cvar_t *limit_sniper;
+cvar_t *limit_engineer;
+cvar_t *limit_medic;
+cvar_t *limit_special;
+cvar_t *limit_flamer;
 
 // evil: global variables for countdown
 int countdownActive = 0;
@@ -1280,7 +1293,13 @@ void CheckDMRules (void)
 
 	if (fraglimit->value)
 	{
-		for (i=0 ; i<maxclients->value ; i++)
+		// kernel: check if fraglimit changed its value to update need_kills properties
+		for (i = 0; i < MAX_TEAMS; ++i)
+		{
+			if (team_list[i]->need_kills != (int) fraglimit->value)
+				team_list[i]->need_kills = (int) fraglimit->value;
+		}
+		/*for (i=0 ; i<maxclients->value ; i++)
 		{
 			cl = game.clients + i;
 			if (!g_edicts[i+1].inuse)
@@ -1293,7 +1312,7 @@ void CheckDMRules (void)
 				EndDMLevel ();
 				return;
 			}
-		}
+		}*/
 	}
 }
 

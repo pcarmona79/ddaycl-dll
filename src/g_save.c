@@ -382,6 +382,18 @@ void InitGame (void)
 	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
 	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);
 
+	// kernel: global class limits
+	force_limits = gi.cvar("force_limits", "0", CVAR_SERVERINFO);
+	limit_infantry = gi.cvar("limit_infantry", "0", 0);
+	limit_officer = gi.cvar("limit_officer", "0", 0);
+	limit_lgunner = gi.cvar("limit_lgunner", "0", 0);
+	limit_hgunner = gi.cvar("limit_hgunner", "0", 0);
+	limit_sniper = gi.cvar("limit_sniper", "0", 0);
+	limit_engineer = gi.cvar("limit_engineer", "0", 0);
+	limit_medic = gi.cvar("limit_medic", "0", 0);
+	limit_special = gi.cvar("limit_special", "0", 0);
+	limit_flamer = gi.cvar("limit_flamer", "0", 0);
+
 	// items
 	InitItems ();
 

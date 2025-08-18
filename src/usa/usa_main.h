@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __USA_MAIN_H__
+#define __USA_MAIN_H__
+
 #include "usa_defines.h"
 #include "../g_local.h"
 #include "../g_cmds.h"
@@ -49,3 +52,5 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_LFIRE_LAST
 					 int FRAME_DEACTIVATE_LAST, int FRAME_RAISE_LAST,int FRAME_AFIRE_LAST, int FRAME_AIDLE_LAST,
 					 int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent));
 void SP_misc_banner_generic (edict_t *ent, char *model);
+
+#endif /* __USA_MAIN_H__ */

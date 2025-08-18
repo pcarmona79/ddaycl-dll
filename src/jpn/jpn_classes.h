@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __JPN_CLASSES_H__
+#define __JPN_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -232,6 +237,4 @@ SMos_t JPN_MOS_List[NUM_CLASSES]=
 	}
 };
 
-
-	
-	
+#endif /* __JPN_CLASSES_H__ */

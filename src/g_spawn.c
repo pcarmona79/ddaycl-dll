@@ -1061,7 +1061,7 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 
 
 
-InitItems ();
+	InitItems ();
 
 
 	if (ctc->value)

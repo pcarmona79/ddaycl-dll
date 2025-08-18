@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __POL_CLASSES_H__
+#define __POL_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -232,5 +237,4 @@ SMos_t POL_MOS_List[NUM_CLASSES]=
 	}
 };
 
-	
-	
+#endif /* __POL_CLASSES_H__ */

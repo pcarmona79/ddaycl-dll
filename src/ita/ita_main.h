@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __ITA_MAIN_H__
+#define __ITA_MAIN_H__
+
 #define USER_EXCLUDE_FUNCTIONS 1
 
 #include "ita_defines.h"
@@ -60,3 +63,4 @@ void AngleVectors (vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod, qboolean calcv);
 
+#endif /* __ITA_MAIN_H__ */

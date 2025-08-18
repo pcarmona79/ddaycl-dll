@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.043" // ddaychile
+#define DEVVERSION	"5.044" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -791,6 +791,18 @@ extern cvar_t  *campaign;
 // kernel: this will come from q2pro
 extern cvar_t *sys_basedir;
 extern cvar_t *sys_homedir;
+
+// kernel: global class limits
+extern cvar_t *force_limits;
+extern cvar_t *limit_infantry;
+extern cvar_t *limit_officer;
+extern cvar_t *limit_lgunner;
+extern cvar_t *limit_hgunner;
+extern cvar_t *limit_sniper;
+extern cvar_t *limit_engineer;
+extern cvar_t *limit_medic;
+extern cvar_t *limit_special;
+extern cvar_t *limit_flamer;
 
 //extern	cvar_t	*crosshair;
 

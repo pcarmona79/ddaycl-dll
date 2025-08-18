@@ -25,6 +25,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __ITA_CLASSES_H__
+#define __ITA_CLASSES_H__
+
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
@@ -71,6 +76,7 @@ SMos_t ITA_MOS_List[NUM_CLASSES]=
 		STANDARD_MARKSMANSHIP,
 		"info_infantry_start"
 	},
+	
 	{
 		"Officer",//"Offiziere",
 		"class_officer",
@@ -232,4 +238,4 @@ SMos_t ITA_MOS_List[NUM_CLASSES]=
 };
 
 	
-	
+#endif /* __ITA_CLASSES_H__ */

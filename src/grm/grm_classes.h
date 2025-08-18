@@ -25,6 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#ifndef __GRM_CLASSES_H__
+#define __GRM_CLASSES_H__
+
 /*
 typedef struct 
 {
@@ -232,5 +235,4 @@ SMos_t GRM_MOS_List[NUM_CLASSES]=
 	}
 };
 
-	
-	
+#endif /* __GRM_CLASSES_H__ */

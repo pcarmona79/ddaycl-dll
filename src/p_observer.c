@@ -408,7 +408,7 @@ ent->client->landed = true;
 qboolean OpenSpot (edict_t *ent, mos_t class)
 {
 //	int index;
-	int spots, taken, j;
+	int taken, j;
 	TeamS_t *team;
 	edict_t *cl_ent;
 
@@ -462,62 +462,78 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 	switch (class)
 	{
 	case INFANTRY:
-		spots							= MAX_INFANTRY;
 		team->mos[INFANTRY]->available	= MAX_INFANTRY	- taken;
 		break;
 	case OFFICER:
-		spots							= MAX_OFFICERS;
 		team->mos[OFFICER]->available	= MAX_OFFICERS	- taken;
 		break;
 	case L_GUNNER:
-		spots							= MAX_L_GUNNER;
 		team->mos[L_GUNNER]->available	= MAX_L_GUNNER	- taken;
 		break;
 	case H_GUNNER:
-		spots							= MAX_H_GUNNER;			
 		team->mos[H_GUNNER]->available	= MAX_H_GUNNER	- taken;
 		break;
 	case SNIPER:
-		spots							= MAX_SNIPER;
 		team->mos[SNIPER]->available	= MAX_SNIPER	- taken;
 		break;
 	case SPECIAL:
-		spots							= MAX_SPECIAL;
 		team->mos[SPECIAL]->available	= MAX_SPECIAL	- taken;
 		break;
 	case ENGINEER:
-		spots							= MAX_ENGINEER;
 		team->mos[ENGINEER]->available	= MAX_ENGINEER	- taken;
 		break;
 	case MEDIC:
-		spots							= MAX_MEDIC;
 		team->mos[MEDIC]->available		= MAX_MEDIC		- taken;
 		break;
 	case FLAMER:
-		spots							= MAX_FLAMER;
 		team->mos[FLAMER]->available	= MAX_FLAMER	- taken;
 		break;
 	default:
-		spots							= 0;
 		team->mos[class]->available		= 0;
 		break;
 	}
 
-	if (mapclasslimits[team->index][class].limit)
+	if (force_limits->value > 0)
 	{
-		spots = mapclasslimits[team->index][class].limit;
+		switch (class)
+		{
+		case INFANTRY:
+			team->mos[INFANTRY]->available = limit_infantry->value - taken;
+			break;
+		case OFFICER:
+			team->mos[OFFICER]->available = limit_officer->value - taken;
+			break;
+		case L_GUNNER:
+			team->mos[L_GUNNER]->available = limit_lgunner->value - taken;
+			break;
+		case H_GUNNER:
+			team->mos[H_GUNNER]->available = limit_hgunner->value - taken;
+			break;
+		case SNIPER:
+			team->mos[SNIPER]->available = limit_sniper->value - taken;
+			break;
+		case SPECIAL:
+			team->mos[SPECIAL]->available = limit_special->value - taken;
+			break;
+		case ENGINEER:
+			team->mos[ENGINEER]->available = limit_engineer->value - taken;
+			break;
+		case MEDIC:
+			team->mos[MEDIC]->available = limit_medic->value - taken;
+			break;
+		case FLAMER:
+			team->mos[FLAMER]->available = limit_flamer->value - taken;
+			break;
+		default:
+			team->mos[class]->available = 0;
+			break;
+		}
+	}
+	else if (!(force_limits->value > 0) && mapclasslimits[team->index][class].limit)
+	{
+		int spots = mapclasslimits[team->index][class].limit;
 		team->mos[class]->available = spots - taken;
 	}
-
-	if (spots < 0)
-		spots = 0;
-
-
-/*	safe_bprintf(PRINT_HIGH, "class_stat %s: %s -- %i/%i (%i)\n",
-		ent->client->pers.netname,
-		team->mos[class]->name,
-		taken, spots, 
-		team->mos[class]->available);*/
 
 	if (team->mos[class]->available > 0)
 		return true;
@@ -728,65 +744,85 @@ continue;
 				taken++;
 		}
 
-
-
+		// kernel: mos[i]->available will be calculated in OpenSpot(), here we just need maxSlots
 		// Now set the available for this class
-
-		
 		switch (ent->client->resp.team_on->mos[i]->mos) //crash
 		{
 		case INFANTRY:
 			maxSlots = MAX_INFANTRY;
-			ent->client->resp.team_on->mos[i]->available = MAX_INFANTRY - taken;
 			break;
 		case OFFICER:
 			maxSlots = MAX_OFFICERS;
-			ent->client->resp.team_on->mos[i]->available = MAX_OFFICERS - taken;
 			break;
 		case L_GUNNER:
 			maxSlots = MAX_L_GUNNER;
-			ent->client->resp.team_on->mos[i]->available = MAX_L_GUNNER - taken;
 			break;
 		case H_GUNNER:
 			maxSlots = MAX_H_GUNNER;
-			ent->client->resp.team_on->mos[i]->available = MAX_H_GUNNER - taken;
 			break;
 		case SNIPER:
 			maxSlots = MAX_SNIPER;
-			ent->client->resp.team_on->mos[i]->available = MAX_SNIPER - taken;
 			break;
 		case SPECIAL:
 			maxSlots = MAX_SPECIAL;
-			ent->client->resp.team_on->mos[i]->available = MAX_SPECIAL - taken;
 			break;
 		case ENGINEER:
 			maxSlots = MAX_ENGINEER;
-			ent->client->resp.team_on->mos[i]->available = MAX_ENGINEER - taken;
 			break;
 		case MEDIC:
 			maxSlots = MAX_MEDIC;
-			ent->client->resp.team_on->mos[i]->available = MAX_MEDIC - taken;
 			break;
 		case FLAMER:
 			maxSlots = MAX_FLAMER;
-			ent->client->resp.team_on->mos[i]->available = MAX_FLAMER - taken;
 			break;
 		default:
 			maxSlots = 0;
-			ent->client->resp.team_on->mos[i]->available = 0;
 			break;
 		}
 
-		if (mapclasslimits[ent->client->resp.team_on->index][i].limit)
+		if (force_limits->value > 0)
+		{
+			switch (ent->client->resp.team_on->mos[i]->mos)
+			{
+			case INFANTRY:
+				maxSlots = limit_infantry->value;
+				break;
+			case OFFICER:
+				maxSlots = limit_officer->value;
+				break;
+			case L_GUNNER:
+				maxSlots = limit_lgunner->value;
+				break;
+			case H_GUNNER:
+				maxSlots = limit_hgunner->value;
+				break;
+			case SNIPER:
+				maxSlots = limit_sniper->value;
+				break;
+			case SPECIAL:
+				maxSlots = limit_special->value;
+				break;
+			case ENGINEER:
+				maxSlots = limit_engineer->value;
+				break;
+			case MEDIC:
+				maxSlots = limit_medic->value;
+				break;
+			case FLAMER:
+				maxSlots = limit_flamer->value;
+				break;
+			default:
+				maxSlots = 0;
+				break;
+			}
+		}
+		else if (!(force_limits->value > 0) && mapclasslimits[ent->client->resp.team_on->index][i].limit)
 		{
 			maxSlots = mapclasslimits[ent->client->resp.team_on->index][i].limit;
-			ent->client->resp.team_on->mos[i]->available = maxSlots - taken;
 		}
 
 		if (maxSlots < 0)
 			maxSlots = 0;
-
-
 
 		// Setup text variable
 		theText = gi.TagMalloc(sizeof("123456789012 [00/00]"), TAG_GAME);
