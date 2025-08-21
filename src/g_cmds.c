@@ -3259,39 +3259,10 @@ void Cmd_Medic_Call_f (edict_t *ent) {
 
 void Cmd_MOTD (edict_t *ent)
 {
-	//ala MOTD
-	FILE *motd_file;
-	char motd[1000];
-	char line[100];
-
-	// kernel: try to open from q2 directories
-	motd_file = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, "motd.txt", "r");
-
-	if (motd_file == NULL)
-		motd_file = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, "motd.txt", "r");
-
-	if (motd_file == NULL)
-		motd_file = DDay_OpenFullPathFile(".", GAMEVERSION, "motd.txt", "r");
-
-	if (motd_file != NULL)
-	{		
-		// we successfully opened the file "motd.txt"
-		if ( fgets(motd, 900, motd_file) )
-		{	
-			// we successfully read a line from "motd.txt" into motd
-			// ... read the remaining lines now
-			while ( fgets(line, 100, motd_file) )
-			{
-				// add each new line to motd, to create a BIG message string.
-				// we are using strcat: STRing conCATenation function here.
-				strcat(motd, line);
-			}
-
-			// print our message.
-			safe_centerprintf (ent, motd);
-		}
-		// be good now ! ... close the file
-		fclose(motd_file);
+	if (dday_motd[0])
+	{
+		// kernel: display the MOTD from its buffer
+		gi.centerprintf(ent, dday_motd);
 	}
 }
 

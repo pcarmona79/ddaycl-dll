@@ -26,7 +26,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h" 
+#include "g_maps.h"
+#include "q_shared.h"
 #include <stdio.h>
+
+char dday_motd[1000];
 
 // g_maps.c -- server maplist rotation/manipulation routines with file manipulation
 // 
@@ -100,6 +104,49 @@ void DDay_CloseFile(FILE *fp)
 		gi.dprintf ("ERROR -- DDay_CloseFile() exception.\n");
 }
 
+
+// kernel: load text from file
+qboolean DDay_LoadTextFile(const char *filename, char *text, int len)
+{
+	//ala MOTD
+	FILE *motd_file;
+	char line[100];
+
+	// kernel: try to open from q2 directories
+	motd_file = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+	if (motd_file == NULL)
+		motd_file = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+	if (motd_file != NULL)
+	{
+		while (fgets(line, 100, motd_file))
+		{
+			int l = strnlen(line, 99);
+			int tl = strnlen(text, len - 1);
+			if (tl + l < len)
+				strncat(text, line, l);
+			else
+				strncat(text, line, len - tl);
+		}
+
+		fclose(motd_file);
+		return true;
+	}
+
+	return false;
+}
+
+// kernel: clear MOTD buffer and load from file
+qboolean DDay_LoadMOTD()
+{
+	memset(dday_motd, 0, 1000);
+
+	return DDay_LoadTextFile("motd.txt", dday_motd, 1000);
+}
 
 // 
 // LoadMapList 

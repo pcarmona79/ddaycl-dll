@@ -1386,6 +1386,10 @@ if (campaign_winner>-1)
 			ent->health = ent->client->pers.max_health;
 	}
 
+	// reload MOTD
+	if (!DDay_LoadMOTD())
+		gi.dprintf("Failed to load the MOTD.\n");
+
 	//LevelExitUserDLLs();
 }
 
