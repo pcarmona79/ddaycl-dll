@@ -558,7 +558,8 @@ void SVCmd_ListPlayers_f(void)
 
 		if (player->inuse && player->client)
 		{
-			gi.cprintf(NULL, PRINT_HIGH, "%2d   %s\n", i, player->client->pers.netname);
+			// kernel: reduce by one to get q2 id
+			gi.cprintf(NULL, PRINT_HIGH, "%2d   %s\n", i - 1, player->client->pers.netname);
 		}
 	}
 }
@@ -601,13 +602,14 @@ void SVCmd_KillPlayer_f()
 	}
 
 	int player_id = atoi(playerIdStr);
-	if (player_id < 1 || player_id > maxclients->value)
+	if (player_id < 0 || player_id >= maxclients->value)
 	{
-		gi.cprintf(NULL, PRINT_HIGH, "ID de jugador no válido. Debe estar entre 1 y %d.\n", (int)maxclients->value);
+		gi.cprintf(NULL, PRINT_HIGH, "ID de jugador no válido. Debe estar entre 0 y %d.\n", (int)maxclients->value - 1);
 		return;
 	}
 
-	edict_t* player = &g_edicts[player_id];
+	// kernel: when using client ids we need to sum 1 to get the right client
+	edict_t* player = &g_edicts[player_id + 1];
 	if (!player->inuse || !player->client)
 	{
 		gi.cprintf(NULL, PRINT_HIGH, "El jugador con ID %d no está en juego o no es valido.\n", player_id);
