@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
 
@@ -34,7 +35,7 @@ extern int countdownActive;
 extern int countdownValue;
 extern int countdownTimer;
 extern float countdownTimeLimit;
-
+extern float gameStartTime;
 
 
 void Svcmd_Teamswitch_f (void)
@@ -590,6 +591,31 @@ void SVCmd_StartCountdown_f()
 	int levelTimelimit = minutes * 60;
 }
 
+
+// kernel: broadcast the time left if a countdown is running
+void Svcmd_Timeleft_f()
+{
+	if (timelimit->value > 0)
+	{
+		int totalTime = timelimit->value * 60;
+		int timeElapsed = level.time - gameStartTime;
+		int timeLeft = totalTime - timeElapsed;
+
+		if (timeLeft < 0)
+			timeLeft = 0;
+
+		int minutesLeft = timeLeft / 60;
+		int secondsLeft = timeLeft % 60;
+
+		gi.bprintf(PRINT_HIGH, "Tiempo restante: %d minutos y %d segundos.\n", minutesLeft, secondsLeft);
+	}
+	else
+	{
+		gi.dprintf("No hay un limite de tiempo configurado para esta partida.\n");
+	}
+}
+
+
 // evil: command for kill a player by id
 void SVCmd_KillPlayer_f()
 {
@@ -663,13 +689,15 @@ void	ServerCommand (void)
 		Svcmd_Teamswitch_f();
 
 	else if (Q_stricmp(cmd, "startcount") == 0)
-		SVCmd_StartCountdown_f(gi.argv(1));
+		SVCmd_StartCountdown_f();
+	else if (Q_stricmp(cmd, "timeleft") == 0)
+		Svcmd_Timeleft_f();
 
 	else if (Q_stricmp(cmd, "listplayers") == 0)
 		SVCmd_ListPlayers_f();
 
 	else if (Q_stricmp(cmd, "killplayer") == 0)
-		SVCmd_KillPlayer_f(gi.argv(1));
+		SVCmd_KillPlayer_f();
 
 
 	else
