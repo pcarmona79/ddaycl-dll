@@ -470,6 +470,9 @@ typedef struct
 
 	float		ctb_time;
 
+	int 		allied_sandbags;
+	int 		axis_sandbags;
+
 } level_locals_t;
 
 
@@ -2157,10 +2160,6 @@ typedef enum
 qboolean no_objectives_left;
 
 qboolean dropnodes;
-
-
-int	allied_sandbags;
-int axis_sandbags;
 
 
 char	*votemaps[5];
