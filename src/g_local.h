@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.044" // ddaychile
+#define DEVVERSION	"5.045" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -469,6 +469,9 @@ typedef struct
 	char        *botfiles;  //whether override file is used or not
 
 	float		ctb_time;
+
+	int 		allied_sandbags;
+	int 		axis_sandbags;
 
 } level_locals_t;
 
@@ -2157,10 +2160,6 @@ typedef enum
 qboolean no_objectives_left;
 
 qboolean dropnodes;
-
-
-int	allied_sandbags;
-int axis_sandbags;
 
 
 char	*votemaps[5];
