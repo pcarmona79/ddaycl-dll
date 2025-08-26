@@ -748,7 +748,14 @@ void BOT_SpawnBot (int team, char *name, char *skin, char *userinfo)
 	bot->yaw_speed = 100;
 
 
-
+	// kernel: cleans up client data before spawn the bot (copied from PutClientInServer)
+	client_respawn_t resp = bot->client->resp;
+	client_persistant_t saved = bot->client->pers;
+	memset(bot->client, 0, sizeof(*bot->client));
+	bot->client->pers = saved;
+	if (bot->client->pers.health <= 0)
+		InitClientPersistant(bot->client);
+	bot->client->resp = resp;
 	InitClientResp(bot->client);
 
 	// To allow bots to respawn
