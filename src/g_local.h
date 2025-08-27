@@ -1160,6 +1160,7 @@ void G_RunEntity (edict_t *ent);
 void SaveClientData (void);
 void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
+int HumanPlayerCount(void);
 void ResetCountTimer(void); //evil: for function in g_main.cs
 
 // 
@@ -1970,7 +1971,6 @@ typedef struct
 
 camp_spots_t camp_spots[128];
 int  total_camp_spots;
-int	num_clients;
 qboolean qbots;
 
 typedef struct
