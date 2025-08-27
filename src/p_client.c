@@ -3266,7 +3266,13 @@ void Count_Votes (void)
 
 	level.changemap = votemaps[highmap];
 
-
+	// kernel: clear the counts for the next map ballot
+	mapvotes[0] = 0;
+	mapvotes[1] = 0;
+	mapvotes[2] = 0;
+	mapvotes[3] = 0;
+	mapvotes[4] = 0;
+	num_clients = 0;
 }
 
 qboolean Setup_Map_Vote (void)
