@@ -260,6 +260,15 @@ void SP_info_reinforcement_startx(edict_t *ent)
 
 } 
 
+// kernel: new place for team indexes
+int usa_index = 0;
+int rus_index = 0;
+int gbr_index = 0;
+int pol_index = 0;
+int usm_index = 0;
+int grm_index = 1;
+int ita_index = 1;
+int jpn_index = 1;
 
 gitem_t *InsertItem(gitem_t *it,spawn_t *spawnInfo);
 

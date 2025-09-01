@@ -1918,15 +1918,16 @@ mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
 
 
 
+// kernel: we need to initialize this indexes later
+extern int usa_index;
+extern int rus_index;
+extern int gbr_index;
+extern int pol_index;
+extern int usm_index;
+extern int grm_index;
+extern int ita_index;
+extern int jpn_index;
 
-int usa_index;
-int grm_index;
-int rus_index;
-int gbr_index;
-int pol_index;
-int ita_index;
-int jpn_index;
-int usm_index;
 
 #define SMG_SPREAD 20 // valor era 30 hans
 #define PISTOL_SPREAD 10 // valor era 40 hans
