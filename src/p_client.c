@@ -2634,10 +2634,6 @@ void ClientBegin (edict_t *ent)
 	int		i;
 	
 	
-	num_clients++;
-
-
-
 	ent->client = game.clients + (ent - g_edicts - 1);
 	ent->client->resp.AlreadySpawned=false;
 
@@ -2968,8 +2964,6 @@ void ClientDisconnect (edict_t *ent)
 	if (!level.intermissiontime)
 		Write_Player_Stats(ent);
 
-	num_clients--;
-
 
 	change_stance(ent, STANCE_STAND);
 	
@@ -3265,8 +3259,6 @@ void Count_Votes (void)
 	}
 
 	level.changemap = votemaps[highmap];
-
-
 }
 
 qboolean Setup_Map_Vote (void)
@@ -3569,6 +3561,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		}
 		if (level.map_vote_time > 0)
 		{
+			int num_clients = HumanPlayerCount();
+
 			if (level.time > level.map_vote_time + 15)
 			{
                 Count_Votes ();

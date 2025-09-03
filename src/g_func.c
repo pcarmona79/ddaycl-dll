@@ -1138,7 +1138,11 @@ void door_blocked  (edict_t *self, edict_t *other)
 		if (self->moveinfo.state == STATE_DOWN)
 		{
 			for (ent = self->teammaster ; ent ; ent = ent->teamchain)
-				door_go_up (ent, ent->activator);
+			{
+				// kernel: do not open if no activator
+				if (ent->activator)
+					door_go_up(ent, ent->activator);
+			}
 		}
 		else
 		{

@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.045" // ddaychile
+#define DEVVERSION	"5.046" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -1160,6 +1160,7 @@ void G_RunEntity (edict_t *ent);
 void SaveClientData (void);
 void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
+int HumanPlayerCount(void);
 void ResetCountTimer(void); //evil: for function in g_main.cs
 
 // 
@@ -1917,15 +1918,16 @@ mapclasslimits_t mapclasslimits[MAX_TEAMS][10];
 
 
 
+// kernel: we need to initialize this indexes later
+extern int usa_index;
+extern int rus_index;
+extern int gbr_index;
+extern int pol_index;
+extern int usm_index;
+extern int grm_index;
+extern int ita_index;
+extern int jpn_index;
 
-int usa_index;
-int grm_index;
-int rus_index;
-int gbr_index;
-int pol_index;
-int ita_index;
-int jpn_index;
-int usm_index;
 
 #define SMG_SPREAD 20 // valor era 30 hans
 #define PISTOL_SPREAD 10 // valor era 40 hans
@@ -1970,7 +1972,6 @@ typedef struct
 
 camp_spots_t camp_spots[128];
 int  total_camp_spots;
-int	num_clients;
 qboolean qbots;
 
 typedef struct

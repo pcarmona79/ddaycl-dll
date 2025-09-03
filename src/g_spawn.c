@@ -1059,7 +1059,12 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 	ent = NULL;
 	inhibit = 0;
 
-
+	// kernel: clear the counts for the next map ballot
+	mapvotes[0] = 0;
+	mapvotes[1] = 0;
+	mapvotes[2] = 0;
+	mapvotes[3] = 0;
+	mapvotes[4] = 0;
 
 	InitItems ();
 

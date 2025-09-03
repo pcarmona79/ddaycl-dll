@@ -600,6 +600,11 @@ void turret_breach_die (edict_t *self, edict_t *inflictor, edict_t *attacker, in
 		else
 			turret_off(self->owner);
 	}
+
+	// kernel: sometimes the original entity has already been freed
+	if (!self->inuse)
+		return;
+
 	while ((t = G_Find (t, FOFS(classname), "turret_range")))
 	{
 		if (!t->inuse)
@@ -647,6 +652,11 @@ void turret_base_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int 
 			G_FreeEdict(t);
 	}
 	t = NULL;*/
+
+	// kernel: sometimes the original entity has already been freed
+	if (!self->inuse)
+		return;
+
 	while ((t = G_Find (t, FOFS(classname), "turret_breach")))
 	{
 		if (!t->inuse)
