@@ -2044,6 +2044,7 @@ newanim:
 //		(ent->s.frame < FRAME_standtokneel04  ||
 //			ent->s.frame > FRAME_kneeltoprone06))
 	//faf
+/* kernel: this is slowing down the playability
 	else if (extra_anims->value == 1 &&
 		((ent->oldstance && ent->stanceflags != ent->oldstance)||
 		(ent->s.frame > FRAME_standtokneel03 && ent->s.frame < FRAME_kneeltoprone06)
@@ -2098,6 +2099,7 @@ newanim:
 					if (ent->s.frame == FRAME_standtokneel03)
 						ent->oldstance = STANCE_STAND;
 				}
+*/
 /*				if (ent->stanceflags > ent->oldstance)
 				{
 					ent->s.frame++;
@@ -2108,7 +2110,7 @@ newanim:
 					ent->s.frame--;
 					client->anim_priority = ANIM_CHANGESTANCE;
 				}*/
-				if (ent->s.frame < ent->client->anim_end)
+/*				if (ent->s.frame < ent->client->anim_end)
 				{
 					ent->s.frame++;
 					client->anim_priority = ANIM_CHANGESTANCE;
@@ -2123,7 +2125,7 @@ newanim:
 			}
 
 	}			
-
+*/
 
 
 
