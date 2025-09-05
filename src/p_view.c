@@ -2425,6 +2425,7 @@ void ClientEndServerFrame (edict_t *ent)
 
 //safe_bprintf (PRINT_HIGH, "1 %i ent->viewheight  %i stance\n", ent->viewheight, ent->stance_view);
 
+	/* kernel: this slow down the animation when extra_anims is enabled
 	//faf:  slow down view when changing stances
 	if (ent->stance_view > ent->viewheight + 10)
 		ent->viewheight+=10;
@@ -2434,6 +2435,7 @@ void ClientEndServerFrame (edict_t *ent)
 		ent->viewheight = ent->stance_view;
 
 	if (extra_anims->value != 1)
+	*/
 		ent->viewheight = ent->stance_view;
 
 
