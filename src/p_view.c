@@ -2330,6 +2330,8 @@ qboolean Cmd_Scope_f(edict_t *ent);
 void Cmd_MOTD(edict_t *ent);
 void A_ScoreboardMessage (edict_t *ent);
 void A_ScoreboardMessage2 (edict_t *ent);
+void SplittedScoreboardMessage (edict_t *ent);
+void SplittedScoreboardMessage2 (edict_t *ent);
 void change_stance(edict_t *self, int stance);
 void ClientEndServerFrame (edict_t *ent)
 {
@@ -2737,11 +2739,22 @@ void ClientEndServerFrame (edict_t *ent)
 			if (ent->client->menu)
 				PMenu_Update(ent);
 			else
-				if (ent->client->layout_type == SHOW_PSCORES)
-					A_ScoreboardMessage2(ent);
+			{
+				if (!ent->flyingnun)
+				{
+					if (ent->client->layout_type == SHOW_PSCORES)
+						A_ScoreboardMessage2(ent);
+					else
+						A_ScoreboardMessage(ent);
+				}
 				else
-					A_ScoreboardMessage(ent);
-
+				{
+					if (ent->client->layout_type == SHOW_PSCORES)
+						SplittedScoreboardMessage2(ent);
+					else
+						SplittedScoreboardMessage(ent);
+				}
+			}
 			gi.unicast (ent, false);
 		}
 		if ((ent->client->layout_type == SHOW_OBJECTIVES_TEMP || ent->client->layout_type == SHOW_OBJECTIVES) && !(level.framenum & 40) )

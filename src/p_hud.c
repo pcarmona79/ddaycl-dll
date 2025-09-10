@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include <stdio.h>
 
+void SplittedScoreboardMessage (edict_t *ent);
+void SplittedScoreboardMessage2 (edict_t *ent);
 
 /*
 ======================================================================
@@ -576,7 +578,8 @@ void TeamStats (edict_t *ent)
 
 //faf:  scoreboard from aq2
 // Maximum number of lines of scores to put under each team's header.
-#define MAX_SCORES_PER_TEAM 9
+#define MAX_SCORES_PER_TEAM 15
+#define MAX_SCORES_PER_SPLITTED_TEAM 10
 #define TEAM_TOP        (MAX_TEAMS+1)
 #define TEAM1    0
 #define TEAM2    1
@@ -588,335 +591,291 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 	char scoretopleftpic[256];
 	char scoretoprightpic[256];  //faf: end
 
-		char        string2[1400], string[1400];//, damage[50];
-		gclient_t   *cl;
-		edict_t     *cl_ent;
-		int         maxsize = 1000, i, j, k;
+	char        string2[1400], string[1400];//, damage[50];
+	gclient_t   *cl;
+	edict_t     *cl_ent;
+	int         maxsize = 1000, i, j, k;
 
-				int team, len;//, deadview;
-				int sorted[TEAM_TOP][MAX_CLIENTS];
-				int sortedscores[TEAM_TOP][MAX_CLIENTS];
-				int score, total[TEAM_TOP], totalscore[TEAM_TOP];
-				int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
-				int stoppedat[TEAM_TOP];
-char pingstring[4];
+	int team, len;//, deadview;
+	int sorted[TEAM_TOP][MAX_CLIENTS];
+	int sortedscores[TEAM_TOP][MAX_CLIENTS];
+	int score, total[TEAM_TOP], totalscore[TEAM_TOP];
+	int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
+	int stoppedat[TEAM_TOP];
+	char pingstring[4];
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
 		return;
 	//[end]
 
+	total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
+		totalscore[TEAM1] = totalscore[TEAM2] = 0;
 
+	for (i = 0; i < game.maxclients; i++)
+	{
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
 
-				total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
-						totalscore[TEAM1] = totalscore[TEAM2] = 0;
+		if (!game.clients[i].resp.team_on)
+			continue;
+		else
+			team = game.clients[i].resp.team_on->index;
 
-				for (i=0 ; i<game.maxclients ; i++)
-				{
-						cl_ent = g_edicts + 1 + i;
-						if (!cl_ent->inuse)
-								continue;
-
-						if (!game.clients[i].resp.team_on)
-							continue;
-						else
-							team = game.clients[i].resp.team_on->index;
-
-
-						score = game.clients[i].resp.score;
-						if (player_scores->value == 0)
-						{
-							   j = total[team];
-						}
-						else
-						{
-							for (j = 0; j < total[team]; j++)
-							{
-								 if (score > sortedscores[team][j])
-										break;
-							}
-							for (k=total[team] ; k>j ; k--)
-							{
-								  sorted[team][k] = sorted[team][k-1];
-								  sortedscores[team][k] = sortedscores[team][k-1];
-							}
-						}
-						sorted[team][j] = i;
-						sortedscores[team][j] = score;
-						totalscore[team] += score;
-						total[team]++;
-						if (cl_ent->solid != SOLID_NOT &&
-								cl_ent->deadflag != DEAD_DEAD)
-								totalalive[team]++;
-				}
-
-		if (!strcmp(team_list[0]->teamid, "usa") && !strcmp(team_list[1]->teamid, "grm"))
+		score = game.clients[i].resp.score;
+		if (player_scores->value == 0)
 		{
-				sprintf(string,
+			j = total[team];
+		}
+		else
+		{
+			for (j = 0; j < total[team]; j++)
+			{
+				if (score > sortedscores[team][j])
+					break;
+			}
+			for (k = total[team]; k > j; k--)
+			{
+				sorted[team][k] = sorted[team][k - 1];
+				sortedscores[team][k] = sortedscores[team][k - 1];
+			}
+		}
+		sorted[team][j] = i;
+		sortedscores[team][j] = score;
+		totalscore[team] += score;
+		total[team]++;
+		if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+			totalalive[team]++;
+	}
+
+	if (!strcmp(team_list[0]->teamid, "usa") &&
+		!strcmp(team_list[1]->teamid, "grm")) {
+		sprintf(string,
 				"xv 0  yv   0 picn scorehead  " // background header
 				"yv 80 xv   0 picn scoreleft  " // background left list
 				"      xv 160 picn scoreright " // background right list
 				);
-		}
-		else
-		// if teams are anything else or grm|usa, display the split graphics:
-		{
-			snprintf(string, 1400,
-					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
-					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
-					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
-					"      xv 160 picn %s_score  ",    // scorerightpic
-					team_list[0]->teamid,
-					team_list[1]->teamid,
-					team_list[0]->teamid,
-					team_list[1]->teamid);
-				/*strcpy(scoreleftpic, "yv 80 xv   0 picn ");
-				strcat(scoreleftpic, team_list[0]->teamid);
-				strcat(scoreleftpic, "_score  ");
+	} else
+	// if teams are anything else or grm|usa, display the split graphics:
+	{
+		snprintf(string, 1400,
+				 "xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+				 "xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+				 "yv 80 xv   0 picn %s_score  "     // scoreleftpic
+				 "      xv 160 picn %s_score  ",    // scorerightpic
+				 team_list[0]->teamid, team_list[1]->teamid,
+				 team_list[0]->teamid, team_list[1]->teamid);
+	}
+	if (team_list[0]->kills_and_points)
+		strcat(string, "xv 90 yv 20 string \"&\" ");
 
-				strcpy(scorerightpic, "      xv 160 picn ");
-				strcat(scorerightpic, team_list[1]->teamid);
-				strcat(scorerightpic, "_score  ");
-
-				strcpy(scoretopleftpic, "xv 0  yv   0 picn ");
-				strcat(scoretopleftpic, team_list[0]->teamid);
-				strcat(scoretopleftpic, "_score_top  ");
-
-				strcpy(scoretoprightpic, "xv 0  xv 160 picn ");
-				strcat(scoretoprightpic, team_list[1]->teamid);
-				strcat(scoretoprightpic, "_score_top  ");
+	if (team_list[1]->kills_and_points)
+		strcat(string, "xv 245 yv 20 string \"&\" ");
 
 
-				sprintf(string, scoretopleftpic); //team 0
-				strcat(string, scoretoprightpic); // team 1
-				strcat(string, scoreleftpic); //background left list pic
-				strcat(string, scorerightpic); // background right list pic  */
-		}
-		if (team_list[0]->kills_and_points)
-			strcat(string, "xv 90 yv 20 string \"&\" ");
-
-		if (team_list[1]->kills_and_points)
-			strcat(string, "xv 245 yv 20 string \"&\" ");
-
-
-				sprintf(string2,
-						// TEAM1
-						"xv 37 yv 38 string \"%4d/%-3d\" "
-						"xv 97 yv 38 string \"%4d/%-3d\" "
-						// TEAM2
-						"xv 191 yv 38 string \"%4d/%-3d\" "
-						"xv 250 yv 38 string \"%4d/%-3d\" ",
+	sprintf(string2,
+			// TEAM1
+			"xv 37 yv 38 string \"%4d/%-3d\" "
+			"xv 97 yv 38 string \"%4d/%-3d\" "
+			// TEAM2
+			"xv 191 yv 38 string \"%4d/%-3d\" "
+			"xv 250 yv 38 string \"%4d/%-3d\" ",
 //50,60,200,200,50,60,200,200);//test
-						team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,// name_pos[TEAM1], team_list[TEAM1]->teamname,
-						team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);//, name_pos[TEAM2] + 160, team_list[TEAM2]->teamname);
+			team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+			team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+			team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+			team_list[TEAM2]->score, team_list[TEAM2]->need_points);
 
-				strcat (string, string2);
+	strcat (string, string2);
 
 
-				if (player_scores->value)
-				{
-					strcat (string,		"xv 4   yv 67 string  \"Ping  Player  Score\" ");//faf
-					strcat (string,		"xv 164   yv 67 string  \"Ping  Player  Score\" ");//faf
-
-				}
-				else
-				{
-					strcat (string,		"xv 4   yv 67 string  \"Ping  Player\" ");//faf
-					strcat (string,		"xv 164   yv 67 string  \"Ping  Player\" ");//faf
-				}
+	if (player_scores->value)
+	{
+		strcat (string,		"xv 4   yv 67 string  \"Ping  Player  Score\" ");//faf
+		strcat (string,		"xv 164   yv 67 string  \"Ping  Player  Score\" ");//faf
+	}
+	else
+	{
+		strcat (string,		"xv 4   yv 67 string  \"Ping  Player\" ");//faf
+		strcat (string,		"xv 164   yv 67 string  \"Ping  Player\" ");//faf
+	}
 
 //strcat (string,		"xv 0   yv 67 string  \" Ping Player         Ping Player\" "
 
-			// pbowens: team victory pix
-			if (level.intermissiontime && Last_Team_Winner != 99 &&
-				Last_Team_Winner != -1) 
+	// pbowens: team victory pix
+	if (level.intermissiontime && Last_Team_Winner != 99 &&
+		Last_Team_Winner != -1)
+	{
+		if (campaign_winner == 0){
+			strcat(string, va("xv 0 yv -80 picn allies_campaign "));
+		}
+		else if (campaign_winner == 1){
+			strcat(string, va("xv 0 yv -80 picn axis_campaign "));
+		}
+		else{
+			strcat(string, va("xv 0 yv -80 picn victory_%s ",
+							  team_list[Last_Team_Winner]->teamid ));
+		}
+	}
+
+	// evil: show draw title
+	if (level.intermissiontime && Last_Team_Winner == -1)
+	{
+		strcat(string, "xv 0 yv -80 picn victory_none ");
+	}
+
+	len = strlen(string);
+
+	totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
+	stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+
+	for (i=0 ; i < (MAX_SCORES_PER_TEAM + 1) ; i++)
+	{
+		if (i >= total[TEAM1] && i >= total[TEAM2])
+			break;
+
+		// ok, if we're approaching the "maxsize", then let's stop printing members of each
+		// teams (if there's more than one member left to print in that team...)
+		if (len > (maxsize - 100))
+		{
+			if (i < (total[TEAM1] - 1))
+				stoppedat[TEAM1] = i;
+			if (i < (total[TEAM2] - 1))
+				stoppedat[TEAM2] = i;
+		}
+		if (i == MAX_SCORES_PER_TEAM - 1) {
+			if (total[TEAM1] > MAX_SCORES_PER_TEAM)
+				stoppedat[TEAM1] = i;
+			if (total[TEAM2] > MAX_SCORES_PER_TEAM)
+				stoppedat[TEAM2] = i;
+		}
+
+		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
+		{
+			cl = &game.clients[sorted[TEAM1][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
+			if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM1]++;
+
+			if (cl_ent->ai)
+				sprintf(pingstring , "BOT");
+			else if (game.clients[sorted[TEAM1][i]].ping<1000)
 			{
-				if (campaign_winner == 0){
-					strcat(string, va("xv 0 yv -80 picn allies_campaign "));
-				}
-				else if (campaign_winner == 1){
-					strcat(string, va("xv 0 yv -80 picn axis_campaign "));
-				}
-				else{
-					strcat(string, va("xv 0 yv -80 picn victory_%s ", 
-						team_list[Last_Team_Winner]->teamid ));
-				}
+				if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM1][i]].ping % 1000) > 3)
+					sprintf(pingstring , "999");
 			}
+			else
+				sprintf(pingstring , "999");
 
-			// evil: show draw title
-			if (level.intermissiontime && Last_Team_Winner == -1)
+			if (player_scores->value)
 			{
-				strcat(string, "xv 0 yv -80 picn victory_none ");
+				sprintf(
+					string + strlen(string),
+					"xv 3 yv %d string \"%s%-12.12s%3d\"",
+					87 + i * 14, // 8,
+					pingstring,
+					va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+					   game.clients[sorted[TEAM1][i]].pers.netname),
+					game.clients[sorted[TEAM1][i]].resp.score);
 			}
+			else
+			{
+				sprintf(string + strlen(string),
+						"xv 3 yv %d string \"%3d%-12.12s\"",
+						87 + i * 14,//8,
+						(game.clients[sorted[TEAM1][i]].ping > 999) ? 999 : game.clients[sorted[TEAM1][i]].ping,
+						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM1][i]].pers.netname));
+			}
+		}
 
-				len = strlen(string);
+		if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
+		{
+			cl = &game.clients[sorted[TEAM2][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+			if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM2]++;
 
-				totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
-				stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+			if (cl_ent->ai)
+				sprintf(pingstring , "BOT");
+			else if (game.clients[sorted[TEAM2][i]].ping<1000)
+			{
+				if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM2][i]].ping % 1000) > 3)
+					sprintf(pingstring , "999");
+			}
+			else
+				sprintf(pingstring , "999");
 
-				for (i=0 ; i < (MAX_SCORES_PER_TEAM + 1) ; i++)
-				{
-						if (i >= total[TEAM1] && i >= total[TEAM2])
-								break;
+			// AQ truncates names at 12, not sure why, except maybe to conserve scoreboard
+			// string space?  skipping that "feature".  -FB
 
+			//sprintf(string+strlen(string),
+			//		"xv 175 yv %d string%s \"%s\" ",
+			//		87 + i * 8,//faf 12,
+			//		"",//deadview ? (cl_ent->solid == SOLID_NOT ? "" : "2") : "",
+			//		game.clients[sorted[TEAM2][i]].pers.netname);
+			if (player_scores->value)
+			{
+				sprintf(string + strlen(string),
+						"xv 165 yv %d string \"%s%-12.12s%3d\"",
+						87 + i * 14,
+						pingstring,
+						va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM2][i]].pers.netname),
+						game.clients[sorted[TEAM2][i]].resp.score);
+			}
+			else
+			{
+				sprintf(string + strlen(string),
+						"xv 165 yv %d string \"%3d%-12.12s\"",
+						87 + i * 14,
+						(game.clients[sorted[TEAM2][i]].ping > 999) ? 999 : game.clients[sorted[TEAM2][i]].ping,
+						va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM2][i]].pers.netname));
+			}
+		}
 
-						// ok, if we're approaching the "maxsize", then let's stop printing members of each
-						// teams (if there's more than one member left to print in that team...)
-						if (len > (maxsize - 100))
-						{
-								if (i < (total[TEAM1] - 1))
-										stoppedat[TEAM1] = i;
-								if (i < (total[TEAM2] - 1))
-										stoppedat[TEAM2] = i;
-						}
-						if (i == MAX_SCORES_PER_TEAM-1)
-						{
-								if (total[TEAM1] > MAX_SCORES_PER_TEAM)
-										stoppedat[TEAM1] = i;
-								if (total[TEAM2] > MAX_SCORES_PER_TEAM)
-										stoppedat[TEAM2] = i;
-						}
+		len = strlen(string);
+	}
 
-						if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
-						{
-								cl = &game.clients[sorted[TEAM1][i]];
-								cl_ent = g_edicts + 1 + sorted[TEAM1][i];
-								if (cl_ent->solid != SOLID_NOT &&
-										cl_ent->deadflag != DEAD_DEAD)
-										totalaliveprinted[TEAM1]++;
+	// Print remaining players if we ran out of room...
+	/*if (!deadview) // live player viewing scoreboard...
+	{
+		if (stoppedat[TEAM1] > -1)
+		{
+			sprintf(string + strlen(string), "xv 0 yv %d string \"..and %d more\" ",
+					42 + (stoppedat[TEAM1] * 8), total[TEAM1] - stoppedat[TEAM1]);
+		}
+		if (stoppedat[TEAM2] > -1)
+		{
+			sprintf(string + strlen(string), "xv 160 yv %d string \"..and %d more\" ",
+					42 + (stoppedat[TEAM2] * 8), total[TEAM2] - stoppedat[TEAM2]);
+		}
+	}
+	else // dead player viewing scoreboard...
+	{*/
+	if (stoppedat[TEAM1] > -1)
+	{
+		sprintf(string + strlen(string), "xv 0 yv 200 /*160*/ string \" and %d more\" ",
+				total[TEAM1] - stoppedat[TEAM1]);
+	}
+	if (stoppedat[TEAM2] > -1)
+	{
+		sprintf(string + strlen(string), "xv 160 yv 200 /*160*/ string \" and %d more\" ",
+				total[TEAM2] - stoppedat[TEAM2]);
+	}
+	//}
 
-								if (cl_ent->ai)
-									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM1][i]].ping<1000)
-								{
-									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM1][i]].ping % 1000) > 3)
-										sprintf(pingstring , "999");
-								}
-								else
-									sprintf(pingstring , "999");
+	if (strlen(string) > 1300)  // for debugging...
+		gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
+				   string);
 
-
-								if (player_scores->value)
-								{
-								sprintf(string + strlen(string),
-										"xv 3 yv %d string \"%s%-12.12s%3d\"",
-										87 + i * 14,//8,
-//                                       game.clients[sorted[TEAM1][i]].ping,
-										pingstring,
-	va("%s%s",(game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM1][i]].pers.netname),
-
-										//                                        game.clients[sorted[TEAM1][i]].pers.netname,
-										game.clients[sorted[TEAM1][i]].resp.score);//, damage);
-								}
-								else
-								{
-								sprintf(string + strlen(string),
-										"xv 3 yv %d string \"%3d%-12.12s\"",
-										87 + i * 14,//8,
-						   //             game.clients[sorted[TEAM1][i]].ping,
-										(game.clients[sorted[TEAM1][i]].ping > 999) ? 999 : game.clients[sorted[TEAM1][i]].ping,
-	va("%s%s",(game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM1][i]].pers.netname)
-
-										
-										//										game.clients[sorted[TEAM1][i]].pers.netname
-										);//, damage);   
-								}
-
-						}
-
-						if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
-						{
-								cl = &game.clients[sorted[TEAM2][i]];
-								cl_ent = g_edicts + 1 + sorted[TEAM2][i];
-								if (cl_ent->solid != SOLID_NOT &&
-										cl_ent->deadflag != DEAD_DEAD)
-										totalaliveprinted[TEAM2]++;
-
-								if (cl_ent->ai)
-									sprintf(pingstring , "BOT");
-								else if (game.clients[sorted[TEAM2][i]].ping<1000)
-								{
-									if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM2][i]].ping % 1000) > 3)
-										sprintf(pingstring , "999");
-								}
-								else
-									sprintf(pingstring , "999");
-
-
-								// AQ truncates names at 12, not sure why, except maybe to conserve scoreboard
-								// string space?  skipping that "feature".  -FB
-
-//                                sprintf(string+strlen(string), 
-//                                        "xv 175 yv %d string%s \"%s\" ",  
-  //                                      87 + i * 8,//faf 12,
-	//                                    "",//deadview ? (cl_ent->solid == SOLID_NOT ? "" : "2") : "",
-	  //                                  game.clients[sorted[TEAM2][i]].pers.netname);
-							if (player_scores->value)
-							{
-								sprintf(string + strlen(string),
-										"xv 165 yv %d string \"%s%-12.12s%3d\"",
-										87 + i * 14,//8,
-//                                        game.clients[sorted[TEAM2][i]].ping,
-										pingstring,	
-va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM2][i]].pers.netname),
-
-	 //                                   game.clients[sorted[TEAM2][i]].pers.netname,
-										game.clients[sorted[TEAM2][i]].resp.score);//, damage);
-							}
-							else
-							{
-								sprintf(string + strlen(string), 
-										"xv 165 yv %d string \"%3d%-12.12s\"",
-										87 + i * 14,//8,
-										(game.clients[sorted[TEAM2][i]].ping > 999) ? 999 : game.clients[sorted[TEAM2][i]].ping,
-										//game.clients[sorted[TEAM2][i]].ping,
-	va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM2][i]].pers.netname)
-
-	 //                                   game.clients[sorted[TEAM2][i]].pers.netname
-										);//, damage);   
-							}
-
-						}
-
-						len = strlen(string);
-				}
-
-				// Print remaining players if we ran out of room...
-  /*              if (!deadview) // live player viewing scoreboard...
-				{
-						if (stoppedat[TEAM1] > -1)
-						{
-								sprintf(string + strlen(string), "xv 0 yv %d string \"..and %d more\" ",
-										42 + (stoppedat[TEAM1] * 8), total[TEAM1] - stoppedat[TEAM1]);
-						}
-						if (stoppedat[TEAM2] > -1)
-						{
-								sprintf(string + strlen(string), "xv 160 yv %d string \"..and %d more\" ",
-										42 + (stoppedat[TEAM2] * 8), total[TEAM2] - stoppedat[TEAM2]);
-						}
-				}
-						else // dead player viewing scoreboard...
-				{*/
-						if (stoppedat[TEAM1] > -1)
-						{
-								sprintf(string + strlen(string), "xv 0 yv 200 /*160*/ string \" and %d more\" ",
-										total[TEAM1] - stoppedat[TEAM1]);
-						}
-						if (stoppedat[TEAM2] > -1)
-						{
-								sprintf(string + strlen(string), "xv 160 yv 200 /*160*/ string \" and %d more\" ",
-									   total[TEAM2] - stoppedat[TEAM2]);
-						}
-			 //   }
-
-
-
-		if (strlen(string) > 1300)  // for debugging...
-				gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
-								string);
-
-		gi.WriteByte (svc_layout);
-		gi.WriteString (string);
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
 }
 
 //faf: new secondary scoreboard to show more statistics
@@ -928,308 +887,273 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 	char scoretopleftpic[256];
 	char scoretoprightpic[256];  //faf: end
 
-		char        string2[1400], string[1400];//, damage[50];
-		gclient_t   *cl;
-		edict_t     *cl_ent;
-		int         maxsize = 1000, i, j, k;
+	char        string2[1400], string[1400];//, damage[50];
+	gclient_t   *cl;
+	edict_t     *cl_ent;
+	int         maxsize = 1000, i, j, k;
 
-				int team, len;//, deadview;
-				int sorted[TEAM_TOP][MAX_CLIENTS];
-				int sortedscores[TEAM_TOP][MAX_CLIENTS];
-				int score, total[TEAM_TOP], totalscore[TEAM_TOP];
-				int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
-				int stoppedat[TEAM_TOP];
+	int team, len;//, deadview;
+	int sorted[TEAM_TOP][MAX_CLIENTS];
+	int sortedscores[TEAM_TOP][MAX_CLIENTS];
+	int score, total[TEAM_TOP], totalscore[TEAM_TOP];
+	int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
+	int stoppedat[TEAM_TOP];
 
-				int total_deaths;
-
+	int total_deaths;
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
 		return;
 	//[end]
 
-				total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
-						totalscore[TEAM1] = totalscore[TEAM2] = 0;
+	total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
+		totalscore[TEAM1] = totalscore[TEAM2] = 0;
 
-				for (i=0 ; i<game.maxclients ; i++)
-				{
-						cl_ent = g_edicts + 1 + i;
-						if (!cl_ent->inuse)
-								continue;
+	for (i=0 ; i<game.maxclients ; i++)
+	{
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
 
-						if (!game.clients[i].resp.team_on)
-							continue;
-						else
-							team = game.clients[i].resp.team_on->index;
+		if (!game.clients[i].resp.team_on)
+			continue;
+		else
+			team = game.clients[i].resp.team_on->index;
 
-
-						score = game.clients[i].resp.score;
+		score = game.clients[i].resp.score;
    
-							for (j = 0; j < total[team]; j++)
-							{
-								 if (score > sortedscores[team][j])
-										break;
-							}
-							for (k=total[team] ; k>j ; k--)
-							{
-								  sorted[team][k] = sorted[team][k-1];
-								  sortedscores[team][k] = sortedscores[team][k-1];
-							}
-
-						sorted[team][j] = i;
-						sortedscores[team][j] = score;
-						totalscore[team] += score;
-						total[team]++;
-						if (cl_ent->solid != SOLID_NOT &&
-								cl_ent->deadflag != DEAD_DEAD)
-								totalalive[team]++;
-				}
-
-
-		if (!strcmp(team_list[0]->teamid, "usa") && !strcmp(team_list[1]->teamid, "grm"))
+		for (j = 0; j < total[team]; j++)
 		{
-				sprintf(string,
+			if (score > sortedscores[team][j])
+				break;
+		}
+		for (k=total[team] ; k>j ; k--)
+		{
+			sorted[team][k] = sorted[team][k-1];
+			sortedscores[team][k] = sortedscores[team][k-1];
+		}
+
+		sorted[team][j] = i;
+		sortedscores[team][j] = score;
+		totalscore[team] += score;
+		total[team]++;
+		if (cl_ent->solid != SOLID_NOT &&
+			cl_ent->deadflag != DEAD_DEAD)
+			totalalive[team]++;
+	}
+
+	if (!strcmp(team_list[0]->teamid, "usa") && !strcmp(team_list[1]->teamid, "grm"))
+	{
+		sprintf(string,
 				"xv 0  yv   0 picn scorehead  " // background header
 				"yv 80 xv   0 picn scoreleft  " // background left list
 				"      xv 160 picn scoreright " // background right list
 				);
+	}
+	else
+	// if teams are anything else or grm|usa, display the split graphics:
+	{
+		snprintf(string, 1400,
+				 "xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
+				 "xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
+				 "yv 80 xv   0 picn %s_score  "     // scoreleftpic
+				 "      xv 160 picn %s_score  ",    // scorerightpic
+				 team_list[0]->teamid,
+				 team_list[1]->teamid,
+				 team_list[0]->teamid,
+				 team_list[1]->teamid);
+	}
+
+	sprintf(string2,
+			// TEAM1
+			"xv 37 yv 38 string \"%4d/%-3d\" "
+			"xv 97 yv 38 string \"%4d/%-3d\" "
+			// TEAM2
+			"xv 191 yv 38 string \"%4d/%-3d\" "
+			"xv 250 yv 38 string \"%4d/%-3d\" ",
+			team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+			team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+			team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+			team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+
+	strcat (string, string2);
+
+	if (stats->value)
+	{
+		strcat (string,		"xv 4   yv 67 string  \"Player   Rating +/-\" ");//faf
+		strcat (string,		"xv 164   yv 67 string  \"Player   Rating +/-\" ");//faf
+	}
+	else
+	{
+		strcat (string,		"xv 4   yv 67 string  \"Player   Acrcy% +/-\" ");//faf
+		strcat (string,		"xv 164   yv 67 string  \"Player   Acrcy% +/-\" ");//faf
+	}
+
+	// pbowens: team victory pix
+	if (level.intermissiontime && Last_Team_Winner != 99 &&
+		Last_Team_Winner != -1)
+	{
+		if (campaign_winner == 0){
+			strcat(string, va("xv 0 yv -80 picn allies_campaign "));
 		}
-		else
-		// if teams are anything else or grm|usa, display the split graphics:
+		else if (campaign_winner == 1){
+			strcat(string, va("xv 0 yv -80 picn axis_campaign "));
+		}
+		else{
+			strcat(string, va("xv 0 yv -80 picn victory_%s ",
+							  team_list[Last_Team_Winner]->teamid ));
+		}
+	}
+
+	len = strlen(string);
+
+	totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
+	stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+
+	for (i=0 ; i < (MAX_SCORES_PER_TEAM + 1) ; i++)
+	{
+		if (i >= total[TEAM1] && i >= total[TEAM2])
+			break;
+
+		// ok, if we're approaching the "maxsize", then let's stop printing members of each
+		// teams (if there's more than one member left to print in that team...)
+		if (len > (maxsize - 100))
 		{
-			snprintf(string, 1400,
-					"xv 0  yv   0 picn %s_score_top  " // scoretopleftpic
-					"xv 0  xv 160 picn %s_score_top  " // scoretoprightpic
-					"yv 80 xv   0 picn %s_score  "     // scoreleftpic
-					"      xv 160 picn %s_score  ",    // scorerightpic
-					team_list[0]->teamid,
-					team_list[1]->teamid,
-					team_list[0]->teamid,
-					team_list[1]->teamid);
-				/* strcpy(scoreleftpic, "yv 80 xv   0 picn ");
-				strcat(scoreleftpic, team_list[0]->teamid);
-				strcat(scoreleftpic, "_score  ");
-
-				strcpy(scorerightpic, "      xv 160 picn ");
-				strcat(scorerightpic, team_list[1]->teamid);
-				strcat(scorerightpic, "_score  ");
-
-				strcpy(scoretopleftpic, "xv 0  yv   0 picn ");
-				strcat(scoretopleftpic, team_list[0]->teamid);
-				strcat(scoretopleftpic, "_score_top  ");
-
-				strcpy(scoretoprightpic, "xv 0  xv 160 picn ");
-				strcat(scoretoprightpic, team_list[1]->teamid);
-				strcat(scoretoprightpic, "_score_top  ");
-
-
-				sprintf(string, scoretopleftpic); //team 0
-				strcat(string, scoretoprightpic); // team 1
-				strcat(string, scoreleftpic); //background left list pic
-				strcat(string, scorerightpic); // background right list pic */
+			if (i < (total[TEAM1] - 1))
+				stoppedat[TEAM1] = i;
+			if (i < (total[TEAM2] - 1))
+				stoppedat[TEAM2] = i;
+		}
+		if (i == MAX_SCORES_PER_TEAM-1)
+		{
+			if (total[TEAM1] > MAX_SCORES_PER_TEAM)
+				stoppedat[TEAM1] = i;
+			if (total[TEAM2] > MAX_SCORES_PER_TEAM)
+				stoppedat[TEAM2] = i;
 		}
 
+		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
+		{
+			cl = &game.clients[sorted[TEAM1][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
+			if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM1]++;
 
-				sprintf(string2,
-						// TEAM1
-						"xv 37 yv 38 string \"%4d/%-3d\" "
-						"xv 97 yv 38 string \"%4d/%-3d\" "
-						 // TEAM2
-						 "xv 191 yv 38 string \"%4d/%-3d\" "
-						"xv 250 yv 38 string \"%4d/%-3d\" ",
-						team_list[TEAM1]->kills, team_list[TEAM1]->need_kills, team_list[TEAM1]->score, team_list[TEAM1]->need_points,// name_pos[TEAM1], team_list[TEAM1]->teamname,
-						team_list[TEAM2]->kills, team_list[TEAM2]->need_kills, team_list[TEAM2]->score, team_list[TEAM2]->need_points);//, name_pos[TEAM2] + 160, team_list[TEAM2]->teamname);
+			if (game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses == 0)
+				accuracy = 0;
+			else
+				accuracy = 100.0 * game.clients[sorted[TEAM1][i]].resp.accuracy_hits /
+					(game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses);
 
+			//if using stats, replace accuracy with average stats
+			if (stats->value)
+			{
+				total_deaths = game.clients[sorted[TEAM1][i]].pers.stat_human_kills +
+					game.clients[sorted[TEAM1][i]].pers.stat_bot_kills +
+					game.clients[sorted[TEAM1][i]].resp.stat_human_plus	+
+					game.clients[sorted[TEAM1][i]].resp.stat_bot_plus	+
+					game.clients[sorted[TEAM1][i]].pers.stat_human_deaths +
+					game.clients[sorted[TEAM1][i]].pers.stat_bot_deaths +
+					game.clients[sorted[TEAM1][i]].resp.stat_human_minus +
+					game.clients[sorted[TEAM1][i]].resp.stat_bot_minus;
 
-				strcat (string, string2);
+				cl_ent = g_edicts + 1 + sorted[TEAM1][i];
 
-
-
-				if (stats->value)
+				if (total_deaths != 0 && !cl_ent->ai)
 				{
-					strcat (string,		"xv 4   yv 67 string  \"Player   Rating +/-\" ");//faf
-					strcat (string,		"xv 164   yv 67 string  \"Player   Rating +/-\" ");//faf
-
+					accuracy = 100.0 * (game.clients[sorted[TEAM1][i]].pers.stat_human_kills
+										+ game.clients[sorted[TEAM1][i]].pers.stat_bot_kills
+										+ game.clients[sorted[TEAM1][i]].resp.stat_human_plus
+										+ game.clients[sorted[TEAM1][i]].resp.stat_bot_plus) / total_deaths;
 				}
 				else
-				{
-					strcat (string,		"xv 4   yv 67 string  \"Player   Acrcy% +/-\" ");//faf
-					strcat (string,		"xv 164   yv 67 string  \"Player   Acrcy% +/-\" ");//faf
-				}
-		
-
-
-			// pbowens: team victory pix
-			if (level.intermissiontime && Last_Team_Winner != 99 &&
-				Last_Team_Winner != -1) 
-			{
-				if (campaign_winner == 0){
-					strcat(string, va("xv 0 yv -80 picn allies_campaign "));
-				}
-				else if (campaign_winner == 1){
-					strcat(string, va("xv 0 yv -80 picn axis_campaign "));
-				}
-				else{
-					strcat(string, va("xv 0 yv -80 picn victory_%s ", 
-						team_list[Last_Team_Winner]->teamid ));
-				}
+					accuracy = 0;
 			}
 
+			sprintf(string + strlen(string),
+					"xv 3 yv %d string \"%-12.12s%3d%3d\"",
+					87 + i * 14,//8,
+					va("%s%s",(game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+					   game.clients[sorted[TEAM1][i]].pers.netname),
+					(int)accuracy,
+					game.clients[sorted[TEAM1][i]].resp.stat_human_plus
+					+ game.clients[sorted[TEAM1][i]].resp.stat_bot_plus
+					- game.clients[sorted[TEAM1][i]].resp.stat_human_minus
+					- game.clients[sorted[TEAM1][i]].resp.stat_bot_minus);
+		}
 
-				len = strlen(string);
+		if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
+		{
+			cl = &game.clients[sorted[TEAM2][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+			if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM2]++;
 
-				totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
-				stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+			if (game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses == 0)
+				accuracy = 0;
+			else
+				accuracy = 100.0 * game.clients[sorted[TEAM2][i]].resp.accuracy_hits /
+					(game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses);
 
-				for (i=0 ; i < (MAX_SCORES_PER_TEAM + 1) ; i++)
+			//if using stats, replace accuracy with average stats
+			if (stats->value)
+			{
+				total_deaths = game.clients[sorted[TEAM2][i]].pers.stat_human_kills +
+					game.clients[sorted[TEAM2][i]].pers.stat_bot_kills +
+					game.clients[sorted[TEAM2][i]].resp.stat_human_plus	+
+					game.clients[sorted[TEAM2][i]].resp.stat_bot_plus	+
+					game.clients[sorted[TEAM2][i]].pers.stat_human_deaths +
+					game.clients[sorted[TEAM2][i]].pers.stat_bot_deaths +
+					game.clients[sorted[TEAM2][i]].resp.stat_human_minus +
+					game.clients[sorted[TEAM2][i]].resp.stat_bot_minus;
+
+				cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+
+				if (total_deaths != 0 && !cl_ent->ai)
 				{
-						if (i >= total[TEAM1] && i >= total[TEAM2])
-								break;
-
-
-						// ok, if we're approaching the "maxsize", then let's stop printing members of each
-						// teams (if there's more than one member left to print in that team...)
-						if (len > (maxsize - 100))
-						{
-								if (i < (total[TEAM1] - 1))
-										stoppedat[TEAM1] = i;
-								if (i < (total[TEAM2] - 1))
-										stoppedat[TEAM2] = i;
-						}
-						if (i == MAX_SCORES_PER_TEAM-1)
-						{
-								if (total[TEAM1] > MAX_SCORES_PER_TEAM)
-										stoppedat[TEAM1] = i;
-								if (total[TEAM2] > MAX_SCORES_PER_TEAM)
-										stoppedat[TEAM2] = i;
-						}
-
-						if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
-						{
-								cl = &game.clients[sorted[TEAM1][i]];
-								cl_ent = g_edicts + 1 + sorted[TEAM1][i];
-								if (cl_ent->solid != SOLID_NOT &&
-										cl_ent->deadflag != DEAD_DEAD)
-										totalaliveprinted[TEAM1]++;
-
-								if (game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses == 0)
-									accuracy = 0;
-								else
-									accuracy = (100 * game.clients[sorted[TEAM1][i]].resp.accuracy_hits /(game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses));
-
-								//if using stats, replace accuracy with average stats
-								if (stats->value)
-								{
-										total_deaths = game.clients[sorted[TEAM1][i]].pers.stat_human_kills +
-														game.clients[sorted[TEAM1][i]].pers.stat_bot_kills +
-														game.clients[sorted[TEAM1][i]].resp.stat_human_plus	+
-														game.clients[sorted[TEAM1][i]].resp.stat_bot_plus	+
-														game.clients[sorted[TEAM1][i]].pers.stat_human_deaths +
-														game.clients[sorted[TEAM1][i]].pers.stat_bot_deaths +
-														game.clients[sorted[TEAM1][i]].resp.stat_human_minus +
-														game.clients[sorted[TEAM1][i]].resp.stat_bot_minus;
-
-										cl_ent = g_edicts + 1 + sorted[TEAM1][i];
-
-										if (total_deaths != 0 && !cl_ent->ai)
-										{	
-											accuracy =100 * (game.clients[sorted[TEAM1][i]].pers.stat_human_kills + game.clients[sorted[TEAM1][i]].pers.stat_bot_kills + game.clients[sorted[TEAM1][i]].resp.stat_human_plus + game.clients[sorted[TEAM1][i]].resp.stat_bot_plus)/total_deaths;
-
-										}
-										else
-											accuracy = 0;
-								}
-
-
-								sprintf(string + strlen(string),
-										"xv 3 yv %d string \"%-12.12s%3d%3d\"",
-										87 + i * 14,//8,
-										
-	va("%s%s",(game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM1][i]].pers.netname),
-
-										//                                        game.clients[sorted[TEAM1][i]].pers.netname,
-									   (int)accuracy,
-										//game.clients[sorted[TEAM1][i]].resp.plus_minus);
-										game.clients[sorted[TEAM1][i]].resp.stat_human_plus + game.clients[sorted[TEAM1][i]].resp.stat_bot_plus
-										- game.clients[sorted[TEAM1][i]].resp.stat_human_minus - game.clients[sorted[TEAM1][i]].resp.stat_bot_minus);   
-							
-
-						}
-
-						if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
-						{
-								cl = &game.clients[sorted[TEAM2][i]];
-								cl_ent = g_edicts + 1 + sorted[TEAM2][i];
-								if (cl_ent->solid != SOLID_NOT &&
-										cl_ent->deadflag != DEAD_DEAD)
-										totalaliveprinted[TEAM2]++;
-
-								if (game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses == 0)
-									accuracy = 0;
-								else
-									accuracy = (100 * game.clients[sorted[TEAM2][i]].resp.accuracy_hits /(game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses));
-
-
-
-								//if using stats, replace accuracy with average stats
-								if (stats->value)
-								{
-										total_deaths = game.clients[sorted[TEAM2][i]].pers.stat_human_kills +
-														game.clients[sorted[TEAM2][i]].pers.stat_bot_kills +
-														game.clients[sorted[TEAM2][i]].resp.stat_human_plus	+
-														game.clients[sorted[TEAM2][i]].resp.stat_bot_plus	+
-														game.clients[sorted[TEAM2][i]].pers.stat_human_deaths +
-														game.clients[sorted[TEAM2][i]].pers.stat_bot_deaths +
-														game.clients[sorted[TEAM2][i]].resp.stat_human_minus +
-														game.clients[sorted[TEAM2][i]].resp.stat_bot_minus;
-
-										cl_ent = g_edicts + 1 + sorted[TEAM2][i];
-
-										if (total_deaths != 0 && !cl_ent->ai)
-										{	
-											accuracy =100 * (game.clients[sorted[TEAM2][i]].pers.stat_human_kills + game.clients[sorted[TEAM2][i]].pers.stat_bot_kills + game.clients[sorted[TEAM2][i]].resp.stat_human_plus + game.clients[sorted[TEAM2][i]].resp.stat_bot_plus)/total_deaths;
-
-										}
-										else
-											accuracy = 0;
-								}
-							
-								sprintf(string + strlen(string),
-										"xv 165 yv %d string \"%-12.12s%3d%3d\"",
-										87 + i * 14,//8,
-	va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ", game.clients[sorted[TEAM2][i]].pers.netname),
-										(int)accuracy,
-									   // game.clients[sorted[TEAM2][i]].resp.plus_minus);
-										game.clients[sorted[TEAM2][i]].resp.stat_human_plus + game.clients[sorted[TEAM2][i]].resp.stat_bot_plus
-										- game.clients[sorted[TEAM2][i]].resp.stat_human_minus - game.clients[sorted[TEAM2][i]].resp.stat_bot_minus);   
-							
-
-						}
-
-						len = strlen(string);
+					accuracy = 100.0 * (game.clients[sorted[TEAM2][i]].pers.stat_human_kills
+										+ game.clients[sorted[TEAM2][i]].pers.stat_bot_kills
+										+ game.clients[sorted[TEAM2][i]].resp.stat_human_plus
+										+ game.clients[sorted[TEAM2][i]].resp.stat_bot_plus) / total_deaths;
 				}
+				else
+					accuracy = 0;
+			}
 
-   
-						if (stoppedat[TEAM1] > -1)
-						{
-								sprintf(string + strlen(string), "xv 0 yv 200 string \" and %d more\" ",
-										total[TEAM1] - stoppedat[TEAM1]);
-						}
-						if (stoppedat[TEAM2] > -1)
-						{
-								sprintf(string + strlen(string), "xv 160 yv 200 string \" and %d more\" ",
-									   total[TEAM2] - stoppedat[TEAM2]);
-						}
-			 //   }
+			sprintf(string + strlen(string),
+					"xv 165 yv %d string \"%-12.12s%3d%3d\"",
+					87 + i * 14,
+					va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+					   game.clients[sorted[TEAM2][i]].pers.netname),
+					(int)accuracy,
+					game.clients[sorted[TEAM2][i]].resp.stat_human_plus
+					+ game.clients[sorted[TEAM2][i]].resp.stat_bot_plus
+					- game.clients[sorted[TEAM2][i]].resp.stat_human_minus
+					- game.clients[sorted[TEAM2][i]].resp.stat_bot_minus);
+		}
 
+		len = strlen(string);
+	}
 
+	if (stoppedat[TEAM1] > -1)
+	{
+		sprintf(string + strlen(string), "xv 0 yv 200 string \" and %d more\" ",
+				total[TEAM1] - stoppedat[TEAM1]);
+	}
+	if (stoppedat[TEAM2] > -1)
+	{
+		sprintf(string + strlen(string), "xv 160 yv 200 string \" and %d more\" ",
+				total[TEAM2] - stoppedat[TEAM2]);
+	}
 
-		if (strlen(string) > 1300)  // for debugging...
-				gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
-								string);
+	if (strlen(string) > 1300)  // for debugging...
+		gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
+				   string);
 
-		gi.WriteByte (svc_layout);
-		gi.WriteString (string);
+	gi.WriteByte (svc_layout);
+	gi.WriteString (string);
 }
 
 
@@ -1263,10 +1187,20 @@ void DeathmatchScoreboard (edict_t *ent)
 	//[end]
 
 
-	if (ent->client->layout_type == SHOW_SCORES)
-		A_ScoreboardMessage(ent);
-	else if (ent->client->layout_type == SHOW_PSCORES)
-		A_ScoreboardMessage2(ent);
+	if (!ent->flyingnun)
+	{
+		if (ent->client->layout_type == SHOW_SCORES)
+			A_ScoreboardMessage(ent);
+		else if (ent->client->layout_type == SHOW_PSCORES)
+			A_ScoreboardMessage2(ent);
+	}
+	else
+	{
+		if (ent->client->layout_type == SHOW_SCORES)
+			SplittedScoreboardMessage(ent);
+		else if (ent->client->layout_type == SHOW_PSCORES)
+			SplittedScoreboardMessage2(ent);
+	}
 
 	gi.unicast (ent, true);
 }
@@ -1852,3 +1786,614 @@ void G_SetStats (edict_t *ent)
 	//ent->client->ps.stats[STAT_TEAM1_INFO] = 0;
 }
 
+
+/*
+==================
+ SplittedScoreboardMessage (kernel: to use in observer mode)
+ based off of CTF scoreboard
+==================
+*/
+void SplittedScoreboardMessage (edict_t *ent)
+{
+	char scoreleftpic[256];	 // faf:  for team dll support
+	char scorerightpic[256]; //      loads background pic according to team
+	char scoretopleftpic[256];
+	char scoretoprightpic[256]; // faf: end
+
+	char string2[1400], string[1400];
+	gclient_t *cl;
+	edict_t *cl_ent;
+	int maxsize = 1000, i, j, k;
+
+	int team, len;
+	int sorted[TEAM_TOP][MAX_CLIENTS];
+	int sortedscores[TEAM_TOP][MAX_CLIENTS];
+	int score, total[TEAM_TOP], totalscore[TEAM_TOP];
+	int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
+	int stoppedat[TEAM_TOP];
+	char pingstring[4];
+
+	//JABot[start]
+	if (ent->ai || !ent->inuse)
+		return;
+	//[end]
+
+	total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
+		totalscore[TEAM1] = totalscore[TEAM2] = 0;
+
+	for (i = 0; i < game.maxclients; i++)
+	{
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+
+		if (!game.clients[i].resp.team_on)
+			continue;
+		else
+			team = game.clients[i].resp.team_on->index;
+
+		score = game.clients[i].resp.score;
+		if (player_scores->value == 0)
+		{
+			j = total[team];
+		}
+		else
+		{
+			for (j = 0; j < total[team]; j++)
+			{
+				if (score > sortedscores[team][j])
+					break;
+			}
+			for (k = total[team]; k > j; k--)
+			{
+				sorted[team][k] = sorted[team][k - 1];
+				sortedscores[team][k] = sortedscores[team][k - 1];
+			}
+		}
+		sorted[team][j] = i;
+		sortedscores[team][j] = score;
+		totalscore[team] += score;
+		total[team]++;
+		if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+			totalalive[team]++;
+	}
+
+	// display the split graphics
+	if (observer_bscore->value)
+	{
+		snprintf(string, 1400,
+				"xv 0 yb -58 picn %s_score_top  " // scoretopleftpic
+				"     xv 160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+	else
+	{
+		snprintf(string, 1400,
+				"xl 0 yb -190 picn %s_score_top  " // scoretopleftpic
+				"     xr -160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+
+	if (team_list[0]->kills_and_points)
+		strcat(string, "xv 90 yv 20 string \"&\" ");
+
+	if (team_list[1]->kills_and_points)
+		strcat(string, "xv 245 yv 20 string \"&\" ");
+
+	if (observer_bscore->value)
+	{
+		sprintf(string2,
+				// TEAM1
+				"xv 37  yb -20 string \"%4d/%-3d\" "
+				"xv 97  yb -20 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xv  191  yb -20 string \"%4d/%-3d\" "
+				"xv  250  yb -20 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+				team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+				team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+	else
+	{
+		sprintf(string2,
+				// TEAM1
+				"xl 37  yb -152 string \"%4d/%-3d\" "
+				"xl 100 yb -152 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xr -128 yb -152 string \"%4d/%-3d\" "
+				"xr -65  yb -152 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+				team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+				team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+
+	strcat(string, string2);
+
+	if (observer_bscore->value)
+	{
+		// kernel: this mode requires header pics
+		strcat(string, "xl  0    yb -128 picn score_left_h  ");
+		strcat(string, "xr -160  yb -128 picn score_right_h  ");
+	}
+
+	if (player_scores->value)
+	{
+		strcat(string, "xl  3   yb -124 string  \"Ping  Player  Score\" ");   // faf
+		strcat(string, "xr -155 yb -124 string  \"Ping  Player  Score\" "); // faf
+	}
+	else
+	{
+		strcat(string, "xl  3   yb -124 string  \"Ping  Player\" ");	// faf
+		strcat(string, "xr -155 yb -124 string  \"Ping  Player\" "); // faf
+	}
+
+	// pbowens: team victory pix
+	if (level.intermissiontime && Last_Team_Winner >= 0 && Last_Team_Winner != 99)
+	{
+		if (campaign_winner == 0){
+			strcat(string, va("xv 0 yv -80 picn allies_campaign "));
+		}
+		else if (campaign_winner == 1){
+			strcat(string, va("xv 0 yv -80 picn axis_campaign "));
+		}
+		else {
+			strcat(string, va("xv 0 yv -80 picn victory_%s ",
+							  team_list[Last_Team_Winner]->teamid ));
+		}
+	}
+	else if (level.intermissiontime && Last_Team_Winner < 0)
+	{
+		strcat(string, "xv 0 yv -80 picn victory_none ");
+	}
+
+	len = strlen(string);
+
+	totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
+	stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+
+	for (i = 0; i < (MAX_SCORES_PER_SPLITTED_TEAM + 1); i++)
+	{
+		if (i >= total[TEAM1] && i >= total[TEAM2])
+			break;
+
+		// ok, if we're approaching the "maxsize", then let's stop printing members of each
+		// teams (if there's more than one member left to print in that team...)
+		if (len > (maxsize - 100))
+		{
+			if (i < (total[TEAM1] - 1))
+				stoppedat[TEAM1] = i;
+			if (i < (total[TEAM2] - 1))
+				stoppedat[TEAM2] = i;
+		}
+		if (i == MAX_SCORES_PER_SPLITTED_TEAM - 1)
+		{
+			if (total[TEAM1] > MAX_SCORES_PER_SPLITTED_TEAM)
+				stoppedat[TEAM1] = i;
+			if (total[TEAM2] > MAX_SCORES_PER_SPLITTED_TEAM)
+				stoppedat[TEAM2] = i;
+		}
+
+		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
+		{
+			cl = &game.clients[sorted[TEAM1][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
+			if (cl_ent->solid != SOLID_NOT &&
+					cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM1]++;
+
+			if (cl_ent->ai)
+				sprintf(pingstring , "BOT");
+			else if (game.clients[sorted[TEAM1][i]].ping<1000)
+			{
+				if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM1][i]].ping % 1000) > 3)
+					sprintf(pingstring , "999");
+			}
+			else
+				sprintf(pingstring , "999");
+
+			if (player_scores->value)
+			{
+				sprintf(string + strlen(string),
+						"xl 2 yb %d string \"%s%-12.12s%3d\"",
+						-104 + i * 10,
+						pingstring,
+						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM1][i]].pers.netname),
+						game.clients[sorted[TEAM1][i]].resp.score);
+			}
+			else
+			{
+				sprintf(string + strlen(string),
+						"xl 2 yb %d string \"%3d%-12.12s\"",
+						-104 + i * 10,
+						(game.clients[sorted[TEAM1][i]].ping > 999) ? 999 : game.clients[sorted[TEAM1][i]].ping,
+						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM1][i]].pers.netname));
+			}
+		}
+
+		if (i < total[TEAM2] && stoppedat[TEAM2] == -1) // print next team 2 member...
+		{
+			cl = &game.clients[sorted[TEAM2][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+			if (cl_ent->solid != SOLID_NOT &&
+					cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM2]++;
+
+			if (cl_ent->ai)
+				sprintf(pingstring , "BOT");
+			else if (game.clients[sorted[TEAM2][i]].ping<1000)
+			{
+				if (snprintf(pingstring, 4, "%3d", game.clients[sorted[TEAM2][i]].ping % 1000) > 3)
+					sprintf(pingstring , "999");
+			}
+			else
+				sprintf(pingstring , "999");
+
+			if (player_scores->value)
+			{
+				sprintf(string + strlen(string),
+						"xr -154 yb %d string \"%s%-12.12s%3d\"",
+						-104 + i * 10,
+						pingstring,
+						va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+						   game.clients[sorted[TEAM2][i]].pers.netname),
+						game.clients[sorted[TEAM2][i]].resp.score);
+			}
+			else
+			{
+				sprintf(string + strlen(string),
+						"xr -154 yb %d string \"%3d%-12.12s\"",
+						-104 + i * 10,
+						(game.clients[sorted[TEAM2][i]].ping > 999) ? 999 : game.clients[sorted[TEAM2][i]].ping,
+						va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+						    game.clients[sorted[TEAM2][i]].pers.netname));
+			}
+		}
+
+		len = strlen(string);
+	}
+
+	if (stoppedat[TEAM1] > -1)
+	{
+		sprintf(string + strlen(string), "xl 2 yb %d string \" and %d more\" ",
+				-104 + (stoppedat[TEAM1] * 10),
+				total[TEAM1] - stoppedat[TEAM1]);
+	}
+	if (stoppedat[TEAM2] > -1)
+	{
+		sprintf(string + strlen(string), "xr -154 yb %d string \" and %d more\" ",
+				-104 + (stoppedat[TEAM2] * 10),
+				total[TEAM2] - stoppedat[TEAM2]);
+	}
+
+	if (strlen(string) > 1300) // for debugging...
+		gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
+				   string);
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+}
+
+void SplittedScoreboardMessage2 (edict_t *ent)
+{
+	float accuracy;
+	char scoreleftpic[256];	 // faf:  for team dll support
+	char scorerightpic[256]; //      loads background pic according to team
+	char scoretopleftpic[256];
+	char scoretoprightpic[256]; // faf: end
+
+	char string2[1400], string[1400];
+	gclient_t *cl;
+	edict_t *cl_ent;
+	int maxsize = 1000, i, j, k;
+
+	int team, len;
+	int sorted[TEAM_TOP][MAX_CLIENTS];
+	int sortedscores[TEAM_TOP][MAX_CLIENTS];
+	int score, total[TEAM_TOP], totalscore[TEAM_TOP];
+	int totalalive[TEAM_TOP], totalaliveprinted[TEAM_TOP];
+	int stoppedat[TEAM_TOP];
+
+	int total_deaths;
+
+	//JABot[start]
+	if (ent->ai || !ent->inuse)
+		return;
+	//[end]
+
+	total[TEAM1] = total[TEAM2] = totalalive[TEAM1] = totalalive[TEAM2] =
+		totalscore[TEAM1] = totalscore[TEAM2] = 0;
+
+	for (i = 0; i < game.maxclients; i++)
+	{
+		cl_ent = g_edicts + 1 + i;
+		if (!cl_ent->inuse)
+			continue;
+
+		if (!game.clients[i].resp.team_on)
+			continue;
+		else
+			team = game.clients[i].resp.team_on->index;
+
+		score = game.clients[i].resp.score;
+
+		for (j = 0; j < total[team]; j++)
+		{
+			if (score > sortedscores[team][j])
+				break;
+		}
+		for (k = total[team]; k > j; k--)
+		{
+			sorted[team][k] = sorted[team][k - 1];
+			sortedscores[team][k] = sortedscores[team][k - 1];
+		}
+
+		sorted[team][j] = i;
+		sortedscores[team][j] = score;
+		totalscore[team] += score;
+		total[team]++;
+		if (cl_ent->solid != SOLID_NOT &&
+				cl_ent->deadflag != DEAD_DEAD)
+			totalalive[team]++;
+	}
+
+	// display the split graphics
+	if (observer_bscore->value)
+	{
+		snprintf(string, 1400,
+				"xv 0 yb -58 picn %s_score_top  " // scoretopleftpic
+				"     xv 160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+	else
+	{
+		snprintf(string, 1400,
+				"xl 0 yb -190 picn %s_score_top  " // scoretopleftpic
+				"     xr -160 picn %s_score_top  " // scoretoprightpic
+				"xl 0 yb -110 picn %s_score  "	  // scoreleftpic
+				"     xr -160 picn %s_score  ",	  // scorerightpic
+				team_list[0]->teamid,
+				team_list[1]->teamid,
+				team_list[0]->teamid,
+				team_list[1]->teamid);
+	}
+
+	if (observer_bscore->value)
+	{
+		sprintf(string2,
+				// TEAM1
+				"xv 37  yb -20 string \"%4d/%-3d\" "
+				"xv 97  yb -20 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xv  191  yb -20 string \"%4d/%-3d\" "
+				"xv  250  yb -20 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+				team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+				team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+	else
+	{
+		sprintf(string2,
+				// TEAM1
+				"xl 37  yb -152 string \"%4d/%-3d\" "
+				"xl 100 yb -152 string \"%4d/%-3d\" "
+				//  TEAM2
+				"xr -128 yb -152 string \"%4d/%-3d\" "
+				"xr -65  yb -152 string \"%4d/%-3d\" ",
+				team_list[TEAM1]->kills, team_list[TEAM1]->need_kills,
+				team_list[TEAM1]->score, team_list[TEAM1]->need_points,
+				team_list[TEAM2]->kills, team_list[TEAM2]->need_kills,
+				team_list[TEAM2]->score, team_list[TEAM2]->need_points);
+	}
+
+	strcat(string, string2);
+
+	if (observer_bscore->value)
+	{
+		// kernel: this mode requires header pics
+		strcat(string, "xl  0    yb -128 picn score_left_h  ");
+		strcat(string, "xr -160  yb -128 picn score_right_h  ");
+	}
+
+	if (stats->value)
+	{
+		strcat(string, "xl  3   yb -124 string  \"Player   Rating +/-\" ");   // faf
+		strcat(string, "xr -155 yb -124 string  \"Player   Rating +/-\" "); // faf
+	}
+	else
+	{
+		strcat(string, "xl  3   yb -124 string  \"Player   Acrcy% +/-\" ");	// faf
+		strcat(string, "xr -155 yb -124 string  \"Player   Acrcy% +/-\" "); // faf
+	}
+
+	// pbowens: team victory pix
+	if (level.intermissiontime && Last_Team_Winner >= 0 && Last_Team_Winner != 99)
+	{
+		if (campaign_winner == 0){
+			strcat(string, va("xv 0 yv -80 picn allies_campaign "));
+		}
+		else if (campaign_winner == 1){
+			strcat(string, va("xv 0 yv -80 picn axis_campaign "));
+		}
+		else {
+			strcat(string, va("xv 0 yv -80 picn victory_%s ",
+							  team_list[Last_Team_Winner]->teamid ));
+		}
+	}
+	else if (level.intermissiontime && Last_Team_Winner < 0)
+	{
+		strcat(string, "xv 0 yv -80 picn victory_none ");
+	}
+
+	len = strlen(string);
+
+	totalaliveprinted[TEAM1] = totalaliveprinted[TEAM2] = 0;
+	stoppedat[TEAM1] = stoppedat[TEAM2] = -1;
+
+	for (i = 0; i < (MAX_SCORES_PER_SPLITTED_TEAM + 1); i++)
+	{
+		if (i >= total[TEAM1] && i >= total[TEAM2])
+			break;
+
+		// ok, if we're approaching the "maxsize", then let's stop printing members of each
+		// teams (if there's more than one member left to print in that team...)
+		if (len > (maxsize - 100))
+		{
+			if (i < (total[TEAM1] - 1))
+				stoppedat[TEAM1] = i;
+			if (i < (total[TEAM2] - 1))
+				stoppedat[TEAM2] = i;
+		}
+		if (i == MAX_SCORES_PER_SPLITTED_TEAM - 1)
+		{
+			if (total[TEAM1] > MAX_SCORES_PER_SPLITTED_TEAM)
+				stoppedat[TEAM1] = i;
+			if (total[TEAM2] > MAX_SCORES_PER_SPLITTED_TEAM)
+				stoppedat[TEAM2] = i;
+		}
+
+		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
+		{
+			cl = &game.clients[sorted[TEAM1][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
+			if (cl_ent->solid != SOLID_NOT &&
+					cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM1]++;
+
+			if (game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses == 0)
+				accuracy = 0;
+			else
+				accuracy = 100.0 * game.clients[sorted[TEAM1][i]].resp.accuracy_hits /
+					(game.clients[sorted[TEAM1][i]].resp.accuracy_hits + game.clients[sorted[TEAM1][i]].resp.accuracy_misses);
+
+			//if using stats, replace accuracy with average stats
+			if (stats->value)
+			{
+				total_deaths = game.clients[sorted[TEAM1][i]].pers.stat_human_kills +
+					game.clients[sorted[TEAM1][i]].pers.stat_bot_kills +
+					game.clients[sorted[TEAM1][i]].resp.stat_human_plus	+
+					game.clients[sorted[TEAM1][i]].resp.stat_bot_plus	+
+					game.clients[sorted[TEAM1][i]].pers.stat_human_deaths +
+					game.clients[sorted[TEAM1][i]].pers.stat_bot_deaths +
+					game.clients[sorted[TEAM1][i]].resp.stat_human_minus +
+					game.clients[sorted[TEAM1][i]].resp.stat_bot_minus;
+
+				cl_ent = g_edicts + 1 + sorted[TEAM1][i];
+
+				if (total_deaths != 0 && !cl_ent->ai)
+				{
+					accuracy = 100.0 * (game.clients[sorted[TEAM1][i]].pers.stat_human_kills
+										+ game.clients[sorted[TEAM1][i]].pers.stat_bot_kills
+										+ game.clients[sorted[TEAM1][i]].resp.stat_human_plus
+										+ game.clients[sorted[TEAM1][i]].resp.stat_bot_plus) / total_deaths;
+				}
+				else
+					accuracy = 0;
+			}
+
+			sprintf(string + strlen(string),
+					"xl 2 yb %d string \"%-12.12s%3d%3d\"",
+					-104 + i * 14,
+					va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
+					   game.clients[sorted[TEAM1][i]].pers.netname),
+					(int)accuracy,
+					game.clients[sorted[TEAM1][i]].resp.stat_human_plus
+					+ game.clients[sorted[TEAM1][i]].resp.stat_bot_plus
+					- game.clients[sorted[TEAM1][i]].resp.stat_human_minus
+					- game.clients[sorted[TEAM1][i]].resp.stat_bot_minus);
+		}
+
+		if (i < total[TEAM2] && stoppedat[TEAM2] == -1) // print next team 2 member...
+		{
+			cl = &game.clients[sorted[TEAM2][i]];
+			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+			if (cl_ent->solid != SOLID_NOT &&
+					cl_ent->deadflag != DEAD_DEAD)
+				totalaliveprinted[TEAM2]++;
+
+			if (game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses == 0)
+				accuracy = 0;
+			else
+				accuracy = 100.0 * game.clients[sorted[TEAM2][i]].resp.accuracy_hits /
+					(game.clients[sorted[TEAM2][i]].resp.accuracy_hits + game.clients[sorted[TEAM2][i]].resp.accuracy_misses);
+
+			//if using stats, replace accuracy with average stats
+			if (stats->value)
+			{
+				total_deaths = game.clients[sorted[TEAM2][i]].pers.stat_human_kills +
+					game.clients[sorted[TEAM2][i]].pers.stat_bot_kills +
+					game.clients[sorted[TEAM2][i]].resp.stat_human_plus	+
+					game.clients[sorted[TEAM2][i]].resp.stat_bot_plus	+
+					game.clients[sorted[TEAM2][i]].pers.stat_human_deaths +
+					game.clients[sorted[TEAM2][i]].pers.stat_bot_deaths +
+					game.clients[sorted[TEAM2][i]].resp.stat_human_minus +
+					game.clients[sorted[TEAM2][i]].resp.stat_bot_minus;
+
+				cl_ent = g_edicts + 1 + sorted[TEAM2][i];
+
+				if (total_deaths != 0 && !cl_ent->ai)
+				{
+					accuracy = 100.0 * (game.clients[sorted[TEAM2][i]].pers.stat_human_kills
+										+ game.clients[sorted[TEAM2][i]].pers.stat_bot_kills
+										+ game.clients[sorted[TEAM2][i]].resp.stat_human_plus
+										+ game.clients[sorted[TEAM2][i]].resp.stat_bot_plus) / total_deaths;
+				}
+				else
+					accuracy = 0;
+			}
+
+			sprintf(string + strlen(string),
+					"xr -154 yb %d string \"%-12.12s%3d%3d\"",
+					-104 + i * 14,
+					va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
+					   game.clients[sorted[TEAM2][i]].pers.netname),
+					(int)accuracy,
+					game.clients[sorted[TEAM2][i]].resp.stat_human_plus
+					+ game.clients[sorted[TEAM2][i]].resp.stat_bot_plus
+					- game.clients[sorted[TEAM2][i]].resp.stat_human_minus
+					- game.clients[sorted[TEAM2][i]].resp.stat_bot_minus);
+		}
+
+		len = strlen(string);
+	}
+
+	if (stoppedat[TEAM1] > -1)
+	{
+		sprintf(string + strlen(string), "xl 2 yb %d string \" and %d more\" ",
+				-40 + (stoppedat[TEAM1] * 8),
+				total[TEAM1] - stoppedat[TEAM1]);
+	}
+	if (stoppedat[TEAM2] > -1)
+	{
+		sprintf(string + strlen(string), "xr -154 yb %d string \" and %d more\" ",
+				-40 + (stoppedat[TEAM2] * 8),
+				total[TEAM2] - stoppedat[TEAM2]);
+	}
+
+	if (strlen(string) > 1300) // for debugging...
+		gi.dprintf("Warning: scoreboard string neared or exceeded max length\nDump:\n%s\n---\n",
+				   string);
+
+	gi.WriteByte(svc_layout);
+	gi.WriteString(string);
+}

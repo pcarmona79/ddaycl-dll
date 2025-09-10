@@ -153,6 +153,10 @@ cvar_t *fullbright;
 
 cvar_t	*campaign;
 
+// kernel: to split the scoreboard
+cvar_t *observer_bscore;
+
+
 // kernel: q2pro directories
 cvar_t *sys_basedir;
 cvar_t *sys_homedir;

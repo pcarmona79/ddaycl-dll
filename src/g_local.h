@@ -791,6 +791,9 @@ extern cvar_t  *fullbright;
 
 extern cvar_t  *campaign;
 
+// kernel: to split the scoreboard
+extern cvar_t *observer_bscore;
+
 // kernel: this will come from q2pro
 extern cvar_t *sys_basedir;
 extern cvar_t *sys_homedir;
