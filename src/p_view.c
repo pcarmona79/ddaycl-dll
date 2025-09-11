@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
+#include "q_shared.h"
 
 //bcass start - flamer sound thing
 #define FLAMER1		0
@@ -1248,12 +1249,14 @@ void P_ShowID (edict_t *ent)
 		ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (ent->client->chasetarget - g_edicts - 1);
 		ent->client->ps.stats[STAT_IDENT_ICON] = 0;
 //		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
-	
+
 		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health: %i", ent->client->chasetarget->health));
 		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 
-//		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), "Chase Mode.");
-//		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
+		// kernel: show score for streaming
+		gi.configstring(CS_OBJECTIVES + (ent - g_edicts - 1), va("Score: %i",
+																 ent->client->chasetarget->client->resp.score));
+		ent->client->ps.stats[STAT_IDENT] = CS_OBJECTIVES + (ent - g_edicts - 1);
 
 	}
 	else if (tr.ent->client)
