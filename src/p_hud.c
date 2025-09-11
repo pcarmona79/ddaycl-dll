@@ -578,7 +578,7 @@ void TeamStats (edict_t *ent)
 
 //faf:  scoreboard from aq2
 // Maximum number of lines of scores to put under each team's header.
-#define MAX_SCORES_PER_TEAM 15
+#define MAX_SCORES_PER_TEAM 13
 #define MAX_SCORES_PER_SPLITTED_TEAM 10
 #define TEAM_TOP        (MAX_TEAMS+1)
 #define TEAM1    0
@@ -594,7 +594,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 	char        string2[1400], string[1400];//, damage[50];
 	gclient_t   *cl;
 	edict_t     *cl_ent;
-	int         maxsize = 1000, i, j, k;
+	int         maxsize = 1300, i, j, k;
 
 	int team, len;//, deadview;
 	int sorted[TEAM_TOP][MAX_CLIENTS];
@@ -738,18 +738,21 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 
 		// ok, if we're approaching the "maxsize", then let's stop printing members of each
 		// teams (if there's more than one member left to print in that team...)
-		if (len > (maxsize - 100))
+		if (len > maxsize)
 		{
 			if (i < (total[TEAM1] - 1))
 				stoppedat[TEAM1] = i;
 			if (i < (total[TEAM2] - 1))
 				stoppedat[TEAM2] = i;
+			break;
 		}
-		if (i == MAX_SCORES_PER_TEAM - 1) {
+		if (i == MAX_SCORES_PER_TEAM)
+		{
 			if (total[TEAM1] > MAX_SCORES_PER_TEAM)
 				stoppedat[TEAM1] = i;
 			if (total[TEAM2] > MAX_SCORES_PER_TEAM)
 				stoppedat[TEAM2] = i;
+			break;
 		}
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
@@ -860,12 +863,14 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 	{*/
 	if (stoppedat[TEAM1] > -1)
 	{
-		sprintf(string + strlen(string), "xv 0 yv 200 /*160*/ string \" and %d more\" ",
+		sprintf(string + strlen(string), "xv 0 yv %d string \" and %d more\" ",
+				87 + stoppedat[TEAM1] * 14,
 				total[TEAM1] - stoppedat[TEAM1]);
 	}
 	if (stoppedat[TEAM2] > -1)
 	{
-		sprintf(string + strlen(string), "xv 160 yv 200 /*160*/ string \" and %d more\" ",
+		sprintf(string + strlen(string), "xv 160 yv %d string \" and %d more\" ",
+				87 + stoppedat[TEAM2] * 14,
 				total[TEAM2] - stoppedat[TEAM2]);
 	}
 	//}
@@ -890,7 +895,7 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 	char        string2[1400], string[1400];//, damage[50];
 	gclient_t   *cl;
 	edict_t     *cl_ent;
-	int         maxsize = 1000, i, j, k;
+	int         maxsize = 1300, i, j, k;
 
 	int team, len;//, deadview;
 	int sorted[TEAM_TOP][MAX_CLIENTS];
@@ -1017,19 +1022,21 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 
 		// ok, if we're approaching the "maxsize", then let's stop printing members of each
 		// teams (if there's more than one member left to print in that team...)
-		if (len > (maxsize - 100))
+		if (len > maxsize)
 		{
 			if (i < (total[TEAM1] - 1))
 				stoppedat[TEAM1] = i;
 			if (i < (total[TEAM2] - 1))
 				stoppedat[TEAM2] = i;
+			break;
 		}
-		if (i == MAX_SCORES_PER_TEAM-1)
+		if (i == MAX_SCORES_PER_TEAM)
 		{
 			if (total[TEAM1] > MAX_SCORES_PER_TEAM)
 				stoppedat[TEAM1] = i;
 			if (total[TEAM2] > MAX_SCORES_PER_TEAM)
 				stoppedat[TEAM2] = i;
+			break;
 		}
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
@@ -1139,12 +1146,14 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 
 	if (stoppedat[TEAM1] > -1)
 	{
-		sprintf(string + strlen(string), "xv 0 yv 200 string \" and %d more\" ",
+		sprintf(string + strlen(string), "xv 0 yv %d string \" and %d more\" ",
+				87 + stoppedat[TEAM1] * 14,
 				total[TEAM1] - stoppedat[TEAM1]);
 	}
 	if (stoppedat[TEAM2] > -1)
 	{
-		sprintf(string + strlen(string), "xv 160 yv 200 string \" and %d more\" ",
+		sprintf(string + strlen(string), "xv 160 yv %d string \" and %d more\" ",
+				87 + stoppedat[TEAM1] * 14,
 				total[TEAM2] - stoppedat[TEAM2]);
 	}
 
@@ -1803,7 +1812,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 	char string2[1400], string[1400];
 	gclient_t *cl;
 	edict_t *cl_ent;
-	int maxsize = 1000, i, j, k;
+	int maxsize = 1300, i, j, k;
 
 	int team, len;
 	int sorted[TEAM_TOP][MAX_CLIENTS];
@@ -1971,19 +1980,21 @@ void SplittedScoreboardMessage (edict_t *ent)
 
 		// ok, if we're approaching the "maxsize", then let's stop printing members of each
 		// teams (if there's more than one member left to print in that team...)
-		if (len > (maxsize - 100))
+		if (len > maxsize)
 		{
 			if (i < (total[TEAM1] - 1))
 				stoppedat[TEAM1] = i;
 			if (i < (total[TEAM2] - 1))
 				stoppedat[TEAM2] = i;
+			break;
 		}
-		if (i == MAX_SCORES_PER_SPLITTED_TEAM - 1)
+		if (i == MAX_SCORES_PER_SPLITTED_TEAM)
 		{
 			if (total[TEAM1] > MAX_SCORES_PER_SPLITTED_TEAM)
 				stoppedat[TEAM1] = i;
 			if (total[TEAM2] > MAX_SCORES_PER_SPLITTED_TEAM)
 				stoppedat[TEAM2] = i;
+			break;
 		}
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
@@ -2008,7 +2019,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 			{
 				sprintf(string + strlen(string),
 						"xl 2 yb %d string \"%s%-12.12s%3d\"",
-						-104 + i * 10,
+						-104 + i * 9,
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM1][i]].pers.netname),
@@ -2018,7 +2029,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 			{
 				sprintf(string + strlen(string),
 						"xl 2 yb %d string \"%3d%-12.12s\"",
-						-104 + i * 10,
+						-104 + i * 9,
 						(game.clients[sorted[TEAM1][i]].ping > 999) ? 999 : game.clients[sorted[TEAM1][i]].ping,
 						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM1][i]].pers.netname));
@@ -2047,7 +2058,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 			{
 				sprintf(string + strlen(string),
 						"xr -154 yb %d string \"%s%-12.12s%3d\"",
-						-104 + i * 10,
+						-104 + i * 9,
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM2][i]].pers.netname),
@@ -2057,7 +2068,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 			{
 				sprintf(string + strlen(string),
 						"xr -154 yb %d string \"%3d%-12.12s\"",
-						-104 + i * 10,
+						-104 + i * 9,
 						(game.clients[sorted[TEAM2][i]].ping > 999) ? 999 : game.clients[sorted[TEAM2][i]].ping,
 						va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						    game.clients[sorted[TEAM2][i]].pers.netname));
@@ -2070,13 +2081,13 @@ void SplittedScoreboardMessage (edict_t *ent)
 	if (stoppedat[TEAM1] > -1)
 	{
 		sprintf(string + strlen(string), "xl 2 yb %d string \" and %d more\" ",
-				-104 + (stoppedat[TEAM1] * 10),
+				-104 + (stoppedat[TEAM1] * 9),
 				total[TEAM1] - stoppedat[TEAM1]);
 	}
 	if (stoppedat[TEAM2] > -1)
 	{
 		sprintf(string + strlen(string), "xr -154 yb %d string \" and %d more\" ",
-				-104 + (stoppedat[TEAM2] * 10),
+				-104 + (stoppedat[TEAM2] * 9),
 				total[TEAM2] - stoppedat[TEAM2]);
 	}
 
@@ -2099,7 +2110,7 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 	char string2[1400], string[1400];
 	gclient_t *cl;
 	edict_t *cl_ent;
-	int maxsize = 1000, i, j, k;
+	int maxsize = 1300, i, j, k;
 
 	int team, len;
 	int sorted[TEAM_TOP][MAX_CLIENTS];
@@ -2257,19 +2268,21 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 
 		// ok, if we're approaching the "maxsize", then let's stop printing members of each
 		// teams (if there's more than one member left to print in that team...)
-		if (len > (maxsize - 100))
+		if (len > maxsize)
 		{
 			if (i < (total[TEAM1] - 1))
 				stoppedat[TEAM1] = i;
 			if (i < (total[TEAM2] - 1))
 				stoppedat[TEAM2] = i;
+			break;
 		}
-		if (i == MAX_SCORES_PER_SPLITTED_TEAM - 1)
+		if (i == MAX_SCORES_PER_SPLITTED_TEAM)
 		{
 			if (total[TEAM1] > MAX_SCORES_PER_SPLITTED_TEAM)
 				stoppedat[TEAM1] = i;
 			if (total[TEAM2] > MAX_SCORES_PER_SPLITTED_TEAM)
 				stoppedat[TEAM2] = i;
+			break;
 		}
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
@@ -2313,7 +2326,7 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 
 			sprintf(string + strlen(string),
 					"xl 2 yb %d string \"%-12.12s%3d%3d\"",
-					-104 + i * 14,
+					-104 + i * 9,
 					va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 					   game.clients[sorted[TEAM1][i]].pers.netname),
 					(int)accuracy,
@@ -2364,7 +2377,7 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 
 			sprintf(string + strlen(string),
 					"xr -154 yb %d string \"%-12.12s%3d%3d\"",
-					-104 + i * 14,
+					-104 + i * 9,
 					va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 					   game.clients[sorted[TEAM2][i]].pers.netname),
 					(int)accuracy,
@@ -2380,13 +2393,13 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 	if (stoppedat[TEAM1] > -1)
 	{
 		sprintf(string + strlen(string), "xl 2 yb %d string \" and %d more\" ",
-				-40 + (stoppedat[TEAM1] * 8),
+				-104 + (stoppedat[TEAM1] * 9),
 				total[TEAM1] - stoppedat[TEAM1]);
 	}
 	if (stoppedat[TEAM2] > -1)
 	{
 		sprintf(string + strlen(string), "xr -154 yb %d string \" and %d more\" ",
-				-40 + (stoppedat[TEAM2] * 8),
+				-104 + (stoppedat[TEAM2] * 9),
 				total[TEAM2] - stoppedat[TEAM2]);
 	}
 
