@@ -2047,8 +2047,8 @@ newanim:
 //		(ent->s.frame < FRAME_standtokneel04  ||
 //			ent->s.frame > FRAME_kneeltoprone06))
 	//faf
-/* kernel: this is slowing down the playability
-	else if (extra_anims->value == 1 &&
+	/* kernel: this is slowing down the playability */
+	else if (extra_anims->value == 1 && chile->value == 0 &&
 		((ent->oldstance && ent->stanceflags != ent->oldstance)||
 		(ent->s.frame > FRAME_standtokneel03 && ent->s.frame < FRAME_kneeltoprone06)
 		&& !ent->deadflag))
@@ -2102,7 +2102,6 @@ newanim:
 					if (ent->s.frame == FRAME_standtokneel03)
 						ent->oldstance = STANCE_STAND;
 				}
-*/
 /*				if (ent->stanceflags > ent->oldstance)
 				{
 					ent->s.frame++;
@@ -2113,7 +2112,7 @@ newanim:
 					ent->s.frame--;
 					client->anim_priority = ANIM_CHANGESTANCE;
 				}*/
-/*				if (ent->s.frame < ent->client->anim_end)
+				if (ent->s.frame < ent->client->anim_end)
 				{
 					ent->s.frame++;
 					client->anim_priority = ANIM_CHANGESTANCE;
@@ -2128,7 +2127,6 @@ newanim:
 			}
 
 	}			
-*/
 
 
 
@@ -2421,26 +2419,28 @@ void ClientEndServerFrame (edict_t *ent)
 
 			}
 			else
+			{
 				ent->stance_view = 4;
 				ent->viewheight = 4;
-
+			}
 		}	
 	}
 
 
 //safe_bprintf (PRINT_HIGH, "1 %i ent->viewheight  %i stance\n", ent->viewheight, ent->stance_view);
 
-	/* kernel: this slow down the animation when extra_anims is enabled
-	//faf:  slow down view when changing stances
-	if (ent->stance_view > ent->viewheight + 10)
-		ent->viewheight+=10;
-	else if (ent->stance_view < ent->viewheight - 10)
-		ent->viewheight-= 10;
+	/* kernel: this slow down the animation when extra_anims is enabled */
+	if (extra_anims->value == 1 && chile->value == 0)
+	{
+		//faf:  slow down view when changing stances
+		if (ent->stance_view > ent->viewheight + 10)
+			ent->viewheight+=10;
+		else if (ent->stance_view < ent->viewheight - 10)
+			ent->viewheight-= 10;
+		else
+			ent->viewheight = ent->stance_view;
+	}
 	else
-		ent->viewheight = ent->stance_view;
-
-	if (extra_anims->value != 1)
-	*/
 		ent->viewheight = ent->stance_view;
 
 
