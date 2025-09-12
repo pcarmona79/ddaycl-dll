@@ -432,13 +432,10 @@ void Weapon_K43_Fire (edict_t *ent)
 	fire_gun(ent, start, forward, damage, kick, 0, 0, mod, false);
 
 	// rezmoth - cosmetic recoil
-	if (level.framenum % 3 == 0)
-	{
-		if (ent->client->aim)
-			ent->client->kick_angles[0] -= 1.5;
-		else
-			ent->client->kick_angles[0] = -3;
-	}
+	if (ent->client->aim)
+		ent->client->kick_angles[0] -= 1.25;
+	else
+		ent->client->kick_angles[0] -= 2.5;
 
 	/*faf:  this  doesnt really add anything to the game
 	if(ent->client->mags[mag_index].lmg_rnd==1)

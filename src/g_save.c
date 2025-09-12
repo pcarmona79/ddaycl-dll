@@ -378,6 +378,9 @@ void InitGame (void)
 	nohud = gi.cvar ("nohud", "0", 0);
 	serverimg = gi.cvar ("serverimg", "", CVAR_SERVERINFO | CVAR_LATCH);
 
+	// kernel: to split the scoreboard
+	observer_bscore = gi.cvar("observer_bscore", "0", 0);
+
 	// kernel: q2pro directories
 	sys_basedir = gi.cvar("basedir", ".", CVAR_NOSET);
 	sys_homedir = gi.cvar("homedir", ".", CVAR_NOSET);

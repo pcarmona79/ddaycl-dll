@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "m_player.h"
+#include "q_shared.h"
 
 //bcass start - flamer sound thing
 #define FLAMER1		0
@@ -1248,12 +1249,14 @@ void P_ShowID (edict_t *ent)
 		ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (ent->client->chasetarget - g_edicts - 1);
 		ent->client->ps.stats[STAT_IDENT_ICON] = 0;
 //		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
-	
+
 		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health: %i", ent->client->chasetarget->health));
 		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 
-//		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), "Chase Mode.");
-//		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
+		// kernel: show score for streaming
+		gi.configstring(CS_OBJECTIVES + (ent - g_edicts - 1), va("Score: %i",
+																 ent->client->chasetarget->client->resp.score));
+		ent->client->ps.stats[STAT_IDENT] = CS_OBJECTIVES + (ent - g_edicts - 1);
 
 	}
 	else if (tr.ent->client)
@@ -2044,6 +2047,7 @@ newanim:
 //		(ent->s.frame < FRAME_standtokneel04  ||
 //			ent->s.frame > FRAME_kneeltoprone06))
 	//faf
+/* kernel: this is slowing down the playability
 	else if (extra_anims->value == 1 &&
 		((ent->oldstance && ent->stanceflags != ent->oldstance)||
 		(ent->s.frame > FRAME_standtokneel03 && ent->s.frame < FRAME_kneeltoprone06)
@@ -2098,6 +2102,7 @@ newanim:
 					if (ent->s.frame == FRAME_standtokneel03)
 						ent->oldstance = STANCE_STAND;
 				}
+*/
 /*				if (ent->stanceflags > ent->oldstance)
 				{
 					ent->s.frame++;
@@ -2108,7 +2113,7 @@ newanim:
 					ent->s.frame--;
 					client->anim_priority = ANIM_CHANGESTANCE;
 				}*/
-				if (ent->s.frame < ent->client->anim_end)
+/*				if (ent->s.frame < ent->client->anim_end)
 				{
 					ent->s.frame++;
 					client->anim_priority = ANIM_CHANGESTANCE;
@@ -2123,7 +2128,7 @@ newanim:
 			}
 
 	}			
-
+*/
 
 
 
@@ -2328,6 +2333,8 @@ qboolean Cmd_Scope_f(edict_t *ent);
 void Cmd_MOTD(edict_t *ent);
 void A_ScoreboardMessage (edict_t *ent);
 void A_ScoreboardMessage2 (edict_t *ent);
+void SplittedScoreboardMessage (edict_t *ent);
+void SplittedScoreboardMessage2 (edict_t *ent);
 void change_stance(edict_t *self, int stance);
 void ClientEndServerFrame (edict_t *ent)
 {
@@ -2423,6 +2430,7 @@ void ClientEndServerFrame (edict_t *ent)
 
 //safe_bprintf (PRINT_HIGH, "1 %i ent->viewheight  %i stance\n", ent->viewheight, ent->stance_view);
 
+	/* kernel: this slow down the animation when extra_anims is enabled
 	//faf:  slow down view when changing stances
 	if (ent->stance_view > ent->viewheight + 10)
 		ent->viewheight+=10;
@@ -2432,6 +2440,7 @@ void ClientEndServerFrame (edict_t *ent)
 		ent->viewheight = ent->stance_view;
 
 	if (extra_anims->value != 1)
+	*/
 		ent->viewheight = ent->stance_view;
 
 
@@ -2733,11 +2742,22 @@ void ClientEndServerFrame (edict_t *ent)
 			if (ent->client->menu)
 				PMenu_Update(ent);
 			else
-				if (ent->client->layout_type == SHOW_PSCORES)
-					A_ScoreboardMessage2(ent);
+			{
+				if (!ent->flyingnun)
+				{
+					if (ent->client->layout_type == SHOW_PSCORES)
+						A_ScoreboardMessage2(ent);
+					else
+						A_ScoreboardMessage(ent);
+				}
 				else
-					A_ScoreboardMessage(ent);
-
+				{
+					if (ent->client->layout_type == SHOW_PSCORES)
+						SplittedScoreboardMessage2(ent);
+					else
+						SplittedScoreboardMessage(ent);
+				}
+			}
 			gi.unicast (ent, false);
 		}
 		if ((ent->client->layout_type == SHOW_OBJECTIVES_TEMP || ent->client->layout_type == SHOW_OBJECTIVES) && !(level.framenum & 40) )

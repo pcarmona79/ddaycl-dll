@@ -2600,11 +2600,12 @@ void Weapon_Rifle_Fire (edict_t *ent)
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	fire_gun(ent, start, forward, damage, kick, 0, 0, mod, false);
+
 	// rezmoth - cosmetic recoil
-//	if (ent->client->aim)
-//		ent->client->kick_angles[0] -= 2.5;
-//	else
-//		ent->client->kick_angles[0] -= 5;
+	if (ent->client->aim)
+		ent->client->kick_angles[0] -= 1.25;
+	else
+		ent->client->kick_angles[0] -= 2.5;
 
 	ent->client->last_fire_time = level.time;//faf
 

@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.046" // ddaychile
+#define DEVVERSION	"5.047" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -790,6 +790,9 @@ extern cvar_t  *knifefest;
 extern cvar_t  *fullbright;
 
 extern cvar_t  *campaign;
+
+// kernel: to split the scoreboard
+extern cvar_t *observer_bscore;
 
 // kernel: this will come from q2pro
 extern cvar_t *sys_basedir;
