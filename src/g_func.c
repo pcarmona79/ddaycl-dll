@@ -2226,14 +2226,24 @@ void Touch_Spawn_Protect (edict_t *ent, edict_t *other, cplane_t *plane, csurfac
 		if (other->owner->client->resp.team_on && other->owner->client->resp.team_on->index !=
 			ent->obj_owner)
 		{
-			if (other->owner->client->gunwarntime && other->owner->client->gunwarntime > level.time - 1)			
-			{}else{
-//				other->owner->client->gunwarntime = level.time;
-//				safe_centerprintf(other->owner, "You are firing into a spawn area!\nDamage will be lowered!\n");
+			if (!(other->owner->client->gunwarntime && other->owner->client->gunwarntime > level.time - 1))
+			{
+				other->owner->client->gunwarntime = level.time;
+				safe_centerprintf(other->owner, "Watch out! You are firing into a spawn area!\n");
 			}
-			other->dmg = 120;
-			other->radius_dmg = 80;
-			other->dmg_radius = 600;
+			if (chile->value != 0)
+			{
+				// kernel: no damage allowed in spawn areas
+				other->dmg = 0;
+				other->radius_dmg = 0;
+				other->dmg_radius = 0;
+			}
+			else
+			{
+				other->dmg = 120;
+				other->radius_dmg = 80;
+				other->dmg_radius = 600;
+			}
 		}
 	}
 
