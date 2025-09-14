@@ -312,7 +312,7 @@ spawn_t sp_usm[MAX_TEAM_ITEMS];
 SMos_t USM_MOS_List[NUM_CLASSES];
 void USM_UserPrecache(void);
 
-int InitTeam (char *team, int i) // Faltaba definir como int a InitTeam. El compilador lo hace por defecto pero tira un warning feo >:( - ZeRo
+void InitTeam (char *team, int i)
 {
 	int j;
 
@@ -417,8 +417,6 @@ int InitTeam (char *team, int i) // Faltaba definir como int a InitTeam. El comp
 
 	if (team_list[0] && team_list[1])
 		SetItemNames ();
-
-
 }
 
 
