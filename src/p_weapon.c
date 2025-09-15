@@ -487,7 +487,7 @@ void ChangeWeapon (edict_t *ent)
 		//ent->client->ammo_index = ITEM_INDEX(FindItem(ent->client->pers.weapon->ammo));
 		// kernel: this will force to search in team's items first
 		gitem_t* item = FindItemInTeam(ent->client->pers.weapon->ammo,
-				ent->client->resp.team_on->teamid);
+				ent->client->pers.weapon->dllname);
 
 		if (item)
 			ent->client->ammo_index = ITEM_INDEX(item);
