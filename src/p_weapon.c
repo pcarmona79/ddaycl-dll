@@ -2366,7 +2366,7 @@ void Weapon_Morphine_Use(edict_t *ent)
 void Weapon_Morphine(edict_t *ent)
 {
 	static int		pause_frames[] = {0};//{19,32,0};
-	static int		fire_frames[2];
+	static int		fire_frames[3];
 
 	fire_frames[0] = (ent->client->aim)?53:4;
 	fire_frames[1] = (ent->client->aim)?53:5;
@@ -2582,7 +2582,7 @@ void weapon_tnt_prime (edict_t *ent, int team)
 //	int		speed;
 //	int		team;
 	float	radius;
-	
+
 	edict_t	*tnt;
 
 	damage = 1500;
@@ -2618,7 +2618,14 @@ void weapon_tnt_prime (edict_t *ent, int team)
 	else
 		tnt->item = FindItem(va("%s", (team) ? "Potato Masher" : "Mk 2 Grenade" ));
 */	
-	//grenade->touch = Shrapnel_Touch;
+
+	if (ent->client->pers.weapon && ent->client->pers.weapon->position == LOC_TNT)
+		tnt->item = ent->client->pers.weapon;
+	else {
+		tnt->item = FindItemInTeam("TNT", ent->client->resp.team_on->teamid);
+	}
+
+	//grenade->touch = Shrapnel_Touch;	
 
 	tnt->spawnflags = 1;
 
@@ -2652,12 +2659,22 @@ void Weapon_TNT (edict_t *ent)
 		return;
 	}
 
-	if (ent->client->weaponstate == WEAPON_RAISE || 
-		ent->client->weaponstate == WEAPON_LOWER )	{
+	if (ent->client->weaponstate == WEAPON_LOWER) {
 		ent->client->weaponstate =  WEAPON_READY;
 		ent->client->ps.gunframe = (ent->client->tnt) ? 10 : 18;
 	}
 
+	if (ent->client->tnt &&
+		ent->client->weaponstate == WEAPON_RAISE) {
+		ent->client->ps.gunframe = 13;
+		
+		if ((ent->client->latched_buttons|ent->client->buttons) & BUTTON_ATTACK) {
+			// throwing a live tnt
+			ent->client->latched_buttons &= ~BUTTON_ATTACK;
+			ent->client->weaponstate = WEAPON_FIRING;
+			ent->client->ps.gunframe = 12;
+		}
+	}
 
 	if (ent->client->weaponstate == WEAPON_ACTIVATING)
 	{
@@ -2705,7 +2722,9 @@ void Weapon_TNT (edict_t *ent)
 		}
 
 		if (ent->client->tnt) { // No "idle" frames if it's active
-			ent->client->ps.gunframe = 10;
+			// show frame before throwing when it is a live tnt
+			ent->client->ps.gunframe = 13;
+			ent->client->weaponstate = WEAPON_RAISE;
 		}
 		else
 		{

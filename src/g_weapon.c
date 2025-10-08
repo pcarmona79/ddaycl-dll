@@ -3901,11 +3901,11 @@ void TNT_Explode (edict_t *ent)
 }
 
 
-static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
+void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-//	int	index;
+	int	index;
 //	trace_t		trace;
-	
+
     if (surf && (surf->flags & SURF_SKY))
 	{
 		G_FreeEdict (ent);
@@ -3913,33 +3913,35 @@ static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t
 	}
 
 //    if (!other->takedamage || !other->client)
-//faf    if ( (!other->takedamage || !other->client) && (other != ent) ) //GaP prevent stupid sound
-//faf	{
+    if ( (!other->takedamage || !other->client) && (other != ent) ) //GaP prevent stupid sound
+	{
 
 		// stop thudding sound when projectile is stuck in TNT
-/*faf		if (other->item && 
+		if (other->item && 
 			(other->item->position != LOC_KNIFE		&&
 	 		 other->item->position != LOC_HELMET	&&
-			 other->item->position != LOC_GRENADES)	) */
-		
-	if (!other->client && other !=ent)
-	{
-		gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/tnt/wall.wav"), 1, ATTN_NORM, 0); //grenlb1b.wav
+			 other->item->position != LOC_GRENADES)	) 
+			gi.sound (ent, CHAN_VOICE, gi.soundindex ("weapons/tnt/wall.wav"), 1, ATTN_NORM, 0); //grenlb1b.wav
+
 		VectorClear (ent->velocity) ;
 		VectorClear (ent->avelocity) ;
-		ent->movetype = MOVETYPE_NONE;
-       
-		ent->touch = NULL;//faf
+		//ent->movetype = MOVETYPE_NONE; // kernel: now you can pick it up o_O
+		return;
 	}
-	return;
-//faf	}
-/*  What a mess...  TNT pickup for RC1
+/*  What a mess...  TNT pickup for RC1 */
 //else pick it up
 
 	if (!other->client ||
-		(invuln_medic->value == 1 || other->client->resp.mos == MEDIC) ||
-		(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner ))	
-		return;	
+		other->client->tnt || // they already have a tnt
+		(invuln_medic->value == 1 || other->client->resp.mos == MEDIC)) //||
+		//(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner ))
+		return;
+	
+	//faf:  trying to fix a crash that happens every so often.
+	if (!other->client->pers.inventory)
+		return;
+	if (!ent->item)
+		return;
 
 	index= ITEM_INDEX(ent->item);
 
@@ -3947,22 +3949,26 @@ static void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t
 	// something about picking up live TNT?
 	other->client->pers.inventory[index]++;
 	other->client->newweapon = ent->item;
-	other->client->grenade_time=ent->nextthink;		
+	//other->client->grenade_time=ent->nextthink;
+	other->client->tnt = ent; // set their caught tnt
+	other->client->aim = false;
+
 	ChangeWeapon(other);
 
-	safe_cprintf(other, PRINT_HIGH, "You have live TNT!\n");
+	safe_cprintf(other, PRINT_HIGH, "You have a live TNT!\n");
 	
 //	other->client->pers.lastweapon = other->client->pers.weapon;
 //	other->client->pers.weapon = other->client->newweapon;
 //	other->client->newweapon = NULL;
 	
-	G_FreeEdict(ent);
-	other->armed_grenade=true;
+	//ent->s.modelindex = 0; // set model to null
+	//G_FreeEdict(ent);
+	//other->armed_grenade=true;
 	//other->client->weaponstate = WEAPON_FIRING;
-	other->client->ps.gunframe = 6;
+	//other->client->ps.gunframe = 13;
     //ent->enemy = other;
     //Shrapnel_Explode (ent);
-*/
+
 
 //	ent->enemy = other;
 //	TNT_Explode (ent);
