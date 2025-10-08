@@ -696,7 +696,7 @@ void Drop_Shot (edict_t *ent, gitem_t *item)
 //bcass end
 
 
-//not using this
+//kernel: now using this hehe
 void Drop_Flamed (edict_t *ent)
 {
 	int		index;
@@ -1030,7 +1030,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			//targ->enemy=attacker;
 
 //bcass start - random dropping weapon
-			srand(rand());
+			//srand(rand());
 			randnum=rand()%100;
 
 			// wheaty: Don't let drop shot affect Morphine/Flamethrower/Fists/Binocs
@@ -1086,7 +1086,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			{
 				if(targ->client->pers.inventory[ITEM_INDEX(FindItem("Helmet"))]) //if they got helmet
 				{
-					srand(rand());
+					//srand(rand());
 					randnum=rand()%100;
 					if(randnum > HELMET_SAVE)
 					{

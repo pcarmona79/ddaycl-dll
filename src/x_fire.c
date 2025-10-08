@@ -562,9 +562,9 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
                 return;
         }
 		
-		//not using this
-       // if(victim->client)
-		//Drop_Flamed(victim);
+		//kernel: now using this hehe
+		if(victim->client)
+			Drop_Flamed(victim);
 
 /* Entity will burn for a period of time. */
 	victim->burnout = level.time + BURN_TIME;
