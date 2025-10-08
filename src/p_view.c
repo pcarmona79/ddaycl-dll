@@ -2743,7 +2743,8 @@ void ClientEndServerFrame (edict_t *ent)
 				PMenu_Update(ent);
 			else
 			{
-				if (!ent->flyingnun)
+				// kernel: show original scoreboard when in intermision or not in observer mode
+				if (level.intermissiontime || !ent->flyingnun)
 				{
 					if (ent->client->layout_type == SHOW_PSCORES)
 						A_ScoreboardMessage2(ent);
