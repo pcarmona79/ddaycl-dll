@@ -39,7 +39,8 @@ void check_unscope (edict_t *ent)
 {
 	if (ent->client &&
 		ent->client->pers.weapon &&
-		ent->client->pers.weapon->position != LOC_SNIPER)
+		ent->client->pers.weapon->position != LOC_SNIPER &&
+		ent->client->pers.weapon->classnameb != WEAPON_BINOCULARS)
 		return;
 
 	if (ent->client->ps.fov == SCOPE_FOV)
