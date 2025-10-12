@@ -1030,6 +1030,15 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				die_time-=20;
 			//targ->enemy=attacker;
 
+			
+			if (targ->client)
+				targ->client->damage_div=1.4;
+
+			gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hittorso.wav"), 1, ATTN_NORM, 0);
+			break;
+
+		case CHEST_WOUND:
+
 //bcass start - random dropping weapon
 			//srand(rand());
 			randnum=rand()%100;
@@ -1048,17 +1057,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 					damage*=0;//faf
 				}
 //bcass end
-			
-			if (targ->client)
-				targ->client->damage_div=1.4;
-
-			gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hittorso.wav"), 1, ATTN_NORM, 0);
-			break;
-
-		case CHEST_WOUND:
-
-
-			//else//faf:  dont do damage if dropping weapon
+			else//faf:  dont do damage if dropping weapon
 			{
 				damage*=2;//1.1;
 				if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the chest!\n");
