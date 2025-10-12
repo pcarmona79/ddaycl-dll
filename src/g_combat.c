@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 #include "x_fire.h"//faf
 
 
@@ -1034,15 +1035,14 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			randnum=rand()%100;
 
 			// wheaty: Don't let drop shot affect Morphine/Flamethrower/Fists/Binocs
-			if(!targ->ai &&
-				randnum > DROP_SHOT && IsValidPlayer(targ) && 
+			if(randnum >= DROP_SHOT && IsValidPlayer(targ) &&
 				!(targ->client->newweapon) && //faf:  if dropping/changing weap, dont hit gun
 				targ->client->pers.weapon &&
 				targ->client->pers.weapon->classname &&
-				(targ->client->pers.weapon->classnameb == WEAPON_FISTS && 
-				targ->client->pers.weapon->classnameb == WEAPON_MORPHINE && 
-				targ->client->pers.weapon->classnameb == WEAPON_FLAMETHROWER &&
-				targ->client->pers.weapon->classnameb == WEAPON_BINOCULARS))
+				(targ->client->pers.weapon->classnameb != WEAPON_FISTS && 
+				targ->client->pers.weapon->classnameb != WEAPON_MORPHINE && 
+				targ->client->pers.weapon->classnameb != WEAPON_FLAMETHROWER &&
+				targ->client->pers.weapon->classnameb != WEAPON_BINOCULARS))
 				{
 					Drop_Shot (targ, targ->client->pers.weapon);
 					damage*=0;//faf
