@@ -662,12 +662,14 @@ void turret_base_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int 
 		if (!t->inuse)
 			continue;
 
-		if (!strcmp(self->team, t->team))
+		// kernel: check for nulls before comparing strings
+		if (self->team &&
+			t->team &&
+			!strcmp(self->team, t->team))
 		{
 			t->takedamage = DAMAGE_YES;
 			t->health = 1;
 			T_Damage (t, inflictor, self, vec3_origin, t->s.origin, vec3_origin, 100000, 1, 0, MOD_CRUSH);
-			
 		}
 	}
 
