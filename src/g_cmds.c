@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 #include "stddef.h"
 //#include "p_classes.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
@@ -531,9 +532,11 @@ if (ent->client->pers.weapon->position == LOC_GRENADES)
 }
 
 
+/* kernel: this block forces to exit when weapon is lower
 	if (ent->client->weaponstate == WEAPON_RAISE ||
 ent->client->weaponstate == WEAPON_LOWER)
 return false;
+*/
 
 
 	if (//ent->client->pers.weapon->position == LOC_H_MACHINEGUN || //no hmg or engineer cuz tracers/rockets need more work
@@ -1403,7 +1406,7 @@ void Cmd_Drop_f (edict_t *ent)
 			(ent->client->pers.weapon->classnameb == WEAPON_FISTS) ||		 //Wheaty: Use 'Classname' instead of 'Pickupname'
 			(ent->client->pers.weapon->position == LOC_SPECIAL) ||
 			(ent->client->pers.weapon->position == LOC_FLAME) ||
-			(ent->client->pers.weapon->position == LOC_TNT) ||
+			ent->client->tnt || // kernel: live TNT can not be dropped
 			ent->client->grenade ||	!it->drop) // check and see if it *can* drop in the first place
 			return;
 
@@ -1474,7 +1477,7 @@ void Cmd_Drop_f (edict_t *ent)
 			(ent->client->pers.weapon->classnameb == WEAPON_FISTS) ||		 //Wheaty: Use 'Classname' instead of 'Pickupname'
 			(ent->client->pers.weapon->position == LOC_SPECIAL) ||
 			(ent->client->pers.weapon->position == LOC_FLAME) ||
-			(ent->client->pers.weapon->position == LOC_TNT) ||
+			ent->client->tnt || // kernel: live TNT can not be dropped
 			ent->client->grenade ||	!it->drop) // check and see if it *can* drop in the first place
 			return;
 

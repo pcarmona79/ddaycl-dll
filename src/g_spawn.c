@@ -1313,8 +1313,6 @@ char *dday_statusbar =
 "   if 19 "
 "      yb -190 "
 "      stat_string 19 "
-"      yb -180 "
-"      stat_string 17 "
 "   endif "
 "   if 20 "
 "      xv -50  "

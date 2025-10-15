@@ -29,6 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 #include "x_fire.h"//faf
 
 
@@ -663,12 +664,11 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 #define DROP_SHOT 97
 
 //void Drop_Shot (edict_t *ent, gitem_t *item);
-
 void Use_Weapon (edict_t *ent, gitem_t *inv);
+
 void Drop_Shot (edict_t *ent, gitem_t *item)
 {
 	int		index;
-
 
 	if (!item)
 		return;
@@ -689,7 +689,7 @@ void Drop_Shot (edict_t *ent, gitem_t *item)
 		ent->client->pers.inventory[index] = 0;
 
 		gi.sound (ent, CHAN_BODY, gi.soundindex ("misc/drop.wav"), 1, ATTN_NORM, 0);
-		safe_centerprintf(ent, "YOU DROPPED YOUR WEAPON!!\n");
+		safe_centerprintf(ent, "SHIT! YOU DROPPED YOUR WEAPON!!\n");
 
 		ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
 	}
@@ -697,7 +697,7 @@ void Drop_Shot (edict_t *ent, gitem_t *item)
 //bcass end
 
 
-//not using this
+//kernel: now using this hehe
 void Drop_Flamed (edict_t *ent)
 {
 	int		index;
@@ -1010,7 +1010,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	{		
 		case LEG_WOUND:
 			damage*=1.15;
-			//if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the leg!\n");
+			if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the leg!\n");
 			wound_location |= LEG_WOUND;
 
 			if (targ->client)
@@ -1022,7 +1022,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 		case STOMACH_WOUND:
 			damage*=1.5;//0.75
-			//if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the stomach!\n");
+			if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the stomach!\n");
 			wound_location |=STOMACH_WOUND;
 			if(!targ->die_time)
 				die_time=level.time+5;
@@ -1039,37 +1039,32 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 		case CHEST_WOUND:
 
-			
 //bcass start - random dropping weapon
-			srand(rand());
+			//srand(rand());
 			randnum=rand()%100;
 
 			// wheaty: Don't let drop shot affect Morphine/Flamethrower/Fists/Binocs
-			if(!targ->ai &&
-				randnum > DROP_SHOT && IsValidPlayer(targ) && 
+			if(randnum >= DROP_SHOT && IsValidPlayer(targ) &&
 				!(targ->client->newweapon) && //faf:  if dropping/changing weap, dont hit gun
 				targ->client->pers.weapon &&
-				targ->client->pers.weapon->position != LOC_GRENADES &&//faf
 				targ->client->pers.weapon->classname &&
-				(targ->client->pers.weapon->classnameb == WEAPON_FISTS && 
-				targ->client->pers.weapon->classnameb == WEAPON_MORPHINE && 
-				targ->client->pers.weapon->classnameb == WEAPON_FLAMETHROWER &&
-				targ->client->pers.weapon->classnameb == WEAPON_BINOCULARS))
+				(targ->client->pers.weapon->classnameb != WEAPON_FISTS && 
+				targ->client->pers.weapon->classnameb != WEAPON_MORPHINE && 
+				targ->client->pers.weapon->classnameb != WEAPON_FLAMETHROWER &&
+				targ->client->pers.weapon->classnameb != WEAPON_BINOCULARS))
 				{
 					Drop_Shot (targ, targ->client->pers.weapon);
 					damage*=0;//faf
 				}
 //bcass end
-
 			else//faf:  dont do damage if dropping weapon
 			{
 				damage*=2;//1.1;
-				//if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the chest!\n");
+				if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the chest!\n");
 				wound_location |=CHEST_WOUND;
 
 				if(!targ->die_time)
 					die_time=level.time+5;
-				
 				else
 					die_time-=45;
 
@@ -1080,10 +1075,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				}
 				
 				gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hittorso.wav"), 1, ATTN_NORM, 0);
-
 				
 			}
-
 
 			break;
 
@@ -1092,7 +1085,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			{
 				if(targ->client->pers.inventory[ITEM_INDEX(FindItem("Helmet"))]) //if they got helmet
 				{
-					srand(rand());
+					//srand(rand());
 					randnum=rand()%100;
 					if(randnum > HELMET_SAVE)
 					{

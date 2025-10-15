@@ -1566,7 +1566,7 @@ void G_SetStats (edict_t *ent)
 		//item	= FindItem(ent->client->pers.weapon->ammo);
 		// kernel: this will force to search in team's items first
 		item = FindItemInTeam(ent->client->pers.weapon->ammo,
-				ent->client->resp.team_on->teamid);
+				ent->client->pers.weapon->dllname);
 		
 		if (item) 
 		{

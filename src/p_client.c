@@ -1666,9 +1666,11 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 //			selection++;
 	} while(selection--);
 
-	if (spot->obj_owner == -1)
+	// kernel: sometimes the last block does not found a spot
+	if (spot != NULL && spot->obj_owner == -1)
 		spot->obj_owner = team;
-	else return spot;
+	else
+		return spot;
 
 
 

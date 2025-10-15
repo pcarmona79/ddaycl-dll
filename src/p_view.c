@@ -1250,14 +1250,10 @@ void P_ShowID (edict_t *ent)
 		ent->client->ps.stats[STAT_IDENT_ICON] = 0;
 //		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
 
-		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health: %i", ent->client->chasetarget->health));
-		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
-
 		// kernel: show score for streaming
-		gi.configstring(CS_OBJECTIVES + (ent - g_edicts - 1), va("Score: %i",
-																 ent->client->chasetarget->client->resp.score));
-		ent->client->ps.stats[STAT_IDENT] = CS_OBJECTIVES + (ent - g_edicts - 1);
-
+		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health:%4d  Score: %d", ent->client->chasetarget->health,
+															  ent->client->chasetarget->client->resp.score));
+		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 	}
 	else if (tr.ent->client)
 	{
@@ -2743,7 +2739,8 @@ void ClientEndServerFrame (edict_t *ent)
 				PMenu_Update(ent);
 			else
 			{
-				if (!ent->flyingnun)
+				// kernel: show original scoreboard when in intermision or not in observer mode
+				if (level.intermissiontime || !ent->flyingnun)
 				{
 					if (ent->client->layout_type == SHOW_PSCORES)
 						A_ScoreboardMessage2(ent);
