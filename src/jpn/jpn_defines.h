@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_NAMBU			25
 #define DAMAGE_ARISAKA			100	// rezmoth - was 75
 #define DAMAGE_TYPE_100			25 // wheaty: was 20
-#define DAMAGE_TYPE_99			35
+#define DAMAGE_TYPE_99			45
 //#define DAMAGE_M1CARB			35
 #define DAMAGE_ARISAKAS		100
 #define DAMAGE_MG42			50
