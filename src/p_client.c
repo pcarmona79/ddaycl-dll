@@ -4157,8 +4157,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			if (ent->wound_location & CHEST_WOUND)
 				temp_damage = 4;
 			else
-				// rezmoth - changed to 0 to prevent leg wound dmg
-				temp_damage = 0;
+			{
+				if (chile->value)
+					temp_damage = 4; // kernel: bleeding leg wound
+				else
+					// rezmoth - changed to 0 to prevent leg wound dmg
+					temp_damage = 0;
+			}
 
 			T_Damage (ent, ent->enemy, ent->enemy, ent->maxs, ent->s.origin, NULL,temp_damage, 0,  DAMAGE_NO_PROTECTION,
 				MOD_WOUND);
