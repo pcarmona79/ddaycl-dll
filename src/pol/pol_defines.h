@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_SVT			45	
 //#define DAMAGE_STEN			25 
 #define DAMAGE_MORS			25 
-#define DAMAGE_RKM			35
+#define DAMAGE_RKM			45
 #define DAMAGE_MG34			50
 #define DAMAGE_PIAT_HIT	1000 
 #define DAMAGE_PIAT_RAD	500

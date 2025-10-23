@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define DAMAGE_Webley		25
 #define DAMAGE_Enfield		100	// Wheaty: Was 50 (One shot kills) // Nick 4/12/2002 back -> 100
 #define DAMAGE_Sten		25 // wheaty: was 20
-#define DAMAGE_Bren		35
+#define DAMAGE_Bren		45
 #define DAMAGE_Vickers		50 // faf was 50
 #define DAMAGE_PIAT_HIT	1000 
 #define DAMAGE_PIAT_RAD	500

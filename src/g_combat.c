@@ -662,6 +662,7 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 #define	BLEND_TIME 2		// How long the player is affected by damage.. (seconds)
 //bcass start - 3% chance of being shot/function to do it
 #define DROP_SHOT 97
+#define BLEEDING_LEG_WOUND 35 // kernel: 65% chance of a bleeding leg wound
 
 //void Drop_Shot (edict_t *ent, gitem_t *item);
 void Use_Weapon (edict_t *ent, gitem_t *inv);
@@ -1009,9 +1010,25 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	switch(result)
 	{		
 		case LEG_WOUND:
-			damage*=1.15;
+			randnum = rand() % 100;
 			if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the leg!\n");
 			wound_location |= LEG_WOUND;
+
+			// kernel: decrease damage to allow a bleeding leg wound
+			if (chile->value &&
+				randnum >= BLEEDING_LEG_WOUND &&
+				damage >= 100) // kernel: this will match only bolting rifles
+			{
+				damage *= 0.85;
+
+				// kernel: leg wound should bleed to death
+				if (!targ->die_time)
+					die_time = level.time + 5;
+				else
+					die_time -= 45;
+			}
+			else
+				damage *= 1.15;
 
 			if (targ->client)
 				targ->client->damage_div=1.7;

@@ -48,7 +48,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // rezmoth - was 33 before new locational damage
 #define DAMAGE_M1			45	// Wheaty: Was 50 (One shot kills)
 #define DAMAGE_THOMPSON		25 // wheaty: was 20
-#define DAMAGE_BAR			35
+#define DAMAGE_BAR			45
 #define DAMAGE_BHMG			50
 #define DAMAGE_BAZOOKA_HIT	1000 // bridges default to 2000 with cast's maps =)
 #define DAMAGE_BAZOOKA_RAD	500
