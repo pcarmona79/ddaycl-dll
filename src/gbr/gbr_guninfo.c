@@ -132,7 +132,7 @@ GunInfo_t gbrguninfo[MAX_TEAM_GUNS]=
 		0
 	},
 	{//Lee Enfield Sniper 
-		{4},{62,71,86,91}, 26,91, 53,53,
+		{4},{71,77,83,91}, 26,91, 53,53,
 
 			"gbr/303s/unload.wav",
 				{28},
