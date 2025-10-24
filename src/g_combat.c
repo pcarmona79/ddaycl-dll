@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // g_combat.c
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "g_cmds.h"
 #include "q_shared.h"
@@ -519,9 +520,12 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 			//gi.dprintf("stomach\n");
 			return STOMACH_WOUND;
 //faf		} else if (point[2] < min_z + 28) {
-		} else if (point[2] < min_z + 22) {
+		} else if (point[2] > min_z + 11 && point[2] < min_z + 22) {
 			//gi.dprintf("leg\n");
 			return LEG_WOUND;
+		} else if (point[2] < min_z + 11) {
+			//gi.dprintf("feet\n");
+			return FEET_WOUND;
 		}
 		break;
 	case STANCE_DUCK:
@@ -539,9 +543,12 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 			//gi.dprintf("stomache\n");
 			return STOMACH_WOUND;
 //faf		} else if (point[2] < min_z + 18) {
-		} else if (point[2] < min_z + 12) {
+		} else if (point[2] > min_z + 6 && point[2] < min_z + 12) {
 			//gi.dprintf("leg\n");
 			return LEG_WOUND;
+		} else if (point[2] < min_z + 6) {
+			//gi.dprintf("feet\n");
+			return FEET_WOUND;
 		}
 		break;
 	case STANCE_CRAWL:
@@ -662,7 +669,7 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 #define	BLEND_TIME 2		// How long the player is affected by damage.. (seconds)
 //bcass start - 3% chance of being shot/function to do it
 #define DROP_SHOT 97
-#define BLEEDING_LEG_WOUND 35 // kernel: 65% chance of a bleeding leg wound
+#define BLEEDING_FEET_WOUND 30 // kernel: 70% chance of a bleeding feet wound
 
 //void Drop_Shot (edict_t *ent, gitem_t *item);
 void Use_Weapon (edict_t *ent, gitem_t *inv);
@@ -860,7 +867,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 
 	wound_location = die_time = 0;
-	height = abs(targ->mins[2]) + targ->maxs[2];
+	height = fabs(targ->mins[2]) + targ->maxs[2];
 
    	if (targ->client &&((mod == MOD_PISTOL) || 
 						(mod == MOD_SHOTGUN) || 
@@ -1007,21 +1014,21 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if ((mod == MOD_LMG || mod == MOD_SHOTGUN2 || mod == MOD_SUBMG) && result == HEAD_WOUND && targ->health > 30 ) // ZeRo - Se agrega condicion de hp maximo para que si sea headshot.
 			result = CHEST_WOUND;
 			
-	switch(result)
-	{		
-		case LEG_WOUND:
+	switch (result)
+	{
+		case FEET_WOUND:
 			randnum = rand() % 100;
-			if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the leg!\n");
-			wound_location |= LEG_WOUND;
+			if (targ->client) safe_cprintf(targ, PRINT_HIGH, "You've been hit in the feet!\n");
+			wound_location |= FEET_WOUND;
 
 			// kernel: decrease damage to allow a bleeding leg wound
 			if (chile->value &&
-				randnum >= BLEEDING_LEG_WOUND &&
+				randnum >= BLEEDING_FEET_WOUND &&
 				damage >= 100) // kernel: this will match only bolting rifles
 			{
 				damage *= 0.85;
 
-				// kernel: leg wound should bleed to death
+				// kernel: feet wound should bleed to death
 				if (!targ->die_time)
 					die_time = level.time + 5;
 				else
@@ -1029,6 +1036,17 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			}
 			else
 				damage *= 1.15;
+
+			if (targ->client)
+				targ->client->damage_div=1.7;
+
+			gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hitleg.wav"), 1, ATTN_NORM, 0);
+			break;
+
+		case LEG_WOUND:
+			damage *= 1.15;
+			if(targ->client) safe_cprintf(targ,PRINT_HIGH,"You've been hit in the leg!\n");
+			wound_location |= LEG_WOUND;
 
 			if (targ->client)
 				targ->client->damage_div=1.7;

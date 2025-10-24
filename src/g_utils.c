@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // g_utils.c -- misc utility functions for game module
 
+#include "g_defines.h"
 #include "g_local.h"
 
 void change_stance(edict_t *self, int stance);
@@ -716,7 +717,7 @@ qboolean WeighPlayer(edict_t *ent)
 			ent->client->speedmod *= 0.45;		
 	}	
 
-	if( (ent->wound_location & LEG_WOUND) /*&& (!ent->arty_time)*/ )
+	if (ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 		ent->client->speedmod *= 0.75;
 	
 	if(ent->waterlevel)
