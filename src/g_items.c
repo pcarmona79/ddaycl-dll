@@ -925,17 +925,12 @@ static void drop_make_touchable (edict_t *ent)
 	ent->touch = Touch_Item;
 	if (deathmatch->value)
 	{
-		if (strcmp(ent->classname, "briefcase"))//if it's briefcase, dont remove it.  //faf: ctb code
-		{
-			ent->nextthink = level.time + 29;
-			ent->think = G_FreeEdict;
-		}
-		else
-		{
-			ent->nextthink = level.time + 60;
-			ent->think = briefcase_warn;
-		}
+		ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
 
+		if (strcmp(ent->classname, "briefcase"))//if it's briefcase, dont remove it.  //faf: ctb code
+			ent->think = G_FreeEdict;
+		else
+			ent->think = briefcase_warn;
 	}
 }
 

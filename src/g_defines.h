@@ -45,6 +45,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define R_ARM_WOUND			32
 #define NEAR_MISS			64 //Wheaty: Near Miss/Bullet Whiz
 #define TANK_HIT			128 //faf
+#define FEET_WOUND			256 //kernel
 
 
 //Wheaty: Relative direction strike came from

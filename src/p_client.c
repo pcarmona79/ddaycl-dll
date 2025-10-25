@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
 #include "m_player.h"
@@ -1667,11 +1668,13 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 	} while(selection--);
 
 	// kernel: sometimes the last block does not found a spot
-	if (spot != NULL && spot->obj_owner == -1)
-		spot->obj_owner = team;
-	else
-		return spot;
-
+	if (spot != NULL)
+	{
+		if (spot->obj_owner == -1)
+			spot->obj_owner = team;
+		else
+			return spot;
+	}
 
 
 //this team just took a -1 spawn point, make sure other team has a spawn point or give it them here
@@ -1716,7 +1719,7 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 
 
 
-	return spot;
+	return spotb;
 }
 
 
@@ -3634,7 +3637,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 //		}
 
 	//faf: reenabling this (old limp system)
-		if (ent->wound_location == LEG_WOUND
+		// kernel: adding new feet wound
+		if ((ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 			&& ent->client->movement
 			&& ent->stanceflags == STANCE_STAND)
 		{
@@ -4150,20 +4154,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	// Check to see if its time to die from a wound...		
 		if ( (ent->die_time) && (level.time > ent->die_time))//faf
 		{
-			int temp_damage;
+			int temp_damage = 0;
 
+			if (ent->wound_location & FEET_WOUND && chile->value)
+				temp_damage = 2; // kernel: bleeding feet wound
 			if (ent->wound_location & STOMACH_WOUND)
-				temp_damage = 2;
+				temp_damage += 2;
 			if (ent->wound_location & CHEST_WOUND)
-				temp_damage = 4;
-			else
-			{
-				if (chile->value)
-					temp_damage = 4; // kernel: bleeding leg wound
-				else
-					// rezmoth - changed to 0 to prevent leg wound dmg
-					temp_damage = 0;
-			}
+				temp_damage += 4;
+			if (ent->wound_location & LEG_WOUND && chile->value)
+				temp_damage += 2; // kernel: bleeding leg wound
 
 			T_Damage (ent, ent->enemy, ent->enemy, ent->maxs, ent->s.origin, NULL,temp_damage, 0,  DAMAGE_NO_PROTECTION,
 				MOD_WOUND);

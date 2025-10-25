@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "m_player.h"
 #include "q_shared.h"
@@ -1745,7 +1746,7 @@ void G_SetClientEvent (edict_t *ent)
 
 		}
 	}
-	else if (ent->wound_location == LEG_WOUND)
+	else if (ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 	{
 		if (level.framenum % 8 < 3)
 			ent->client->footstep_framenum = level.framenum + 2;
@@ -2196,7 +2197,7 @@ newanim:
 					else
 						ent->s.frame = FRAME_walkaim04;
 					
-					if (ent->wound_location == LEG_WOUND)
+					if (ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 						client->anim_end = FRAME_walkaim04;
 					else
 						client->anim_end = FRAME_walkaim06;
@@ -2212,7 +2213,7 @@ newanim:
 					client->anim_end = FRAME_run6;
 
 					//faf:  for limping:
-					if (ent->wound_location == LEG_WOUND)
+					if (ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 						client->anim_end = FRAME_run4;
 					else
 						client->anim_end = FRAME_run6;
@@ -2225,7 +2226,7 @@ newanim:
 			if (extra_anims->value != 1)
 			{
 				ent->s.frame = FRAME_run1;
-				if (ent->wound_location == LEG_WOUND)
+				if (ent->wound_location & LEG_WOUND || ent->wound_location & FEET_WOUND)
 				{
 					client->anim_end = FRAME_run4;
 				}
