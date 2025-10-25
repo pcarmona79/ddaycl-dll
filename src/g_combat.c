@@ -797,7 +797,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if (attacker && targ &&
 		targ->client && attacker->client &&
 		targ != attacker &&
-		!OnSameTeam (targ, attacker) &&
 		mod != MOD_EXPLOSIVE)
 		targ->client->last_wound_inflictor = attacker;
 
