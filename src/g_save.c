@@ -358,7 +358,7 @@ void InitGame (void)
 
 	chile = gi.cvar ("chile", "1", CVAR_LATCH);
 
-	knifefest = gi.cvar ("knifefest", "1", 0);
+	knifefest = gi.cvar ("knifefest", "0", 0);
 	
 	fullbright = gi.cvar ("fullbright", "0", 0);
 
