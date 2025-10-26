@@ -4162,11 +4162,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				temp_damage += 2;
 			if (ent->wound_location & CHEST_WOUND)
 				temp_damage += 4;
-			if (ent->wound_location & LEG_WOUND && chile->value)
-				temp_damage += 2; // kernel: bleeding leg wound
+			if (ent->wound_location & LEG_WOUND)
+				temp_damage += 0; // kernel: no bleeding leg wound
 
-			T_Damage (ent, ent->enemy, ent->enemy, ent->maxs, ent->s.origin, NULL,temp_damage, 0,  DAMAGE_NO_PROTECTION,
-				MOD_WOUND);
+			// kernel: attacker should be the last wound inflictor
+			T_Damage(ent, ent->enemy, ent->client->last_wound_inflictor, ent->maxs, ent->s.origin, NULL,
+					 temp_damage, 0, DAMAGE_NO_PROTECTION, MOD_WOUND);
 
 			// rezmoth - made bleed interval random
 			//ent->die_time = level.time + (crandom() + 1) * 2;
