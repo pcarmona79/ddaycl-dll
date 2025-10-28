@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
 
 void P_ProjectSource (gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result);
 void NoAmmoWeaponChange (edict_t *ent);
@@ -1463,6 +1464,7 @@ void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *
 
 	if (!other->client || 
 		other->client->grenade || // they already have a grenade
+		other->burnout > level.time || // kernel: burning player can not pickup
 		(invuln_medic->value == 1 && other->client->resp.mos == MEDIC) ) //||
 		//(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner &&
 		//(ent->owner != other))
@@ -1470,8 +1472,6 @@ void Shrapnel_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *
 
 
 	//faf:  trying to fix a crash that happens every so often.
-	if (!other->client->pers.inventory)
-		return;
 	if (!ent->item)
 		return;
 
@@ -3926,7 +3926,6 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 
 		VectorClear (ent->velocity) ;
 		VectorClear (ent->avelocity) ;
-		//ent->movetype = MOVETYPE_NONE; // kernel: now you can pick it up o_O
 		return;
 	}
 /*  What a mess...  TNT pickup for RC1 */
@@ -3934,13 +3933,12 @@ void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 
 	if (!other->client ||
 		other->client->tnt || // they already have a tnt
+		other->burnout > level.time || // kernel: burning player can not pickup
 		(invuln_medic->value == 1 || other->client->resp.mos == MEDIC)) //||
 		//(teamgren->value == 1 && other->client->resp.team_on->index == ent->obj_owner ))
 		return;
 	
 	//faf:  trying to fix a crash that happens every so often.
-	if (!other->client->pers.inventory)
-		return;
 	if (!ent->item)
 		return;
 
