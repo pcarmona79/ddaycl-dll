@@ -1,0 +1,266 @@
+Versión 5.052
+-------------
+
+- Se corrige que no se mostrara el obituario de un bot al morir por una
+  herida.
+
+- Se restablece el comportamiento normal que la herida en la pierna no
+  debe causar desangramiento.
+
+- La variable "knifefest" debe estar deshabilitada por defecto.
+
+
+Versión 5.051
+-------------
+
+- Se añade la nueva detección de la zona FEET_WOUND en Damage_Loc() de
+  g_combat.c, que se convierte en la mitad inferior de la zona
+  LEG_WOUND. Esto permite una mayor precisión en la ubicación de las
+  heridas al buscar heridas sangrantes en los pies tras un disparo de
+  rifle.
+
+- La función SelectRandomDDaySpawnPoint() de p_client.c no debe devolver
+  NULL antes de intentar encontrar otras ubicaciones.
+
+- Se otorga más tiempo (60 segundos) a los objetos caídos para que
+  permanezcan en el mapa en drop_make_touchable() de g_items.c.
+
+
+Versión 5.050
+-------------
+
+- Se corrigen los fotogramas de la acción de cerrojo de los rifles de
+  francotirador británicos, rusos y japoneses.
+
+- Aumenta el daño a 45 en las ametralladoras ligeras que usan munición
+  de rifle.
+
+- Añade un 65% de probabilidad de sufrir una herida sangrante en la
+  pierna tras un disparo de rifle. Esta opción está disponible cuando la
+  variable de control "chile" está activada.
+
+
+Versión 5.049
+-------------
+
+- Permite recoger y soltar TNT.
+
+- Habilita el uso de la función Drop_Flamed() de g_combat.c para soltar
+  el arma cuando el jugador se quema.
+
+- Se restablece el bloque de corrección de la caída de armas en
+  T_Damage() que comprueba si hay disparos que botan el arma en
+  T_Damage() de g_combat.c. También se restablecen los textos de
+  advertencia cuando el jugador recibe impactos.
+
+- Se añade comprobación de binoculares en la función check_unscope() de
+  g_weapon.c y se modifica el bloque de Cmd_Scope_f() de g_cmds.c, que
+  salía prematuramente de la función cuando el arma estaba abajo o
+  levantada para que solo se aplique al usar un rifle de francotirador.
+  Esto debería corregir el error de la vista con mira que quedaba pegada
+  al cambiar demasiado rápido los binoculares.
+
+- El recuento de puntos para la transmisión en el ID de usuario se
+  mostrará en la misma línea. Esto corrige el error que mostraba un cero
+  en la vista del médico.
+
+- Se corrige ClientEndServerFrame() de p_view.c para que solo muestre el
+  marcador original durante el intermedio o cuando no esté en modo
+  observador.
+
+- Se corrigen algunas llamadas a FindItemInTeam() para usar la
+  estructura pers.weapon en lugar de resp.team_on al obtener el nombre
+  de la DLL del equipo.
+
+- Se corrige el error de puntero nulo en SelectRandomDDaySpawnPoint() de
+  p_client.c.
+
+- Corrige SIGSEGV recibido en función turret_base_die() de g_turret.c.
+
+
+Versión 5.048
+-------------
+
+- No se permite el daño en las zonas de aparición de cohetes ni ataques
+  aéreos cuando la variable de control "chile" está habilitada.
+
+- Las animaciones de postura ahora se excluyen cuando la cvar "chile"
+  está habilitada.
+
+- Se corrige la sangría incorrecta de sentencia "else" en el código de
+  bloque relacionado con STANCE_DUCK en ClientEndServerFrame() de
+  p_view.c.
+
+- La función InitItems() de g_ents.c debe devolver void.
+
+
+Versión 5.047
+-------------
+
+- Se añaden SplittedScoreboardMessage() y SplittedScoreboardMessage2() a
+  p_hud.c para mostrar un marcador más adecuado para la transmisión en
+  vivo. El encabezado que contiene la puntuación general se puede
+  colocar en la parte inferior de la pantalla usando la variable
+  "observer_bscore" establecida en 1. Por defecto, esta opción está
+  deshabilitada.
+
+- Se añade la puntuación al ID del jugador en modo de persecución para
+  una mejor experiencia de transmisión.
+
+- Se comenta el código que ralentizaba la vista del jugador al cambiar
+  de postura con la cvar "extra_anims" habilitada.
+
+- Se añade un leve culatazo visual a los rifles.
+
+
+Versión 5.046
+-------------
+
+- Se corrige la función door_blocked() de g_func.c para evitar la
+  invocación de door_go_up() cuando no hay activador.
+
+- Se modifica BOT_SpawnBot() de bot_spawn.c para limpiar los datos del
+  cliente antes de generar el bot (bloque adaptado de
+  PutClientInServer).
+
+- Se borran los recuentos para la siguiente votación del mapa al final
+  de Count_Votes() de p_client.c.
+
+- Se elimina la variable global num_clients y se reemplaza por una
+  llamada a HumanPlayerCount() en p_client.c.
+
+- Se corrige el error al eliminar votos de mapa: la matriz "mapvotes"
+  debe borrarse en SpawnEntities2() de g_spawn.c después de cargar un
+  nuevo mapa.
+
+- Se traslada la definición de los índices de equipo a g_ents.c para
+  inicializarlos.
+
+- En turret_breach_die() y turret_base_die() de g_turret.c, agrega una
+  verificación de entidad liberada antes de intentar trabajar en otras
+  entidades de la torreta actual.
+
+
+Versión 5.045
+-------------
+
+- Se corrigen los errores SVCmd_ListPlayers_f() y SVCmd_KillPlayer_f()
+  de g_svcmds.c para usar el ID Q2 (como el que se muestra en el comando
+  "status") al listar y buscar clientes para eliminar.
+
+- Se añade Svcmd_Timeleft_f() para implementar el nuevo comando de
+  servidor "sv timeleft", que mostrará el tiempo restante si hay una
+  cuenta regresiva en curso.
+
+- Se añaden DDay_LoadTextFile() y DDay_LoadMOTD() a g_maps.c para cargar
+  motd.txt en un búfer local y leer desde este en cada llamada a
+  Cmd_MOTD(). Este cambio evita que se abra el archivo cada vez que un
+  cliente se conecta o ejecuta un comando "motd".
+
+- Se traslada allied_sandbags y axis_sandbags a la estructura
+  level_locals_t, de modo que el recuento de sandbags se restablece al
+  cambiar el mapa.
+
+
+Versión 5.044
+-------------
+
+- Se corrige desbordamiento de búfer al mostrar la imagen del objetivo
+  en mapas con nombres grandes, en G_SetStats() de p_hud.c.
+
+- Se añade la variable "force_limits" para limitar las clases con las
+  variables limit_, lo que anula la configuración del mapa.
+  - force_limits: Habilita los límites de clase.
+  - limit_infantry, limit_officer, limit_lgunner, limit_hgunner,
+  limit_sniper, limit_engineer, limit_medic, limit_special,
+  limit_flamer: Máximo de jugadores permitidos para aparecer. Si el
+  valor es 0, la clase se deshabilitará.
+
+- El límite de frags se comprueba mediante el arreglo "teams" en
+  CheckDMRules() de g_main.c. También comprueba si el valor de fraglimit
+  ha cambiado para actualizar las propiedades "need_kills" en el arreglo
+  "team_list".
+
+- Corrige la función fire_rocket() de g_weapon.c y devuelve a los
+  valores del código fuente 4.x para las funciones Weapon_Rocket_Fire(),
+  Weapon_PIAT_Fire() y Weapon_Panzerfaust_Fire().
+
+
+Versión 5.043
+-------------
+
+- Se reemplaza el uso de FindItem() por FindItemInTeam(), que busca
+  usando el id del equipo cuando el objeto buscado es un arma o su
+  munición.
+
+- Se corrige la función InsertItem() de u_entmgr.c, que presentaba
+  errores y se reemplaza por una versión que comprueba si el elemento ya
+  existe en la lista de objetos antes de añadirlo al final.
+
+- Se corrigen varios fallos al reaparecer bots al cambiar de mapa con el
+  comando "gamemap".
+
+- Se corrige FindNextPickup() de g_cmds.c para que ciclen exclusivamente
+  sobre las armas recogidas.
+
+- Se comprueba si la variable "chile" está habilitada para que no se
+  levanten las SMG ni las LMG al disparar.
+
+
+
+Versión 5.042
+-------------
+
+- Se corrigen los fotogramas de los rifles de francotirador británicos y
+  rusos.
+
+- Se elimina el desplazamiento aleatorio al apuntar tras recargar en
+  varios rifles.
+
+
+Versión 5.041-1
+---------------
+
+- Corrección de bug en el chat cuando no se ha elegido un team.
+
+- Se eliminaron algunos archivos subidos al directorio Release, que solo
+  debería aparecer al compilar en Windows.
+
+- Versión de la DLL se manejará en g_local.h.
+
+- Corrección de identación en algunas funciones para mejorar su
+  legibilidad.
+
+
+Versión 5.041
+-------------
+
+- Se han actualizado las rutas de salida y los directorios intermedios
+  en el archivo dday.vcxproj para las configuraciones de Debug y
+  Release, cambiando de rutas relativas a absolutas en C:\Quake2\dday\.
+  También se modificó la ruta del archivo de salida gamex86.dll para que
+  apunte a la misma ubicación.
+
+- Se ajustó la ruta del comando del depurador local en dday.vcxproj.user
+  y se actualizó la versión del DLL en g_save.c de "Dday 5.040 Chile" a
+  "Dday 5.041 Chile".
+
+- En g_cmd.c se borró una prevención de uso de crosshair que solo hace
+  que las armas disparen chueco.
+
+- Se mejoró el tiempo de espera para el disparo del francotirador en
+  g_weapon.c, reduciendo el tiempo de 2 segundos a 1.78 segundos, mismo
+  tiempo del bolt. Además, se realizaron cambios en las definiciones de
+  dispersión de armas en g_local.h y se ajustaron los snipers de todos
+  los team a una sola velocidad de recarga.
+
+- Se incluyó la biblioteca de cadenas en q_shared.c y se añadieron
+  nuevas líneas en el archivo gamex86.exp para la configuración de
+  exportación del DLL.
+
+
+Versión 5.040
+-------------
+
+- Mejoras para compilar sin warnings en Linux y permitir su uso en
+  contendores con Q2PRO.
