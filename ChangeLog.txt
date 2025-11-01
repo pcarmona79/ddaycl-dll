@@ -1,3 +1,16 @@
+Versión 5.053
+-------------
+
+- Se corrigió la función Drop_Flamed() de g_combat.c para permitir
+  soltar la TNT. Las funciones weapon_grenade_fire() y weapon_tnt_fire()
+  soltarán el ítem si el jugador está en llamas y las funciones de
+  "contacto" impedirán que los jugadores en llamas recojan la TNT o
+  granadas activas.
+
+- Corrige la función TossClientWeapon() de p_client.c para permitir
+  soltar la TNT cuando el jugador haya muerto.
+
+
 Versión 5.052
 -------------
 
