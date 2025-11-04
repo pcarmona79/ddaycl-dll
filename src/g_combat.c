@@ -705,6 +705,9 @@ void Drop_Shot (edict_t *ent, gitem_t *item)
 //bcass end
 
 
+void weapon_tnt_fire(edict_t *ent);
+void weapon_grenade_fire(edict_t *ent);
+
 //kernel: now using this hehe
 void Drop_Flamed (edict_t *ent)
 {
@@ -713,30 +716,31 @@ void Drop_Flamed (edict_t *ent)
 
 	item = 	ent->client->pers.weapon;
 
-
-	if (item == FindItem("Fists") ||
-		item == FindItem("Flamethrower") ||
-		item == FindItem("TNT") ||
-		item == FindItem("Binoculars") ||
-		item == FindItem("Morphine"))
+	if (item->classnameb == WEAPON_FISTS ||
+		item->classnameb == WEAPON_FLAMETHROWER ||
+		item->classnameb == WEAPON_BINOCULARS ||
+		item->classnameb == WEAPON_MORPHINE)
 		return;
 
-
-	if (item && ent->client->pers.weapon->position== LOC_GRENADES)
+	if (ent->client->grenade)
+	{
+		weapon_grenade_fire(ent);
+	}
+	else if (ent->client->tnt)
+	{
+		weapon_tnt_fire(ent);
+	}
+	else if (item && (item->position == LOC_GRENADES || item->position == LOC_TNT))
 	{
 		index = ITEM_INDEX(item);
 
 		if (ent->client->pers.inventory[index])
 		{
 			Drop_Item (ent, item);
-			//ent->client->pers.inventory[index] = 0;
-
-			//ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
 		}
 	}
 	else if (item)
 	{
-
 		index = ITEM_INDEX(item);
 
 		//pbowens: stop firing
@@ -753,8 +757,9 @@ void Drop_Flamed (edict_t *ent)
 			ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
 		}
 	}
-//	ent->client->newweapon = FindItem ("fists");
-	Use_Weapon (ent, FindItem("Fists"));
+
+	ent->client->newweapon = FindItem("Fists");
+	ChangeWeapon(ent);
 }
 
 

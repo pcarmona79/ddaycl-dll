@@ -922,7 +922,6 @@ void TossClientWeapon (edict_t *self)
 	if ( item && 
 		((Q_stricmp (item->pickup_name, "Morphine")   == 0) ||
 		 (Q_stricmp (item->pickup_name, "Fists")      == 0) ||
-		 (Q_stricmp (item->pickup_name, "TNT")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "Sandbags")      == 0) ||
 		 (Q_stricmp (item->pickup_name, "Binoculars") == 0) ))
 		item = NULL;
@@ -1217,7 +1216,6 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		self->client->killer_yaw = self->s.angles[YAW]; //pbowens: always look forward
 		self->client->ps.pmove.pm_type = PM_DEAD;
 		ClientObituary (self, inflictor, attacker);
-		TossClientWeapon (self);
 
 		//gi.sound(self, CHAN_WEAPON, gi.soundindex("misc/null.wav"), 1, ATTN_NORM, 0);
 
@@ -1236,6 +1234,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			weapon_tnt_fire(self);
 		}
 		//bcass end
+
+		TossClientWeapon (self);
 	}
 	
 	// remove powerups
