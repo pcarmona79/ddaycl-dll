@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __GRM_CLASSES_H__
 #define __GRM_CLASSES_H__
 
+#include "../g_local.h"
+
 /*
 typedef struct 
 {
