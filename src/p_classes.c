@@ -51,12 +51,7 @@ void Load_Weapon (edict_t *ent, gitem_t	*item)
 	}
 
 
-	if (!strcmp(item->ammo, "mauser98k_mag") && !strcmp(item->pickup_name, "Mauser 98k"))
-		ent->client->mags[1].rifle_rnd = ammo_item->quantity;
-	else if (!strcmp(item->ammo, "mauser98k_mag") && !strcmp(item->pickup_name, "Mauser 98ks"))
-		ent->client->mags[1].sniper_rnd = ammo_item->quantity;
-
-	else if (!strcmp(item->dllname, team_list[1]->teamid))  //faf:  if its a team 1 weap...(usually grm)
+	if (!strcmp(item->dllname, team_list[1]->teamid))  //faf:  if its a team 1 weap...(usually grm)
 	{
 		if (item->position == LOC_PISTOL)
 			ent->client->mags[1].pistol_rnd = ammo_item->quantity;

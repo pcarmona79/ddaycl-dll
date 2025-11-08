@@ -1234,8 +1234,11 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			weapon_tnt_fire(self);
 		}
 		//bcass end
-
-		TossClientWeapon (self);
+		else
+		{
+			// kernel: if player does not have a live TNT, then toss the weapon
+			TossClientWeapon(self);
+		}
 	}
 	
 	// remove powerups

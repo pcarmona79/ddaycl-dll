@@ -1,3 +1,19 @@
+Versión 5.054
+-------------
+
+- Se eliminan los bloques de código de Load_Weapon() en p_classes.c y
+  Drop_Weapon() en p_weapon.c que buscaban munición específica
+  "mauser98k_mag". Además, Drop_Weapon() ya no sumará las balas de los
+  rifles de infantería y de francotirador. Esto corrige un error que
+  provocaba que el jugador soltara un rifle de infantería con más balas
+  de las que podía cargar.
+
+- Se corrige player_die() en p_client.c para que no llame a
+  TossClientWeapon() si el jugador llevaba TNT activa. Esto corrige un
+  error que ocurría cuando el jugador moría llevando TNT activa y dejaba
+  una sin activar.
+
+
 Versión 5.053
 -------------
 
