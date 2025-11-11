@@ -1,3 +1,10 @@
+Versión 5.055
+-------------
+
+- Una granada o TNT activa no serán botadas en caso de cumplir con la
+  probabilidad para que se bote el arma.
+
+
 Versión 5.054
 -------------
 
