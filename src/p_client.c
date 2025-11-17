@@ -69,8 +69,11 @@ void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para g
 		Tent = &g_edicts[i];
 		if (!Tent->inuse || !Tent->client)
 			continue;
-		safe_cprintf (Tent, PRINT_MEDIUM, "%s \n", streakmsg);
+		safe_cprintf(Tent, PRINT_MEDIUM, "%s\n", streakmsg);
 	}
+
+	if (death_msg->value == 3) //print to server console
+		safe_cprintf(NULL, PRINT_MEDIUM, "%s\n", streakmsg);
 }
 
 void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion principal
