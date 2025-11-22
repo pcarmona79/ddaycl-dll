@@ -3370,7 +3370,7 @@ qboolean Setup_Map_Vote (void)
 	changefirstmap = false;
 	for (i = 0; i < 4; i++)
 	{
-		if (i == 0 && level.nextmap)
+		if (i == 0 && level.nextmap[0])
 		{
 			//if nextmap is same as current map or one played recently, list that last instead of 4th
 			if (!strcmp(level.nextmap, level.mapname))
