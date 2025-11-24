@@ -1,3 +1,20 @@
+Versión 5.056
+-------------
+
+- Se elimina la configuración de las variables "knifefest" y "swords" de
+  SP_worldspawn() de g_spawn.c.
+
+- Modifica AnnounceStreak() de p_client.c para permitir la impresión en
+  la consola del servidor cuando la variable "death_msg" se establece en
+  3.
+
+- Se corrige EndDMLevel() de g_main.c inicializando ent a NULL y
+  moviendo el bloque que crea un nuevo "target_changelevel" al final de
+  la función, antes de llamar a BeginIntermission(). También se corrige
+  Setup_Map_Vote() de p_client.c para comprobar correctamente la cadena
+  level.nextmap.
+
+
 Versión 5.055
 -------------
 
