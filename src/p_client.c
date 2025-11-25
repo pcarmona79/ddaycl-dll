@@ -69,8 +69,11 @@ void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para g
 		Tent = &g_edicts[i];
 		if (!Tent->inuse || !Tent->client)
 			continue;
-		safe_cprintf (Tent, PRINT_MEDIUM, "%s \n", streakmsg);
+		safe_cprintf(Tent, PRINT_MEDIUM, "%s\n", streakmsg);
 	}
+
+	if (death_msg->value == 3) //print to server console
+		safe_cprintf(NULL, PRINT_MEDIUM, "%s\n", streakmsg);
 }
 
 void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion principal
@@ -3367,7 +3370,7 @@ qboolean Setup_Map_Vote (void)
 	changefirstmap = false;
 	for (i = 0; i < 4; i++)
 	{
-		if (i == 0 && level.nextmap)
+		if (i == 0 && level.nextmap[0])
 		{
 			//if nextmap is same as current map or one played recently, list that last instead of 4th
 			if (!strcmp(level.nextmap, level.mapname))

@@ -1519,9 +1519,6 @@ void SP_worldspawn (edict_t *ent)
 	else
 		gi.cvar_set("sv_gravity", st.gravity);
 
-	gi.cvar_set("knifefest", "0");
-	gi.cvar_set("swords", "0");
-
 	if (skill->value < 0)
 		gi.cvar_forceset ("skill", "0");
 	else if (skill->value > 3)

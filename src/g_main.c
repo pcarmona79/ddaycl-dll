@@ -581,7 +581,7 @@ void EndDMLevel (void)
 	int i, axiscount=0,alliedcount=0;
 
 	char *nextmap;
-	edict_t		*ent;
+	edict_t	*ent = NULL;
 	
 	i = 0;
 
@@ -938,14 +938,15 @@ void EndDMLevel (void)
 	else
 	{	// search for a changeleve
 		ent = G_Find (NULL, FOFS(classname), "target_changelevel");
-		if (!ent)
-		{	// the map designer didn't include a changelevel,
-			// so create a fake ent that goes back to the same level
-			ent = G_Spawn ();
-			ent->classname = "target_changelevel";
-			ent->map = level.mapname;
-			safe_bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
-		}
+	}
+
+	if (!ent)
+	{	// the map designer didn't include a changelevel,
+		// so create a fake ent that goes back to the same level
+		ent = G_Spawn ();
+		ent->classname = "target_changelevel";
+		ent->map = level.mapname;
+		safe_bprintf (PRINT_HIGH, "Next map: %s \n", ent->map);
 	}
 
 	BeginIntermission(ent);
