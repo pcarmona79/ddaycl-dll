@@ -4165,7 +4165,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			if (ent->wound_location & FEET_WOUND && chile->value)
 				temp_damage = 2; // kernel: bleeding feet wound
 			if (ent->wound_location & STOMACH_WOUND)
-				temp_damage += 2;
+				// kernel: originally a bug prevented discounting stomach damage, bringing this back by popular opinion
+				temp_damage += 0;
 			if (ent->wound_location & CHEST_WOUND)
 				temp_damage += 4;
 			if (ent->wound_location & LEG_WOUND)
