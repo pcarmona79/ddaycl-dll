@@ -157,6 +157,8 @@ void	Svcmd_Test_f (void)
 
 void Svcmd_Mapinfo_f (void)
 {
+	gi.dprintf("Map: %s\n", level.mapname);
+	gi.dprintf("%s\n", level.level_name);
 	gi.dprintf("%s (%i) ---\n",		team_list[0]->teamname, PlayerCountForTeam(0));//faf team_list[0]->total);
 	gi.dprintf("  Score: %i/%i\n",	team_list[0]->score, team_list[0]->need_points);
 	gi.dprintf("  Kills: %i/%i\n",	team_list[0]->kills, team_list[0]->need_kills);
