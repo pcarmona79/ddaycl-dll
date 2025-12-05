@@ -443,10 +443,10 @@ void SP_info_team_start(edict_t *ent)
 
 
 	team_list[i]=gi.TagMalloc(sizeof(TeamS_t),TAG_LEVEL);
+	memset(team_list[i], 0, sizeof(TeamS_t)); // kernel: clear team_list
+
 	team_list[i]->teamname=gi.TagMalloc(sizeof(ent->message + 2),TAG_LEVEL);
 	//strcpy(team_list[i]->teamname,ent->message);
-
-
 
 
 	if (mashup->value)
