@@ -41,7 +41,7 @@ BASE_CFLAGS=-Dstricmp=strcasecmp
 CFLAGS_RELEASE=$(BASE_CFLAGS) -O3 -ffast-math -funroll-loops -fomit-frame-pointer -fexpensive-optimizations
 
 # Nick - Use 'make build_debug' to use this.
-CFLAGS_DEBUG=$(CFLAGS_RELEASE) -g
+CFLAGS_DEBUG=$(BASE_CFLAGS) -DDEBUG -g
 
 # uncomment for ARM64 cross-compilation
 #ARCH=aarch64
