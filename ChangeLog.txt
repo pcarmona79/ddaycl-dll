@@ -1,3 +1,21 @@
+Versión 5.057
+-------------
+
+- Reduce el daño y aumenta el tiempo de morir cuando el jugador no se
+  mueve. También elimina la comprobación de movimiento antes de calcular
+  el daño.
+
+- Originalmente, un error impedía descontar el daño en el estómago en
+  ClientThink() de p_client.c, pero ahora esta funcionalidad ha sido
+  repuesta por clamor popular para reducir el sangrado durante los
+  juegos.
+
+- En SP_info_team_start(), se borra la estructura TeamS_t tras asignar
+  memoria para team_list. Además se corrige el código que responde a la
+  opción "mashup" mediante una mejor asignación de memoria al copiar
+  cadenas en lugar de sólo cambiar los valores de los punteros.
+
+
 Versión 5.056
 -------------
 
