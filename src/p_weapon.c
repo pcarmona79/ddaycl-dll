@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include "x_fbomb.h"
 #include "x_fire.h"
+#include <string.h>
 /*--------------------------------------------------------*/
 
 //bcass start - medic sound thing
@@ -1953,6 +1954,10 @@ void Binocular_Fire(edict_t *ent)
 //	if ( ent->client->arty_time_restrict <= level.time)//faf && ent->client->arty_num >= (int)arty_max->value )
 //		ent->client->arty_num = 0;
 
+	// kernel: prepare airstrike
+	airstrike = G_Spawn();
+	strncpy(airstrike->arty_teamid, ent->client->resp.team_on->teamid, 64);
+
 	VectorCopy(ent->s.origin, start);
 	start[2] += ent->viewheight;
 	AngleVectors(ent->client->v_angle, forward, NULL, NULL);
@@ -1963,11 +1968,11 @@ void Binocular_Fire(edict_t *ent)
 	if ( tr.surface && !(tr.surface->flags & SURF_SKY) )
 	{ // We hit something but it wasn't sky, so let's see if there is sky above it
 
-		VectorCopy(tr.endpos,ent->client->arty_target); //assign target to Arty
+		VectorCopy(tr.endpos, airstrike->arty_target); //assign target to Arty
 		VectorSet(world_up, 0, 0, 1);
 		VectorMA(start, 8192, world_up, end);
 
-		tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+		tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 		if ( tr.surface && !(tr.surface->flags & SURF_SKY))  // No sky above it either
 		{
@@ -1976,27 +1981,27 @@ void Binocular_Fire(edict_t *ent)
 			
 			//this spot is not under the sky... try moving around a bunch of spots to find a nearby spot that is
 			{
-				ent->client->arty_target[0]+=60;
+				airstrike->arty_target[0]+=60;
 				VectorMA(start, 8192, world_up, end);
-				tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+				tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 			
 				if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 				{
-					ent->client->arty_target[0]-=120;
+					airstrike->arty_target[0]-=120;
 					VectorMA(start, 8192, world_up, end);
-					tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+					tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
   					if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 					{
-						ent->client->arty_target[0]+=60;
-						ent->client->arty_target[1]+=60;
+						airstrike->arty_target[0]+=60;
+						airstrike->arty_target[1]+=60;
 						VectorMA(start, 8192, world_up, end);
-						tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+						tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
   						if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 						{
-							ent->client->arty_target[1]-=120;
+							airstrike->arty_target[1]-=120;
 							VectorMA(start, 8192, world_up, end);
-							tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+							tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 							
 							if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 							{
@@ -2018,7 +2023,7 @@ void Binocular_Fire(edict_t *ent)
 
 
 	// set up for the arty strike
-	VectorCopy(tr.endpos, ent->client->arty_entry);
+	VectorCopy(tr.endpos, airstrike->arty_entry);
 	
 		
 	//randnum = ((rand() % ARTILLARY_WAIT) + 5);  //generate random number for eta
@@ -2047,14 +2052,15 @@ void Binocular_Fire(edict_t *ent)
 //	ent->client->arty_location = 1;//(rand() % 4) + 1;
 	//gi.sound(ent, CHAN_ITEM, gi.soundindex(va("%s/arty/target%i.wav", ent->client->resp.team_on->teamid, 1)), 1, ATTN_NORM, 0);
 
-	gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex(va("%s/arty/target%i.wav", ent->client->resp.team_on->teamid, 1)), 1.0, ATTN_NORM, 0);
+	gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO,
+						gi.soundindex(va("%s/arty/target%i.wav", airstrike->arty_teamid, 1)), 1.0, ATTN_NORM, 0);
 
 
 	//faf:  so we can get rid of the arty stuff in clientthink
 
 
-
-		airstrike = G_Spawn();
+	// kernel: airstrike now has arty_entry property
+	//	airstrike = G_Spawn();
 		gi.linkentity (airstrike);
 
 		VectorCopy(tr.endpos, airstrike->pos2);

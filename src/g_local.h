@@ -1556,8 +1556,8 @@ struct gclient_s
 //faf	qboolean	arty_sound;
 //faf	int			arty_num;
 //faf	int			arty_location;
-	vec3_t		arty_entry;
-	vec3_t		arty_target;
+//	vec3_t		arty_entry;
+//	vec3_t		arty_target;
 //faf	float		arty_time_position;
 //faf	float		arty_time_fire;
 	float		arty_time_restrict;
@@ -1889,6 +1889,11 @@ struct edict_s
 	qboolean		playedsound;  //for dropping guns/ammo
 
 	vec3_t			obj_origin; //for bots to aim at
+
+	// kernel: for airstrikes
+	vec3_t		arty_entry;
+	vec3_t		arty_target;
+	char		arty_teamid[64];
 };
 
 
