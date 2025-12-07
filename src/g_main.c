@@ -173,6 +173,9 @@ cvar_t *limit_medic;
 cvar_t *limit_special;
 cvar_t *limit_flamer;
 
+// kernel: make dday faster again
+cvar_t *fast_arty;
+
 // evil: global variables for countdown
 int countdownActive = 0;
 int countdownValue = 0;

@@ -397,6 +397,9 @@ void InitGame (void)
 	limit_special = gi.cvar("limit_special", "0", 0);
 	limit_flamer = gi.cvar("limit_flamer", "0", 0);
 
+	// kernel: make dday faster again
+	fast_arty = gi.cvar("fast_arty", "0", 0);
+
 	// items
 	InitItems ();
 

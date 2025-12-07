@@ -553,13 +553,16 @@ void Plane_Fire (edict_t *ent)
 	}
 	else
 	{
-		ent->nextthink = level.time +.2;
+		// kernel: fast plane also needs to drop bombs faster
+		if (fast_arty->value)
+			ent->nextthink = level.time + .1;
+		else
+			ent->nextthink = level.time + .2;
 	}
 
 	if (ent->count == 0  && ent->owner->client)
 		safe_cprintf(ent->owner, PRINT_HIGH, "Airstrike confirmed, sir!\n");
 
-	
 	Drop_Bomb(ent);
 	ent->count++;
 }
@@ -571,9 +574,7 @@ void Plane_Fire (edict_t *ent)
 void Plane_Think (edict_t *ent)
 {
 	vec3_t	length;
-	float   distance;
-
-
+	float   distance, drop_distance;
 	edict_t *botwarn;
 	
 
@@ -633,18 +634,22 @@ void Plane_Think (edict_t *ent)
 
 //	safe_bprintf (PRINT_HIGH, "%s \n", vtos(ent->s.angles));
 
-	if (distance < 200)
+	// kernel: fast plane needs to drop bombs earlier
+	if (fast_arty->value)
+		drop_distance = 400;
+	else
+		drop_distance = 200;
+
+	if (distance < drop_distance)
 	{
 		ent->think = Plane_Fire;
-		ent->nextthink = level.time +.1;
 
 		if (IsValidPlayer(ent))
-			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->owner->client->resp.team_on->teamid, 1)), 1, ATTN_NORM, 0);
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->owner->client->resp.team_on->teamid, 1)),
+					 1, ATTN_NORM, 0);
 	}
-	else
-		ent->nextthink = level.time +.1;
 
-
+	ent->nextthink = level.time +.1;
 }
 
 void plane_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )
@@ -812,8 +817,9 @@ void Spawn_Plane(edict_t *ent)
 	VectorCopy (direction, plane->movedir);
 	vectoangles (direction, plane->s.angles);
 
-
-	if (VectorLength(longest) > 4000)
+	if (fast_arty->value)
+		speed = 1000;
+	else if (VectorLength(longest) > 4000)
 		speed = 800;
 	else if (VectorLength(longest) > 2000)
 		speed = 600;
@@ -832,11 +838,8 @@ void Spawn_Plane(edict_t *ent)
 
 
 	plane->leave_limbo_time = level.time;
-plane->s.renderfx   = RF_FULLBRIGHT;
+	plane->s.renderfx   = RF_FULLBRIGHT;
 	gi.linkentity (plane);
-	
-
-
 }
 
 //faf
@@ -867,15 +870,18 @@ void Airstrike_Plane_Launch(edict_t *ent)
 
 	if (!strcmp(ent->owner->client->resp.team_on->teamid, "usa"))
 	{
-		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51f.wav")), 1, ATTN_NONE, 0);
+		if (fast_arty->value)
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51.wav")), 1, ATTN_NONE, 0);
+		else
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51f.wav")), 1, ATTN_NONE, 0);
 	}
 	else if (!strcmp(ent->owner->client->resp.team_on->teamid, "grm"))
 	{
 		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("airstrike/stuka.wav")), 1, ATTN_NONE, 0);
 	}
-
 	else
-		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",  ent->owner->client->resp.team_on->teamid)), 1, ATTN_NONE, 0);    
+		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",  ent->owner->client->resp.team_on->teamid)),
+				 1, ATTN_NONE, 0);
 	
 	
 	Spawn_Plane(ent->owner); //faf
