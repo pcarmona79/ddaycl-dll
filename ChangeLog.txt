@@ -15,6 +15,16 @@ Versión 5.057
   opción "mashup" mediante una mejor asignación de memoria al copiar
   cadenas en lugar de sólo cambiar los valores de los punteros.
 
+- Se añade la nueva cvar "fast_arty" para acelerar el avión al solicitar
+  un ataque aéreo. Esta función está desactivada por defecto.
+
+- Se trasladan las propiedades "arty_entry" y "arty_target" de la
+  estructura gclient_s a la estructura edict_s (tipo edict_t) y se añade
+  "arty_teamid" para almacenar las coordenadas de la artillería y la
+  información del equipo, evitando así la dependencia de la estructura
+  del cliente. Esto permite que los ataques aéreos se realicen incluso
+  si el oficial muere tras la llamada.
+
 
 Versión 5.056
 -------------
