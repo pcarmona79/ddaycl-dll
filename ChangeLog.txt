@@ -25,6 +25,9 @@ Versión 5.057
   del cliente. Esto permite que los ataques aéreos se realicen incluso
   si el oficial muere tras la llamada.
 
+- Cambia la detección de movimiento para utilizar la diferencia entre
+  los orígenes de la entidad, en ClientThink() de p_client.c.
+
 
 Versión 5.056
 -------------
