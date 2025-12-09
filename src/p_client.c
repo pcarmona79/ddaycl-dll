@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 #include "x_fire.h"
 //#include "p_menus.h"
 
@@ -3467,6 +3468,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	trace_t	tr;
 
 	float time;
+	vec3_t diff; // kernel: to check for movement
 
 
 	level.current_entity = ent;
@@ -3692,7 +3694,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			(client->jump_last)  ? "true" : "false",
 			vtos(ent->velocity) );
 */
-		if (ucmd->forwardmove != 0 || ucmd->sidemove != 0 || ucmd->upmove != 0)
+
+		// kernel: verify if ent->s.origin has changed since the last frame
+		VectorSubtract(ent->s.origin, ent->s.old_origin, diff);
+
+		if (diff[PITCH] != 0 || diff[YAW] != 0 || diff[ROLL] != 0)
 			client->movement = true;
 		else
 			client->movement =  false;
