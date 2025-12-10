@@ -1936,11 +1936,11 @@ void Binocular_Fire(edict_t *ent)
 
 	
 
-	if ( ent->client->arty_time_restrict > level.time)//faf && ent->client->arty_num >= (int)arty_max->value)
+	if ( ent->arty_time_restrict > level.time)//faf && ent->client->arty_num >= (int)arty_max->value)
 	{
 		int delay;
 
-		delay = ((int)(ent->client->arty_time_restrict - level.time) +1);
+		delay = ((int)(ent->arty_time_restrict - level.time) +1);
 
 		if (delay == 0)
 			safe_cprintf(ent, PRINT_HIGH, "Can not call airstrike for another 1 second, sir!\n");

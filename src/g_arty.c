@@ -425,7 +425,7 @@ void Think_Arty (edict_t *ent)
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
+	ent->owner->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
 
 }
 
@@ -903,7 +903,7 @@ void Airstrike_Plane_Launch(edict_t *ent)
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->arty_time_restrict = level.time + arty_time->value; 
+	ent->owner->arty_time_restrict = level.time + arty_time->value;
 }
 
 

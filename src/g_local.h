@@ -1560,7 +1560,7 @@ struct gclient_s
 //	vec3_t		arty_target;
 //faf	float		arty_time_position;
 //faf	float		arty_time_fire;
-	float		arty_time_restrict;
+//	float		arty_time_restrict;
 	edict_t     *airstrike;//faf
 
 	float		jump_stamina;
@@ -1898,6 +1898,7 @@ struct edict_s
 	vec3_t		arty_entry;
 	vec3_t		arty_target;
 	char		arty_teamid[64];
+	float		arty_time_restrict;
 };
 
 
