@@ -1259,8 +1259,7 @@ typedef struct
 	int		need_points;	// Needed Points to win level
 
 
-	float	arty_fire_time;	// last time artillary was fired
-	int		arty_fire_count; // how many times the battary has been fired
+	float		arty_time_restrict; // kernel: moved from edict_t
 
 	char    *skin;//faf:  for mapper to set custom skin
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
@@ -1898,7 +1897,6 @@ struct edict_s
 	vec3_t		arty_entry;
 	vec3_t		arty_target;
 	char		arty_teamid[64];
-	float		arty_time_restrict;
 };
 
 
