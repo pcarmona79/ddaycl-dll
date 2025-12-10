@@ -3695,13 +3695,19 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			vtos(ent->velocity) );
 */
 
-		// kernel: verify if ent->s.origin has changed since the last frame
-		VectorSubtract(ent->s.origin, ent->s.old_origin, diff);
+		// kernel: verify if ent->s.origin has changed since the last check
+		if (level.time > client->last_movement_check + 0.1)
+		{
+			VectorSubtract(ent->s.origin, client->last_movement_pos, diff);
 
-		if (diff[PITCH] != 0 || diff[YAW] != 0 || diff[ROLL] != 0)
-			client->movement = true;
-		else
-			client->movement =  false;
+			if (diff[PITCH] != 0 || diff[YAW] != 0 || diff[ROLL] != 0)
+				client->movement = true;
+			else
+				client->movement =  false;
+
+			VectorCopy(ent->s.origin, client->last_movement_pos);
+			client->last_movement_check = level.time;
+		}
 
 		//faf:  for Parts' running anim
 		if (ucmd->sidemove > 0 && ucmd->forwardmove == 0)
@@ -4191,7 +4197,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 			// kernel: if not moving increase die time
 			if (!ent->client->movement)
-				ent->die_time = level.time + 5;
+				ent->die_time = level.time + 6;
 			else
 				ent->die_time = level.time + 2;
 

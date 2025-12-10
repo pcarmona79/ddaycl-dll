@@ -1670,6 +1670,10 @@ struct gclient_s
 	// evil: for topcenter screen messages
 	char topcenter_message[1024];
 	float topcenter_time;
+
+	// kernel: check movement
+	float last_movement_check;
+	vec3_t last_movement_pos;
 };
 
 
