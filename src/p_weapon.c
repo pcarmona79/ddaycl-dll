@@ -2068,6 +2068,9 @@ void Binocular_Fire(edict_t *ent)
 
 		airstrike->owner = ent;
 
+		// kernel: restrict arty now
+		ent->client->resp.team_on->arty_time_restrict = level.time + arty_time->value + arty_delay->value;
+
 		if (airstrikes->value == 1)
 		{
 			airstrike->think = Airstrike_Plane_Launch;

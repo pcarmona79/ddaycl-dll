@@ -425,8 +425,8 @@ void Think_Arty (edict_t *ent)
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
-
+	// kernel: airstrike was already restricted when it was called
+	//ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
 }
 
 void Arty_Sound (edict_t *ent)
@@ -903,7 +903,8 @@ void Airstrike_Plane_Launch(edict_t *ent)
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value;
+	// kernel: airstrike was already restricted when it was called
+	//ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value;
 }
 
 
