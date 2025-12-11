@@ -2055,6 +2055,9 @@ void Binocular_Fire(edict_t *ent)
 	gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO,
 						gi.soundindex(va("%s/arty/target%i.wav", airstrike->arty_teamid, 1)), 1.0, ATTN_NORM, 0);
 
+	// kernel: fast plane approaching
+	if (fast_arty->value)
+		gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("afrowuk/p51_flyby.wav"), 1, ATTN_NONE, 0); // faf/spitfire.wav arty/hit1.wav
 
 	//faf:  so we can get rid of the arty stuff in clientthink
 
