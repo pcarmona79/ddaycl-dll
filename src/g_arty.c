@@ -217,6 +217,12 @@ void Cmd_Arty_f (edict_t *ent)
 	{
 		safe_cprintf(ent, PRINT_HIGH, "Airstrike cancelled sir!\n");
 
+		// kernel: cancel just one arty
+		if (ent->client->resp.team_on->arty_num > 0)
+			ent->client->resp.team_on->arty_num--;
+		else
+			ent->client->resp.team_on->arty_num = 0;
+
 		G_FreeEdict(ent->client->airstrike);
 		ent->client->airstrike = NULL;
 		return;

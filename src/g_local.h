@@ -1260,6 +1260,7 @@ typedef struct
 
 
 	float		arty_time_restrict; // kernel: moved from edict_t
+	int			arty_num;
 
 	char    *skin;//faf:  for mapper to set custom skin
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win

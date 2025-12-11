@@ -1924,19 +1924,18 @@ void Binocular_Fire(edict_t *ent)
 		return;
 
 
-	if (ent->client->airstrike)
+	if (ent->client->airstrike && ent->client->resp.team_on->arty_num >= (int) arty_max->value)
 	{
 		safe_cprintf(ent, PRINT_HIGH, "Airstrike cancelled sir!\n");
 
 		G_FreeEdict(ent->client->airstrike);
 		ent->client->airstrike = NULL;
+		ent->client->resp.team_on->arty_num = 0;
 		return;
 	}
 
-
-	
-
-	if ( ent->client->resp.team_on->arty_time_restrict > level.time)//faf && ent->client->arty_num >= (int)arty_max->value)
+	if (ent->client->resp.team_on->arty_time_restrict > level.time &&
+		ent->client->resp.team_on->arty_num >= (int) arty_max->value)
 	{
 		int delay;
 
@@ -1951,8 +1950,11 @@ void Binocular_Fire(edict_t *ent)
 	}
 
 	// reset the fired counter if past restrict time
-//	if ( ent->client->arty_time_restrict <= level.time)//faf && ent->client->arty_num >= (int)arty_max->value )
-//		ent->client->arty_num = 0;
+	if (ent->client->resp.team_on->arty_time_restrict <= level.time &&
+		ent->client->resp.team_on->arty_num >= (int) arty_max->value)
+	{
+		ent->client->resp.team_on->arty_num = 0;
+	}
 
 	// kernel: prepare airstrike
 	airstrike = G_Spawn();
@@ -2043,10 +2045,8 @@ void Binocular_Fire(edict_t *ent)
 				ent->client->ps.gunframe = 8;
 */
 
-
-
-
-//	ent->client->arty_num++;
+	// kernel: increase arty count
+	ent->client->resp.team_on->arty_num++;
 //	ent->client->arty_time_fire = level.time + arty_delay->value;
 
 //	ent->client->arty_location = 1;//(rand() % 4) + 1;
