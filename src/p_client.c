@@ -3695,8 +3695,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			vtos(ent->velocity) );
 */
 
+		if (ucmd->forwardmove != 0 || ucmd->sidemove != 0 || ucmd->upmove != 0)
+ 			client->movement_keys = true;
+ 		else
+			client->movement_keys =  false;
+
 		// kernel: verify if ent->s.origin has changed since the last check
-		if (level.time > client->last_movement_check + 0.1)
+		if (level.time > client->last_movement_check + 0.05)
 		{
 			VectorSubtract(ent->s.origin, client->last_movement_pos, diff);
 

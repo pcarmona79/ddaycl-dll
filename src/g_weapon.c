@@ -3738,7 +3738,7 @@ void Weapon_Sniper_Fire (edict_t *ent)
 	// rezmoth - changed to new firing code
 	if (ent->client->aim)
 	{
-		if (!ent->ai && ent->client->movement && ent->client->ps.gunframe <=  guninfo->AFO[0] )
+		if (!ent->ai && ent->client->movement_keys && ent->client->ps.gunframe <= guninfo->AFO[0])
 		{
 			safe_cprintf(ent, PRINT_HIGH, "Inaccurate shot!  Hold still when you fire the sniper rifle!\n");
 			fire_gun(ent, start, forward, damage, kick, 250, 250, mod, false);

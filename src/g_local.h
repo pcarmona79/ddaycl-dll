@@ -1537,6 +1537,7 @@ struct gclient_s
 	qboolean	syncspeed;				// for cmd issues
 	qboolean	ident;					// do they see a player id?
 	qboolean	movement;				// is client moving?
+	qboolean	movement_keys;			// is client pressing movement keys?
 
 	float		spawntime;
 	float		cmdtime;				//
