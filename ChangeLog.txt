@@ -10,27 +10,42 @@ Versión 5.057
   repuesta por clamor popular para reducir el sangrado durante los
   juegos.
 
+- Cambia la detección de movimiento para utilizar la diferencia entre
+  los orígenes de la entidad, en ClientThink() de p_client.c. Esta
+  comprobación se realizará cada 0,05 segundos. El movimiento del
+  francotirador al apuntar aún se comprobará utilizando las teclas de
+  movimiento.
+
+- Se añade la nueva cvar "fast_arty" para acelerar el avión al solicitar
+  un ataque aéreo y le agrega sonido ambiente "afrowuk/p51_flyby.wav" al
+  iniciar. Esta función está desactivada por defecto.
+
+- Se trasladan las propiedades "arty_entry" y "arty_target" de la
+  estructura gclient_s a la estructura edict_s (tipo edict_t) y se añade
+  "arty_teamid" para almacenar las coordenadas del ataque aéreo y la
+  información del equipo, evitando así la dependencia de la estructura
+  del cliente. Esto permite que los ataques aéreos se realicen
+  independiente de si el oficial vive o muere tras la llamada. También
+  mueve la propiedad "arty_time_restrict" de la estructura g_client_s
+  hacia TeamS_t para evitar que se borre entre reapariciones y se
+  aplique al equipo y no sólo al jugador.
+
+- Se añade la propiedad "arty_num" a TeamS_t para mantener el recuento
+  de ataques aéreos solicitados y poder limitarlo con la cvar
+  "arty_max".
+
+- Se añade la nueva cvar "arty_confirm" para añadir un retraso antes de
+  enviar la confirmación del ataque aéreo al oficial. Esto permite
+  cancelar el ataque aéreo si el oficial muere mientras espera, para
+  mantener algo del comportamiento anterior a estos cambios.
+
+- Los mensajes importantes sobre ataques aéreos ahora se muestran
+  centrados en la pantalla del jugador.
+
 - En SP_info_team_start(), se borra la estructura TeamS_t tras asignar
   memoria para team_list. Además se corrige el código que responde a la
   opción "mashup" mediante una mejor asignación de memoria al copiar
   cadenas en lugar de sólo cambiar los valores de los punteros.
-
-- Se añade la nueva cvar "fast_arty" para acelerar el avión al solicitar
-  un ataque aéreo. Esta función está desactivada por defecto.
-
-- Se trasladan las propiedades "arty_entry" y "arty_target" de la
-  estructura gclient_s a la estructura edict_s (tipo edict_t) y se añade
-  "arty_teamid" para almacenar las coordenadas de la artillería y la
-  información del equipo, evitando así la dependencia de la estructura
-  del cliente. Esto permite que los ataques aéreos se realicen incluso
-  si el oficial muere tras la llamada. También mueve la propiedad
-  "arty_time_restrict" de la estructura g_client_s hacia TeamS_t para
-  evitar que se borre entre reapariciones y se aplique al equipo y no
-  sólo al jugador.
-
-- Cambia la detección de movimiento para utilizar la diferencia entre
-  los orígenes de la entidad, en ClientThink() de p_client.c. Esta
-  comprobación se realizará cada 0,1 segundos.
 
 - Limpia entidades y estructuras de cliente después de asignarles
   memoria en InitGame() de g_save.c.
