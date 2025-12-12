@@ -42,6 +42,11 @@ Versión 5.057
 - Los mensajes importantes sobre ataques aéreos ahora se muestran
   centrados en la pantalla del jugador.
 
+- Se corrige Weapon_Ppsh41_Fire() de g_weapon.c para que dispare más
+  centrado cuando cvar chile está habilitado y se corrigen los números
+  de los frames de puntería de la Beretta B38/42 y Weapon_B3842_Fire()
+  para reducir la elevación del arma.
+
 - En SP_info_team_start(), se borra la estructura TeamS_t tras asignar
   memoria para team_list. Además se corrige el código que responde a la
   opción "mashup" mediante una mejor asignación de memoria al copiar
