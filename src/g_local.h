@@ -734,6 +734,7 @@ extern	cvar_t	*invuln_spawn;
 extern	cvar_t	*arty_delay;
 extern	cvar_t	*arty_time;
 extern	cvar_t  *arty_max;
+extern	cvar_t  *arty_confirm;
 
 //bcass start - easter_egg cvar, AGAIN
 extern	cvar_t	*easter_egg;

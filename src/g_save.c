@@ -283,6 +283,7 @@ void InitGame (void)
 	arty_delay			=	gi.cvar("arty_delay",			"10", 0);
 	arty_time			=	gi.cvar("arty_time",			"60", 0);
 	arty_max			=	gi.cvar("arty_max",				"1",  0);
+	arty_confirm		=	gi.cvar("arty_confirm",			"3",  0);
 
 //bcass start - easter_egg cvar, AGAIN
 	easter_egg			=	gi.cvar("easter_egg",			"1",  0);

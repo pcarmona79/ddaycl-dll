@@ -1902,8 +1902,7 @@ void Weapon_Knife (edict_t *ent)
 
 
 
-void Arty_Sound (edict_t *ent);
-void Airstrike_Plane_Launch(edict_t *ent);
+void Airstrike_Confirm(edict_t *ent);
 
 //was void Cmd_Arty_f (edict_t *ent)
 void Binocular_Fire(edict_t *ent)
@@ -2030,11 +2029,6 @@ void Binocular_Fire(edict_t *ent)
 		
 	//randnum = ((rand() % ARTILLARY_WAIT) + 5);  //generate random number for eta
 
-	if (ent)
-		safe_cprintf(ent, PRINT_HIGH, "Ok, give us %d seconds to reach the target!\n", (int)arty_delay->value);
-
-
-
 
 /*				check_unscope(ent);//faf
 				
@@ -2053,54 +2047,25 @@ void Binocular_Fire(edict_t *ent)
 	//gi.sound(ent, CHAN_ITEM, gi.soundindex(va("%s/arty/target%i.wav", ent->client->resp.team_on->teamid, 1)), 1, ATTN_NORM, 0);
 
 	gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO,
-						gi.soundindex(va("%s/arty/target%i.wav", airstrike->arty_teamid, 1)), 1.0, ATTN_NORM, 0);
-
-	// kernel: fast plane approaching
-	if (fast_arty->value)
-		gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("afrowuk/p51_flyby.wav"), 1, ATTN_NONE, 0); // faf/spitfire.wav arty/hit1.wav
+						gi.soundindex(va("%s/arty/target1.wav", airstrike->arty_teamid)), 1.0, ATTN_NORM, 0);
 
 	//faf:  so we can get rid of the arty stuff in clientthink
 
+	gi.linkentity (airstrike);
 
-	// kernel: airstrike now has arty_entry property
-	//	airstrike = G_Spawn();
-		gi.linkentity (airstrike);
+	VectorCopy(tr.endpos, airstrike->pos2);
+	airstrike->classname ="airstrike_called";
+	airstrike->owner = ent;
 
-		VectorCopy(tr.endpos, airstrike->pos2);
-		airstrike->classname ="airstrike_called";
+	// kernel: add arty_confirm delay to nextthink
+	airstrike->nextthink = level.time + arty_confirm->value;
+	airstrike->think = Airstrike_Confirm;
 
-		airstrike->owner = ent;
+	// kernel: restrict arty now
+	ent->client->resp.team_on->arty_time_restrict = level.time + arty_time->value + arty_delay->value
+		+ arty_confirm->value;
 
-		// kernel: restrict arty now
-		ent->client->resp.team_on->arty_time_restrict = level.time + arty_time->value + arty_delay->value;
-
-		if (airstrikes->value == 1)
-		{
-			airstrike->think = Airstrike_Plane_Launch;
-
-			ent->client->airstrike = airstrike;
-
-			if (arty_delay->value > 2.1)
-			{
-				airstrike->nextthink = level.time + arty_delay->value - 2;
-			}
-			else
-				airstrike->nextthink = level.time +.1;
-		}
-		else//ddaylife
-		{
-			airstrike->think = Arty_Sound;
-			
-			ent->client->airstrike = airstrike;
-
-			if (arty_delay->value > 3.1)
-			{
-				airstrike->nextthink = level.time + arty_delay->value - 3;
-			}
-			else
-				airstrike->nextthink = level.time +.1;
-		}
-
+	ent->client->airstrike = airstrike;
 }
 
 

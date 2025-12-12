@@ -913,10 +913,58 @@ void Airstrike_Plane_Launch(edict_t *ent)
 	//ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value;
 }
 
+void Airstrike_Confirm(edict_t *ent)
+{
+	if (!ent->owner ||
+		!ent->owner->client ||
+		!ent->owner->inuse ||
+		ent->owner->flyingnun)
+	{
+		G_FreeEdict(ent);
+		return;
+	}
 
+	// kernel: cancel if player is dead
+	if (ent->owner->deadflag || ent->owner->client->limbo_mode)
+	{
+		// kernel: cancel just one arty
+		if (ent->owner->client->resp.team_on->arty_num > 0)
+			ent->owner->client->resp.team_on->arty_num--;
+		else
+			ent->owner->client->resp.team_on->arty_num = 0;
 
+		ent->owner->client->airstrike = NULL;
+		G_FreeEdict(ent);
+		return;
+	}
 
+	// if not dead play sound and print confirmation
+	safe_cprintf(ent->owner, PRINT_HIGH, "Sir, give us %d seconds to reach the target!\n", (int)arty_delay->value);
+	gi.positioned_sound(ent->owner->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/radioint.wav"), 1.0, ATTN_NORM, 0);
 
+	// kernel: fast plane approaching
+	if (fast_arty->value)
+		gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("afrowuk/p51_flyby.wav"), 1, ATTN_NONE, 0); // faf/spitfire.wav arty/hit1.wav
+
+	if (airstrikes->value == 1)
+	{
+		ent->think = Airstrike_Plane_Launch;
+
+		if (arty_delay->value > 2.1)
+			ent->nextthink = level.time + arty_delay->value - 2;
+		else
+			ent->nextthink = level.time + .1;
+	}
+	else //ddaylife
+	{
+		ent->think = Arty_Sound;
+
+		if (arty_delay->value > 3.1)
+			ent->nextthink = level.time + arty_delay->value - 3;
+		else
+			ent->nextthink = level.time + .1;
+	}
+}
 
 
 
