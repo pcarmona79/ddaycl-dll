@@ -1925,7 +1925,7 @@ void Binocular_Fire(edict_t *ent)
 
 	if (ent->client->airstrike && ent->client->resp.team_on->arty_num >= (int) arty_max->value)
 	{
-		safe_cprintf(ent, PRINT_HIGH, "Airstrike cancelled sir!\n");
+		safe_centerprintf(ent, "Airstrike cancelled sir!\n");
 
 		G_FreeEdict(ent->client->airstrike);
 		ent->client->airstrike = NULL;
@@ -1941,9 +1941,9 @@ void Binocular_Fire(edict_t *ent)
 		delay = ((int)(ent->client->resp.team_on->arty_time_restrict - level.time) +1);
 
 		if (delay == 0)
-			safe_cprintf(ent, PRINT_HIGH, "Can not call airstrike for another 1 second, sir!\n");
+			safe_centerprintf(ent, "Can not call airstrike for another 1 second, sir!\n");
 		else
-			safe_cprintf(ent, PRINT_HIGH, "Can not call airstrike for another %i seconds, sir!\n", delay);
+			safe_centerprintf(ent, "Can not call airstrike for another %i seconds, sir!\n", delay);
 
 		return;
 	}

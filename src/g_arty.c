@@ -939,7 +939,7 @@ void Airstrike_Confirm(edict_t *ent)
 	}
 
 	// if not dead play sound and print confirmation
-	safe_cprintf(ent->owner, PRINT_HIGH, "Sir, give us %d seconds to reach the target!\n", (int)arty_delay->value);
+	safe_centerprintf(ent->owner, "Sir, give us %d seconds to reach the target!\n", (int)arty_delay->value);
 	gi.positioned_sound(ent->owner->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/radioint.wav"), 1.0, ATTN_NORM, 0);
 
 	// kernel: fast plane approaching
