@@ -47,6 +47,9 @@ Versión 5.057
   de los frames de puntería de la Beretta B38/42 y Weapon_B3842_Fire()
   para reducir la elevación del arma.
 
+- Incrementa daño del Gewehr 43 italiano a un valor de 50 para darle
+  un poco más de utilidad.
+
 - En SP_info_team_start(), se borra la estructura TeamS_t tras asignar
   memoria para team_list. Además se corrige el código que responde a la
   opción "mashup" mediante una mejor asignación de memoria al copiar
