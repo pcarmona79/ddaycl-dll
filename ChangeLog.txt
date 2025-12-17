@@ -42,6 +42,12 @@ Versión 5.057
 - Los mensajes importantes sobre ataques aéreos ahora se muestran
   centrados en la pantalla del jugador.
 
+- Se corrige el error que impedía considerar los ángulos de visión
+  generados por el mapeador en los puntos de inicio. EndObserverMode()
+  de p_observer.c ahora utiliza los ángulos de inicio obtenidos de la
+  función corregida Find_Mission_Start_Point() de p_client.c para
+  establecer los ángulos delta de la estructura ps.pmove.
+
 - Se corrige Weapon_Ppsh41_Fire() de g_weapon.c para que dispare más
   centrado cuando cvar chile está habilitado y se corrigen los números
   de los frames de puntería de la Beretta B38/42 y Weapon_B3842_Fire()
