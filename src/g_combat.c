@@ -1037,14 +1037,18 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 					die_time = level.time + 5;
 				else
 					die_time -= 45;
+
+				gi.sound (targ, CHAN_BODY, gi.soundindex("misc/hitfeet.wav"), 1, ATTN_NORM, 0);
 			}
 			else
+			{
 				damage *= 1.15;
+				gi.sound (targ, CHAN_BODY, gi.soundindex("misc/hitleg.wav"), 1, ATTN_NORM, 0);
+			}
 
 			if (targ->client)
 				targ->client->damage_div=1.7;
 
-			gi.sound (targ, CHAN_BODY, gi.soundindex ("misc/hitleg.wav"), 1, ATTN_NORM, 0);
 			break;
 
 		case LEG_WOUND:

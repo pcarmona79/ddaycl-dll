@@ -48,6 +48,10 @@ Versión 5.057
   función corregida Find_Mission_Start_Point() de p_client.c para
   establecer los ángulos delta de la estructura ps.pmove.
 
+- Agrega sonido de quiebre de huesos cuando se reciba un disparo de
+  rifle en el pie. Esto ayudará a que sea más notorio el daño provocado,
+  tal cual como sucede con los headshots.
+
 - Se corrige Weapon_Ppsh41_Fire() de g_weapon.c para que dispare más
   centrado cuando cvar chile está habilitado y se corrigen los números
   de los frames de puntería de la Beretta B38/42 y Weapon_B3842_Fire()
