@@ -68,6 +68,8 @@ Versión 5.057
 - Limpia entidades y estructuras de cliente después de asignarles
   memoria en InitGame() de g_save.c.
 
+- Corrige SpawnItem() de g_item.c verificando al inicio si el item es
+  nulo.
 
 Versión 5.056
 -------------
