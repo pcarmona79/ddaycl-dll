@@ -381,7 +381,7 @@ void EndObserverMode(edict_t* ent)
 //	VectorClear (ent->client->v_angle);
 
 	for (i = 0; i < 3; i++)
-		ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->oldviewangles[i]);
+		ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->resp.cmd_angles[i]);
 
 	ent->s.angles[PITCH] = 0;
 	ent->s.angles[YAW] = spawn_angles[YAW];
