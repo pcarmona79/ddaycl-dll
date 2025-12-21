@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.056" // ddaychile
+#define DEVVERSION	"5.057" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -734,6 +734,7 @@ extern	cvar_t	*invuln_spawn;
 extern	cvar_t	*arty_delay;
 extern	cvar_t	*arty_time;
 extern	cvar_t  *arty_max;
+extern	cvar_t  *arty_confirm;
 
 //bcass start - easter_egg cvar, AGAIN
 extern	cvar_t	*easter_egg;
@@ -809,6 +810,9 @@ extern cvar_t *limit_engineer;
 extern cvar_t *limit_medic;
 extern cvar_t *limit_special;
 extern cvar_t *limit_flamer;
+
+// kernel: make dday faster again
+extern cvar_t *fast_arty;
 
 //extern	cvar_t	*crosshair;
 
@@ -1256,8 +1260,8 @@ typedef struct
 	int		need_points;	// Needed Points to win level
 
 
-	float	arty_fire_time;	// last time artillary was fired
-	int		arty_fire_count; // how many times the battary has been fired
+	float		arty_time_restrict; // kernel: moved from edict_t
+	int			arty_num;
 
 	char    *skin;//faf:  for mapper to set custom skin
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
@@ -1535,6 +1539,7 @@ struct gclient_s
 	qboolean	syncspeed;				// for cmd issues
 	qboolean	ident;					// do they see a player id?
 	qboolean	movement;				// is client moving?
+	qboolean	movement_keys;			// is client pressing movement keys?
 
 	float		spawntime;
 	float		cmdtime;				//
@@ -1553,11 +1558,11 @@ struct gclient_s
 //faf	qboolean	arty_sound;
 //faf	int			arty_num;
 //faf	int			arty_location;
-	vec3_t		arty_entry;
-	vec3_t		arty_target;
+//	vec3_t		arty_entry;
+//	vec3_t		arty_target;
 //faf	float		arty_time_position;
 //faf	float		arty_time_fire;
-	float		arty_time_restrict;
+//	float		arty_time_restrict;
 	edict_t     *airstrike;//faf
 
 	float		jump_stamina;
@@ -1667,6 +1672,10 @@ struct gclient_s
 	// evil: for topcenter screen messages
 	char topcenter_message[1024];
 	float topcenter_time;
+
+	// kernel: check movement
+	float last_movement_check;
+	vec3_t last_movement_pos;
 };
 
 
@@ -1886,6 +1895,11 @@ struct edict_s
 	qboolean		playedsound;  //for dropping guns/ammo
 
 	vec3_t			obj_origin; //for bots to aim at
+
+	// kernel: for airstrikes
+	vec3_t		arty_entry;
+	vec3_t		arty_target;
+	char		arty_teamid[64];
 };
 
 

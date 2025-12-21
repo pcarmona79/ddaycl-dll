@@ -105,9 +105,9 @@ void Weapon_B3842_Fire (edict_t *ent)
 	if (level.framenum % 3 == 0)
 	{
 		if (ent->client->aim)
-			ent->client->kick_angles[0] -= 1.5;
+			ent->client->kick_angles[0] -= .5;
 		else
-			ent->client->kick_angles[0] = -3;
+			ent->client->kick_angles[0] = -.5;
 	}
 
 	// pbowens: for darwin's 3.2 kick

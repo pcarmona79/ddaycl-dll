@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define SHOTGUN_FRAME	7
 
 #define DAMAGE_COLT45		25
-#define DAMAGE_M1			45
+#define DAMAGE_M1			50
 #define DAMAGE_SHOTGUN		34//10 per "pellet" with 12 "pellet"
 #define DAMAGE_BAR			45
 #define DAMAGE_BHMG			50

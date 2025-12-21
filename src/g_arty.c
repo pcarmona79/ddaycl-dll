@@ -26,7 +26,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "game.h"
 #include "m_player.h"
+#include "q_shared.h"
+
 // g_arty.c
 // D-Day: Normandy Artillery and Airstrikes
 
@@ -214,6 +217,12 @@ void Cmd_Arty_f (edict_t *ent)
 	{
 		safe_cprintf(ent, PRINT_HIGH, "Airstrike cancelled sir!\n");
 
+		// kernel: cancel just one arty
+		if (ent->client->resp.team_on->arty_num > 0)
+			ent->client->resp.team_on->arty_num--;
+		else
+			ent->client->resp.team_on->arty_num = 0;
+
 		G_FreeEdict(ent->client->airstrike);
 		ent->client->airstrike = NULL;
 		return;
@@ -327,7 +336,7 @@ void Think_Arty (edict_t *ent)
 	trace_t tr_2;
 
 
-
+/* kernel: this is not necessary
 		if (!ent->owner ||
 		!ent->owner->client ||
 		!ent->owner->inuse ||
@@ -350,7 +359,7 @@ void Think_Arty (edict_t *ent)
 		G_FreeEdict(ent);
 		return;
 	}
-
+*/
 
 
 
@@ -364,12 +373,12 @@ void Think_Arty (edict_t *ent)
 	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	// find the direction from the entry point to the target
-    VectorSubtract(ent->owner->client->arty_target, ent->owner->client->arty_entry, targetdir);
+    VectorSubtract(ent->arty_target, ent->arty_entry, targetdir);
     VectorNormalize(targetdir);
-    VectorAdd(ent->owner->client->arty_entry, targetdir, start);
+    VectorAdd(ent->arty_entry, targetdir, start);
 	
    // check we have a clear line of fire
-    tr_2 = gi.trace(start, NULL, NULL, ent->owner->client->arty_target, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+    tr_2 = gi.trace(start, NULL, NULL, ent->arty_target, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	// check to make sure we're not materializing in a solid
 	if ( gi.pointcontents(start) == CONTENTS_SOLID || tr_2.fraction < 1.0 )
@@ -422,15 +431,14 @@ void Think_Arty (edict_t *ent)
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
-
+	// kernel: airstrike was already restricted when it was called
+	//ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value; // delay for user defined minutes
 }
 
 void Arty_Sound (edict_t *ent)
 {
-
-
-		if (!ent->owner ||
+/* kernel: this is not necessary
+	if (!ent->owner ||
 		!ent->owner->client ||
 		!ent->owner->inuse ||
 		!ent->owner->client->resp.team_on ||
@@ -452,11 +460,10 @@ void Arty_Sound (edict_t *ent)
 		G_FreeEdict(ent);
 		return;
 	}
-
-	gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",  ent->owner->client->resp.team_on->teamid)), 1, ATTN_NONE, 0);    
+*/
+	gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav", ent->arty_teamid)), 1, ATTN_NONE, 0);
 	ent->think = Think_Arty;
 	ent->nextthink = level.time +3;
-
 }
 
 
@@ -533,7 +540,6 @@ void Plane_Fly_Off (edict_t *ent)
 		ent->nextthink= level.time + .1;
 		ent->think = G_FreeEdict;
 	}
-
 }
 
 void Plane_Fire (edict_t *ent)
@@ -553,13 +559,17 @@ void Plane_Fire (edict_t *ent)
 	}
 	else
 	{
-		ent->nextthink = level.time +.2;
+		// kernel: fast plane also needs to drop bombs faster
+		if (fast_arty->value)
+			ent->nextthink = level.time + .1;
+		else
+			ent->nextthink = level.time + .2;
 	}
 
-	if (ent->count == 0  && ent->owner->client)
+	//if (ent->count == 0  && ent->owner->client) // kernel: no need to check client references
+	if (ent->count == 0)
 		safe_cprintf(ent->owner, PRINT_HIGH, "Airstrike confirmed, sir!\n");
 
-	
 	Drop_Bomb(ent);
 	ent->count++;
 }
@@ -571,12 +581,10 @@ void Plane_Fire (edict_t *ent)
 void Plane_Think (edict_t *ent)
 {
 	vec3_t	length;
-	float   distance;
-
-
+	float   distance, drop_distance;
 	edict_t *botwarn;
 	
-
+/* kernel: this is not necessary
 	if (!ent->owner ||
 		!ent->owner->client ||
 		ent->flyingnun)
@@ -585,10 +593,10 @@ void Plane_Think (edict_t *ent)
 		G_FreeEdict(ent);
 		return;
 	}
+*/
 
-
-
-	VectorSubtract(ent->s.origin, ent->owner->client->arty_entry, length);
+	// kernel: arty_entry was copied from the airstrike entity
+	VectorSubtract(ent->s.origin, ent->arty_entry, length);
 	distance = VectorLength(length);
 
 	if (distance < 1000)
@@ -605,7 +613,7 @@ void Plane_Think (edict_t *ent)
 			VectorClear (botwarn->maxs);
 			botwarn->classname = "botwarn";
 			botwarn->classnameb = BOTWARN;
-			VectorCopy (ent->owner->client->arty_entry, botwarn->s.origin);
+			VectorCopy (ent->arty_entry, botwarn->s.origin);
 
 			//tilt plane
 			if (random() < .5)
@@ -633,18 +641,22 @@ void Plane_Think (edict_t *ent)
 
 //	safe_bprintf (PRINT_HIGH, "%s \n", vtos(ent->s.angles));
 
-	if (distance < 200)
+	// kernel: fast plane needs to drop bombs earlier
+	if (fast_arty->value)
+		drop_distance = 400;
+	else
+		drop_distance = 200;
+
+	if (distance < drop_distance)
 	{
 		ent->think = Plane_Fire;
-		ent->nextthink = level.time +.1;
 
 		if (IsValidPlayer(ent))
-			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->owner->client->resp.team_on->teamid, 1)), 1, ATTN_NORM, 0);
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/hit%i.wav", ent->arty_teamid, 1)),
+					 1, ATTN_NORM, 0);
 	}
-	else
-		ent->nextthink = level.time +.1;
 
-
+	ent->nextthink = level.time +.1;
 }
 
 void plane_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int damage , vec3_t point )
@@ -658,6 +670,7 @@ void plane_die(edict_t * self , edict_t * inflictor , edict_t * attacker , int d
 }
 
 //faf
+// kernel: now ent is the airstrike
 void Spawn_Plane(edict_t *ent)
 {
 	//faf
@@ -674,13 +687,17 @@ void Spawn_Plane(edict_t *ent)
 
 	edict_t *plane;
 
+	/* kernel: not checking this because all info is in the airstrike ent
 	if (IsValidPlayer(ent) && 
 		ent->client && ent->client->arty_entry)
 	{
 		VectorCopy(ent->client->arty_entry, start);
 	}
 	else
-		return;
+		return; */
+
+	// kernel: copy the starting position
+	VectorCopy(ent->arty_entry, start);
 
  	VectorClear(longest);
 
@@ -730,7 +747,7 @@ void Spawn_Plane(edict_t *ent)
 	VectorSet(back, 0, -1, 0);
 
 	VectorMA(start, 8192, left, end);
-	tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	VectorSubtract (tr.endpos, start, temp);
 	if (VectorLength(temp) > VectorLength(longest) &&
@@ -743,7 +760,7 @@ void Spawn_Plane(edict_t *ent)
 	}
 	VectorMA(start, 8192, right, end);
 
-	tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 	
 	VectorSubtract (tr.endpos, start, temp);
 	if (VectorLength(temp) > VectorLength(longest) &&
@@ -755,7 +772,7 @@ void Spawn_Plane(edict_t *ent)
 	}
 	VectorMA(start, 8192, forward, end);
 
-	tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 	
 	VectorSubtract (tr.endpos, start, temp);
 	if (VectorLength(temp) > VectorLength(longest) &&
@@ -767,7 +784,7 @@ void Spawn_Plane(edict_t *ent)
 	}
 	VectorMA(start, 8192, back, end);
 
-	tr = gi.trace(start, NULL, NULL, end, ent, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_ALL);//MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 	
 	VectorSubtract (tr.endpos, start, temp);
 	if (VectorLength(temp) > VectorLength(longest) &&
@@ -788,9 +805,9 @@ void Spawn_Plane(edict_t *ent)
 	plane->s.modelindex = gi.modelindex ("models/ships/viper/tris.md2");
 	
 //faf: requires models	
-	plane->s.modelindex = gi.modelindex (va("models/ships/%splane/tris.md2", team_list[ent->client->resp.team_on->index]->teamid));
+	plane->s.modelindex = gi.modelindex (va("models/ships/%splane/tris.md2", ent->arty_teamid));
 
-	plane->owner = ent;
+	plane->owner = ent->owner;
 	
 
 	VectorClear (plane->mins);
@@ -812,8 +829,14 @@ void Spawn_Plane(edict_t *ent)
 	VectorCopy (direction, plane->movedir);
 	vectoangles (direction, plane->s.angles);
 
+	// kernel: copy coordinates and team info to the plane
+	VectorCopy(ent->arty_entry, plane->arty_entry);
+	VectorCopy(ent->arty_target, plane->arty_target);
+	strncpy(plane->arty_teamid, ent->arty_teamid, 64);
 
-	if (VectorLength(longest) > 4000)
+	if (fast_arty->value)
+		speed = 1000;
+	else if (VectorLength(longest) > 4000)
 		speed = 800;
 	else if (VectorLength(longest) > 2000)
 		speed = 600;
@@ -832,16 +855,14 @@ void Spawn_Plane(edict_t *ent)
 
 
 	plane->leave_limbo_time = level.time;
-plane->s.renderfx   = RF_FULLBRIGHT;
+	plane->s.renderfx   = RF_FULLBRIGHT;
 	gi.linkentity (plane);
-	
-
-
 }
 
 //faf
 void Airstrike_Plane_Launch(edict_t *ent)
 {
+/* kernel: this is not necessary
 	if (!ent->owner ||
 		!ent->owner->client ||
 		!ent->owner->inuse ||
@@ -864,36 +885,86 @@ void Airstrike_Plane_Launch(edict_t *ent)
 		G_FreeEdict(ent);
 		return;
 	}
-
-	if (!strcmp(ent->owner->client->resp.team_on->teamid, "usa"))
+*/
+	if (!strcmp(ent->arty_teamid, "usa"))
 	{
-		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51f.wav")), 1, ATTN_NONE, 0);
+		if (fast_arty->value)
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51.wav")), 1, ATTN_NONE, 0);
+		else
+			gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("faf/p51f.wav")), 1, ATTN_NONE, 0);
 	}
-	else if (!strcmp(ent->owner->client->resp.team_on->teamid, "grm"))
+	else if (!strcmp(ent->arty_teamid, "grm"))
 	{
 		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("airstrike/stuka.wav")), 1, ATTN_NONE, 0);
 	}
-
 	else
-		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav",  ent->owner->client->resp.team_on->teamid)), 1, ATTN_NONE, 0);    
+		gi.sound(ent->owner, CHAN_AUTO, gi.soundindex(va("%s/arty/fire.wav", ent->arty_teamid)),
+				 1, ATTN_NONE, 0);
 	
-	
-	Spawn_Plane(ent->owner); //faf
+	// kernel: ent is the airstrike
+	Spawn_Plane(ent);
 
 	ent->think = G_FreeEdict;
 	ent->nextthink = level.time +.1;
 
 	ent->owner->client->airstrike = NULL;
 
-	ent->owner->client->arty_time_restrict = level.time + arty_time->value; 
-
-
+	// kernel: airstrike was already restricted when it was called
+	//ent->owner->client->resp.team_on->arty_time_restrict = level.time + arty_time->value;
 }
 
+void Airstrike_Confirm(edict_t *ent)
+{
+	if (!ent->owner ||
+		!ent->owner->client ||
+		!ent->owner->inuse ||
+		ent->owner->flyingnun)
+	{
+		G_FreeEdict(ent);
+		return;
+	}
 
+	// kernel: cancel if player is dead
+	if (ent->owner->deadflag || ent->owner->client->limbo_mode)
+	{
+		// kernel: cancel just one arty
+		if (ent->owner->client->resp.team_on->arty_num > 0)
+			ent->owner->client->resp.team_on->arty_num--;
+		else
+			ent->owner->client->resp.team_on->arty_num = 0;
 
+		ent->owner->client->airstrike = NULL;
+		G_FreeEdict(ent);
+		return;
+	}
 
+	// if not dead play sound and print confirmation
+	safe_centerprintf(ent->owner, "Sir, give us %d seconds to reach the target!\n", (int)arty_delay->value);
+	gi.positioned_sound(ent->owner->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/radioint.wav"), 1.0, ATTN_NORM, 0);
 
+	// kernel: fast plane approaching
+	if (fast_arty->value)
+		gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("afrowuk/p51_flyby.wav"), 1, ATTN_NONE, 0); // faf/spitfire.wav arty/hit1.wav
+
+	if (airstrikes->value == 1)
+	{
+		ent->think = Airstrike_Plane_Launch;
+
+		if (arty_delay->value > 2.1)
+			ent->nextthink = level.time + arty_delay->value - 2;
+		else
+			ent->nextthink = level.time + .1;
+	}
+	else //ddaylife
+	{
+		ent->think = Arty_Sound;
+
+		if (arty_delay->value > 3.1)
+			ent->nextthink = level.time + arty_delay->value - 3;
+		else
+			ent->nextthink = level.time + .1;
+	}
+}
 
 
 

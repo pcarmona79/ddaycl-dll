@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "g_maps.h"
 #include "p_menus.h"
+#include "q_shared.h"
 
 void Cmd_Objectives (edict_t *ent);
 void M_ChooseMOS(edict_t *ent);
@@ -320,6 +321,7 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles);
 void EndObserverMode(edict_t* ent) 
 { 
 	vec3_t	spawn_origin, spawn_angles;
+	int i;
 
 	if (!ent->client->limbo_mode) 
 		return;
@@ -377,6 +379,15 @@ void EndObserverMode(edict_t* ent)
 //	VectorClear (ent->s.angles);
 //	VectorClear (ent->client->ps.viewangles);
 //	VectorClear (ent->client->v_angle);
+
+	for (i = 0; i < 3; i++)
+		ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->resp.cmd_angles[i]);
+
+	ent->s.angles[PITCH] = 0;
+	ent->s.angles[YAW] = spawn_angles[YAW];
+	ent->s.angles[ROLL] = 0;
+	VectorCopy (ent->s.angles, ent->client->ps.viewangles);
+	VectorCopy (ent->s.angles, ent->client->v_angle);
 
 	gi.linkentity (ent);
 

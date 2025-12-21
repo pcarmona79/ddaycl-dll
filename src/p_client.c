@@ -30,6 +30,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_maps.h"
 #include "m_player.h"
 #include "g_cmds.h"
+#include "q_shared.h"
 #include "x_fire.h"
 //#include "p_menus.h"
 
@@ -2024,11 +2025,7 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles)
 	VectorCopy (spot->s.origin, origin);
 	origin[2] += 9;
 
-	VectorCopy (spot->s.angles, ent->s.angles);
-	VectorCopy (spot->s.angles, ent->client->ps.viewangles);
-	VectorCopy (spot->s.angles, ent->client->v_angle);
-
-
+	VectorCopy (spot->s.angles, angles);
 }
 
 void InitBodyQue (void)
@@ -2477,7 +2474,6 @@ void PutClientInServer (edict_t *ent)
 	// set the delta angle
 
 	for (i=0 ; i<3 ; i++)
-
 		client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - client->resp.cmd_angles[i]);
 
 	ent->s.angles[PITCH] = 0;
@@ -2510,7 +2506,7 @@ void PutClientInServer (edict_t *ent)
 	}
 */
 	//if (!client->resp.team_on)
-		gi.linkentity (ent);
+	gi.linkentity (ent);
 
 
 
@@ -3467,6 +3463,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	trace_t	tr;
 
 	float time;
+	vec3_t diff; // kernel: to check for movement
 
 
 	level.current_entity = ent;
@@ -3628,7 +3625,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 	else if (client->limbo_mode)
 	{
-		VectorSet(ucmd->angles,0,0,0);
+		// kernel: this causes troubles in limbo view
+		//VectorSet(ucmd->angles,0,0,0);
 
 		ucmd->forwardmove	 = 0;
 		ucmd->sidemove		 = 0;
@@ -3692,10 +3690,25 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			(client->jump_last)  ? "true" : "false",
 			vtos(ent->velocity) );
 */
+
 		if (ucmd->forwardmove != 0 || ucmd->sidemove != 0 || ucmd->upmove != 0)
-			client->movement = true;
-		else
-			client->movement =  false;
+ 			client->movement_keys = true;
+ 		else
+			client->movement_keys =  false;
+
+		// kernel: verify if ent->s.origin has changed since the last check
+		if (level.time > client->last_movement_check + 0.05)
+		{
+			VectorSubtract(ent->s.origin, client->last_movement_pos, diff);
+
+			if (diff[PITCH] != 0 || diff[YAW] != 0 || diff[ROLL] != 0)
+				client->movement = true;
+			else
+				client->movement =  false;
+
+			VectorCopy(ent->s.origin, client->last_movement_pos);
+			client->last_movement_check = level.time;
+		}
 
 		//faf:  for Parts' running anim
 		if (ucmd->sidemove > 0 && ucmd->forwardmove == 0)
@@ -4152,10 +4165,10 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	    if (client->jump_stamina < JUMP_MAX)
 			client->jump_stamina += JUMP_REGEN;
 */
-		if (ent->die_time &&
-			!ent->client->movement)
-			ent->die_time = level.time + .5;
-
+	// kernel: real men just keep moving
+	//if (ent->die_time &&
+	//	!ent->client->movement)
+	//	ent->die_time = level.time + .5;
 
 	// Check to see if its time to die from a wound...		
 		if ( (ent->die_time) && (level.time > ent->die_time))//faf
@@ -4165,11 +4178,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			if (ent->wound_location & FEET_WOUND && chile->value)
 				temp_damage = 2; // kernel: bleeding feet wound
 			if (ent->wound_location & STOMACH_WOUND)
-				temp_damage += 2;
+				// kernel: originally a bug prevented discounting stomach damage, bringing this back by popular opinion
+				temp_damage += 0;
 			if (ent->wound_location & CHEST_WOUND)
 				temp_damage += 4;
 			if (ent->wound_location & LEG_WOUND)
 				temp_damage += 0; // kernel: no bleeding leg wound
+
+			// kernel: reduce damage 50% when not moving
+			if (!ent->client->movement)
+				temp_damage /= 2;
 
 			// kernel: attacker should be the last wound inflictor
 			T_Damage(ent, ent->enemy, ent->client->last_wound_inflictor, ent->maxs, ent->s.origin, NULL,
@@ -4177,9 +4195,12 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 			// rezmoth - made bleed interval random
 			//ent->die_time = level.time + (crandom() + 1) * 2;
-			ent->die_time = level.time + 2;
 
-
+			// kernel: if not moving increase die time
+			if (!ent->client->movement)
+				ent->die_time = level.time + 6;
+			else
+				ent->die_time = level.time + 2;
 
 			//faf: making it so you only bleed when you are moving
 			if (!ent->client->bleedwarn && temp_damage != 0)

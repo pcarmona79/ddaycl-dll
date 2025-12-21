@@ -3738,7 +3738,7 @@ void Weapon_Sniper_Fire (edict_t *ent)
 	// rezmoth - changed to new firing code
 	if (ent->client->aim)
 	{
-		if (!ent->ai && ent->client->movement && ent->client->ps.gunframe <=  guninfo->AFO[0] )
+		if (!ent->ai && ent->client->movement_keys && ent->client->ps.gunframe <= guninfo->AFO[0])
 		{
 			safe_cprintf(ent, PRINT_HIGH, "Inaccurate shot!  Hold still when you fire the sniper rifle!\n");
 			fire_gun(ent, start, forward, damage, kick, 250, 250, mod, false);
@@ -5684,9 +5684,9 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 	if (level.framenum % 3 == 0)
 	{
 		if (ent->client->aim)
-			ent->client->kick_angles[0] -= 1.5;
+			ent->client->kick_angles[0] -= .5;
 		else
-			ent->client->kick_angles[0] = -3;
+			ent->client->kick_angles[0] = -.5;
 	}
 
 	// pbowens: for darwin's 3.2 kick
@@ -5705,11 +5705,14 @@ void Weapon_Ppsh41_Fire (edict_t *ent)
 //		sound effects creates the illusion of a higher (consistant) firing rate
 	if (ent->numfired % 2 == 1)
 	{
-		for (i=0 ; i<3 ; i++)
+		if (!chile->value)
 		{
-			//rezmoth - changed for new firing system
-			ent->client->kick_origin[i] = crandom() * 0.35;
-			ent->client->kick_angles[i] += crandom() * 0.7;
+			for (i=0 ; i<3 ; i++)
+			{
+				//rezmoth - changed for new firing system
+				ent->client->kick_origin[i] = crandom() * 0.35;
+				ent->client->kick_angles[i] += crandom() * 0.7;
+			}
 		}
 
 		fire_gun(ent, start, forward, damage, kick, SMG_SPREAD, SMG_SPREAD, mod, false);

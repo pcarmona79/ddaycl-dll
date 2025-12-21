@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "g_cmds.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
+#include <string.h>
 
 // g_ents.c
 // D-Day: Normandy Old / Unsorted Entities
@@ -422,7 +423,8 @@ void InitTeam (char *team, int i)
 
 void SP_info_team_start(edict_t *ent)
 {
-	int i,k;
+	int i, k;
+	char *mashup_team, *mashup_name;
 	
 	i=ent->obj_owner;
 	
@@ -443,75 +445,71 @@ void SP_info_team_start(edict_t *ent)
 
 
 	team_list[i]=gi.TagMalloc(sizeof(TeamS_t),TAG_LEVEL);
-	team_list[i]->teamname=gi.TagMalloc(sizeof(ent->message + 2),TAG_LEVEL);
-	//strcpy(team_list[i]->teamname,ent->message);
-
-
-
+	memset(team_list[i], 0, sizeof(TeamS_t)); // kernel: clear team_list
 
 	if (mashup->value)
 	{
-	/*buggy pol rifle and probably other stuff	char *team;
 		int r;
-		r = (int)(random() *8);
-		team = NULL;
-		while (!team)
+
+		if (i == 0)
 		{
-			r = (int)(random() *8);
+			r = (int)(random() * 4);
 			switch (r)
 			{
-			case 1: team = "grm"; break;
-			case 2: team = "rus"; break;
-			case 3: team = "gbr"; break;
-			case 4: team = "pol"; break;
-			case 5: team = "ita"; break;
-			case 6: team = "jpn"; break;
-			case 7: team = "usm"; break;
-			default: team = "usa"; break;
-			}
-			if (team_list[(i+1)%2] && !strcmp(team_list[(i+1)%2]->teamid, team))
-				team = NULL;
-		}
-		strcpy (ent->pathtarget, team);
-		strcpy (ent->message, team);*/
-		int r;
-		char *team;
-		r = (int)(random() *5);
-		if (i==0)
-		{
-			r = (int)(random() *4);
-			switch (r)
-			{
-				case 0: team = "rus"; break;
-				case 1: team = "gbr"; break;
-				case 2: team = "pol"; break;
-				case 3: team = "usm"; break;
-				default: team = "usa"; break;
+			case 0:
+				mashup_team = "rus";
+				mashup_name = "Russians";
+				break;
+			case 1:
+				mashup_team = "gbr";
+				mashup_name = "British";
+				break;
+			case 2:
+				mashup_team = "pol";
+				mashup_name = "Polish";
+				break;
+			case 3:
+				mashup_team = "usm";
+				mashup_name = "US Marines";
+				break;
+			default:
+				mashup_team = "usa";
+				mashup_name = "US Army";
+				break;
 			}
 		}
 		else
 		{
-			r = (int)(random() *2);
+			r = (int)(random() * 2);
 			switch (r)
 			{
-				case 0: team = "grm"; break;
-				case 1: team = "ita"; break;
-				default: team = "jpn"; break;
+			case 0:
+				mashup_team = "jpn";
+				mashup_name = "Japanese";
+				break;
+			case 1:
+				mashup_team = "ita";
+				mashup_name = "Italians";
+				break;
+			default:
+				mashup_team = "grm";
+				mashup_name = "Germans";
+				break;
 			}
 		}
-		strcpy (ent->pathtarget, team);
-		strcpy (ent->message, team);
+		strncpy (ent->pathtarget, mashup_team, 4);
 
+		team_list[i]->teamname = gi.TagMalloc(strlen(mashup_name) + 1, TAG_LEVEL);
+		strcpy(team_list[i]->teamname, mashup_name);
+	}
+	else
+	{
+		team_list[i]->teamname = gi.TagMalloc(strlen(ent->message) + 1, TAG_LEVEL);
+		strcpy(team_list[i]->teamname, ent->message);
 	}
 
-
-	team_list[i]->teamname = ent->message;
 	//long team names were causing crashes
 	if (strlen(ent->message) > 12) ent->message[12] =0;
-
-
-
-
 
 //	if (strlen(ent->message) > 12) team_list[i]->teamname = team_list[i]->teamid;
 //	team_list[i]->playermodel = gi.TagMalloc( 64, TAG_LEVEL );
@@ -542,9 +540,9 @@ void SP_info_team_start(edict_t *ent)
 	team_list[i]->score=0;
 
 	if (ent->map)
-		team_list[i]->nextmap = ent->map;
+		strncpy(team_list[i]->nextmap, ent->map, 64);
 	else
-		team_list[i]->nextmap = level.mapname;
+		strncpy(team_list[i]->nextmap, level.mapname, 64);
 
 
 	//make it so if allies win dday5 it goes to dday1

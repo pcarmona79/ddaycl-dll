@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "q_shared.h"
 #include <stdio.h>
+#include <string.h>
 
 field_t fields[] = {
 	{"classname", FOFS(classname), F_LSTRING},
@@ -282,6 +283,7 @@ void InitGame (void)
 	arty_delay			=	gi.cvar("arty_delay",			"10", 0);
 	arty_time			=	gi.cvar("arty_time",			"60", 0);
 	arty_max			=	gi.cvar("arty_max",				"1",  0);
+	arty_confirm		=	gi.cvar("arty_confirm",			"3",  0);
 
 //bcass start - easter_egg cvar, AGAIN
 	easter_egg			=	gi.cvar("easter_egg",			"1",  0);
@@ -397,6 +399,9 @@ void InitGame (void)
 	limit_special = gi.cvar("limit_special", "0", 0);
 	limit_flamer = gi.cvar("limit_flamer", "0", 0);
 
+	// kernel: make dday faster again
+	fast_arty = gi.cvar("fast_arty", "0", 0);
+
 	// items
 	InitItems ();
 
@@ -408,12 +413,14 @@ void InitGame (void)
 	// initialize all entities for this game
 	game.maxentities = maxentities->value;
 	g_edicts =  gi.TagMalloc (game.maxentities * sizeof(g_edicts[0]), TAG_GAME);
+	memset(g_edicts, 0, game.maxentities * sizeof(g_edicts[0]));
 	globals.edicts = g_edicts;
 	globals.max_edicts = game.maxentities;
 
 	// initialize all clients for this game
 	game.maxclients = maxclients->value;
 	game.clients = gi.TagMalloc (game.maxclients * sizeof(game.clients[0]), TAG_GAME);
+	memset(game.clients, 0, game.maxclients * sizeof(game.clients[0]));
 	globals.num_edicts = game.maxclients+1;
 
 

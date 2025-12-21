@@ -96,6 +96,7 @@ cvar_t	*invuln_spawn;				// how long player is invulnerable after spawn
 cvar_t	*arty_delay;				// seconds for artillary to position
 cvar_t	*arty_time;					// seconds between each volley 
 cvar_t  *arty_max;					// number of shots to be fired in each volley
+cvar_t  *arty_confirm;				// seconds to wait for artillery confirmation
 
 //bcass start - easter_egg cvar, AGAIN
 cvar_t	*easter_egg;				//turns easter eggs on and off
@@ -172,6 +173,9 @@ cvar_t *limit_engineer;
 cvar_t *limit_medic;
 cvar_t *limit_special;
 cvar_t *limit_flamer;
+
+// kernel: make dday faster again
+cvar_t *fast_arty;
 
 // evil: global variables for countdown
 int countdownActive = 0;

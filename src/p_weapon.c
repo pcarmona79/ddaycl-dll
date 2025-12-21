@@ -34,6 +34,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include "x_fbomb.h"
 #include "x_fire.h"
+#include <string.h>
 /*--------------------------------------------------------*/
 
 //bcass start - medic sound thing
@@ -1901,8 +1902,7 @@ void Weapon_Knife (edict_t *ent)
 
 
 
-void Arty_Sound (edict_t *ent);
-void Airstrike_Plane_Launch(edict_t *ent);
+void Airstrike_Confirm(edict_t *ent);
 
 //was void Cmd_Arty_f (edict_t *ent)
 void Binocular_Fire(edict_t *ent)
@@ -1923,35 +1923,41 @@ void Binocular_Fire(edict_t *ent)
 		return;
 
 
-	if (ent->client->airstrike)
+	if (ent->client->airstrike && ent->client->resp.team_on->arty_num >= (int) arty_max->value)
 	{
-		safe_cprintf(ent, PRINT_HIGH, "Airstrike cancelled sir!\n");
+		safe_centerprintf(ent, "Airstrike cancelled sir!\n");
 
 		G_FreeEdict(ent->client->airstrike);
 		ent->client->airstrike = NULL;
+		ent->client->resp.team_on->arty_num = 0;
 		return;
 	}
 
-
-	
-
-	if ( ent->client->arty_time_restrict > level.time)//faf && ent->client->arty_num >= (int)arty_max->value)
+	if (ent->client->resp.team_on->arty_time_restrict > level.time &&
+		ent->client->resp.team_on->arty_num >= (int) arty_max->value)
 	{
 		int delay;
 
-		delay = ((int)(ent->client->arty_time_restrict - level.time) +1);
+		delay = ((int)(ent->client->resp.team_on->arty_time_restrict - level.time) +1);
 
 		if (delay == 0)
-			safe_cprintf(ent, PRINT_HIGH, "Can not call airstrike for another 1 second, sir!\n");
+			safe_centerprintf(ent, "Can not call airstrike for another 1 second, sir!\n");
 		else
-			safe_cprintf(ent, PRINT_HIGH, "Can not call airstrike for another %i seconds, sir!\n", delay);
+			safe_centerprintf(ent, "Can not call airstrike for another %i seconds, sir!\n", delay);
 
 		return;
 	}
 
 	// reset the fired counter if past restrict time
-//	if ( ent->client->arty_time_restrict <= level.time)//faf && ent->client->arty_num >= (int)arty_max->value )
-//		ent->client->arty_num = 0;
+	if (ent->client->resp.team_on->arty_time_restrict <= level.time &&
+		ent->client->resp.team_on->arty_num >= (int) arty_max->value)
+	{
+		ent->client->resp.team_on->arty_num = 0;
+	}
+
+	// kernel: prepare airstrike
+	airstrike = G_Spawn();
+	strncpy(airstrike->arty_teamid, ent->client->resp.team_on->teamid, 64);
 
 	VectorCopy(ent->s.origin, start);
 	start[2] += ent->viewheight;
@@ -1963,11 +1969,11 @@ void Binocular_Fire(edict_t *ent)
 	if ( tr.surface && !(tr.surface->flags & SURF_SKY) )
 	{ // We hit something but it wasn't sky, so let's see if there is sky above it
 
-		VectorCopy(tr.endpos,ent->client->arty_target); //assign target to Arty
+		VectorCopy(tr.endpos, airstrike->arty_target); //assign target to Arty
 		VectorSet(world_up, 0, 0, 1);
 		VectorMA(start, 8192, world_up, end);
 
-		tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+		tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 		if ( tr.surface && !(tr.surface->flags & SURF_SKY))  // No sky above it either
 		{
@@ -1976,27 +1982,27 @@ void Binocular_Fire(edict_t *ent)
 			
 			//this spot is not under the sky... try moving around a bunch of spots to find a nearby spot that is
 			{
-				ent->client->arty_target[0]+=60;
+				airstrike->arty_target[0]+=60;
 				VectorMA(start, 8192, world_up, end);
-				tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+				tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 			
 				if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 				{
-					ent->client->arty_target[0]-=120;
+					airstrike->arty_target[0]-=120;
 					VectorMA(start, 8192, world_up, end);
-					tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+					tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
   					if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 					{
-						ent->client->arty_target[0]+=60;
-						ent->client->arty_target[1]+=60;
+						airstrike->arty_target[0]+=60;
+						airstrike->arty_target[1]+=60;
 						VectorMA(start, 8192, world_up, end);
-						tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+						tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
   						if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 						{
-							ent->client->arty_target[1]-=120;
+							airstrike->arty_target[1]-=120;
 							VectorMA(start, 8192, world_up, end);
-							tr = gi.trace(ent->client->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+							tr = gi.trace(airstrike->arty_target, NULL, NULL, end, ent, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 							
 							if ( tr.surface && !(tr.surface->flags & SURF_SKY))
 							{
@@ -2018,15 +2024,10 @@ void Binocular_Fire(edict_t *ent)
 
 
 	// set up for the arty strike
-	VectorCopy(tr.endpos, ent->client->arty_entry);
+	VectorCopy(tr.endpos, airstrike->arty_entry);
 	
 		
 	//randnum = ((rand() % ARTILLARY_WAIT) + 5);  //generate random number for eta
-
-	if (ent)
-		safe_cprintf(ent, PRINT_HIGH, "Ok, give us %d seconds to reach the target!\n", (int)arty_delay->value);
-
-
 
 
 /*				check_unscope(ent);//faf
@@ -2038,57 +2039,33 @@ void Binocular_Fire(edict_t *ent)
 				ent->client->ps.gunframe = 8;
 */
 
-
-
-
-//	ent->client->arty_num++;
+	// kernel: increase arty count
+	ent->client->resp.team_on->arty_num++;
 //	ent->client->arty_time_fire = level.time + arty_delay->value;
 
 //	ent->client->arty_location = 1;//(rand() % 4) + 1;
 	//gi.sound(ent, CHAN_ITEM, gi.soundindex(va("%s/arty/target%i.wav", ent->client->resp.team_on->teamid, 1)), 1, ATTN_NORM, 0);
 
-	gi.positioned_sound (ent->s.origin, g_edicts, CHAN_AUTO, gi.soundindex(va("%s/arty/target%i.wav", ent->client->resp.team_on->teamid, 1)), 1.0, ATTN_NORM, 0);
-
+	gi.positioned_sound(ent->s.origin, g_edicts, CHAN_AUTO,
+						gi.soundindex(va("%s/arty/target1.wav", airstrike->arty_teamid)), 1.0, ATTN_NORM, 0);
 
 	//faf:  so we can get rid of the arty stuff in clientthink
 
+	gi.linkentity (airstrike);
 
+	VectorCopy(tr.endpos, airstrike->pos2);
+	airstrike->classname ="airstrike_called";
+	airstrike->owner = ent;
 
-		airstrike = G_Spawn();
-		gi.linkentity (airstrike);
+	// kernel: add arty_confirm delay to nextthink
+	airstrike->nextthink = level.time + arty_confirm->value;
+	airstrike->think = Airstrike_Confirm;
 
-		VectorCopy(tr.endpos, airstrike->pos2);
-		airstrike->classname ="airstrike_called";
+	// kernel: restrict arty now
+	ent->client->resp.team_on->arty_time_restrict = level.time + arty_time->value + arty_delay->value
+		+ arty_confirm->value;
 
-		airstrike->owner = ent;
-
-		if (airstrikes->value == 1)
-		{
-			airstrike->think = Airstrike_Plane_Launch;
-
-			ent->client->airstrike = airstrike;
-
-			if (arty_delay->value > 2.1)
-			{
-				airstrike->nextthink = level.time + arty_delay->value - 2;
-			}
-			else
-				airstrike->nextthink = level.time +.1;
-		}
-		else//ddaylife
-		{
-			airstrike->think = Arty_Sound;
-			
-			ent->client->airstrike = airstrike;
-
-			if (arty_delay->value > 3.1)
-			{
-				airstrike->nextthink = level.time + arty_delay->value - 3;
-			}
-			else
-				airstrike->nextthink = level.time +.1;
-		}
-
+	ent->client->airstrike = airstrike;
 }
 
 

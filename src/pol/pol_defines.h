@@ -48,7 +48,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define POL_M98KS_FRAME		6
 
 #define DAMAGE_VIS			25
-#define DAMAGE_SVT			45	
+#define DAMAGE_SVT			50
 //#define DAMAGE_STEN			25 
 #define DAMAGE_MORS			25 
 #define DAMAGE_RKM			45
