@@ -402,6 +402,7 @@ void InitGame (void)
 	// kernel: make dday faster again
 	fast_arty = gi.cvar("fast_arty", "0", 0);
 	fast_bleeding = gi.cvar("fast_bleeding", "0", 0);
+	fast_sniper = gi.cvar("fast_sniper", "0", 0);
 
 	// items
 	InitItems ();

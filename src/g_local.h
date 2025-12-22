@@ -814,6 +814,7 @@ extern cvar_t *limit_flamer;
 // kernel: make dday faster again
 extern cvar_t *fast_arty;
 extern cvar_t *fast_bleeding;
+extern cvar_t *fast_sniper;
 
 //extern	cvar_t	*crosshair;
 

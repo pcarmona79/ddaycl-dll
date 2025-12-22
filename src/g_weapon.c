@@ -3698,7 +3698,7 @@ void Weapon_Sniper_Fire (edict_t *ent)
 	}
 
 	//faf:  keep them from firing too fast
-	if (level.time < ent->client->last_fire_time + 1.78F)
+	if (!fast_sniper->value && level.time < ent->client->last_fire_time + 1.78F)
 	{
 		ent->client->ps.gunframe = 9;//first idle frame
 		return;//faf

@@ -4,6 +4,9 @@ Versión 5.058
 - Agrega cvar "fast_bleeding" para separar característica de sangrado
   que no se detiene si el jugador se queda detenido.
 
+- Agrega cvar "fast_sniper" que permite desactivar limitación de tiempo
+  entre disparos. Se considera desactivada por defecto.
+
 Versión 5.057
 -------------
 
