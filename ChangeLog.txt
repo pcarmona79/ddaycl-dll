@@ -7,6 +7,12 @@ Versión 5.058
 - Agrega cvar "fast_sniper" que permite desactivar limitación de tiempo
   entre disparos. Se considera desactivada por defecto.
 
+- Se modifica Airstrike_Plane_Launch() de g_arty.c para permitir
+  cancelar la orden de ataque aéreo si el oficial muere antes de que el
+  avión aparezca en el mapa. También se modifica Airstrike_Confirm()
+  para que solo reproduzca el sonido de confirmación si la variable
+  "arty_confirm" tiene un valor mayor que cero.
+
 Versión 5.057
 -------------
 

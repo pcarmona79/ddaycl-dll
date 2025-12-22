@@ -2058,7 +2058,11 @@ void Binocular_Fire(edict_t *ent)
 	airstrike->owner = ent;
 
 	// kernel: add arty_confirm delay to nextthink
-	airstrike->nextthink = level.time + arty_confirm->value;
+	if (arty_confirm->value > 0.1)
+		airstrike->nextthink = level.time + arty_confirm->value;
+	else
+		airstrike->nextthink = level.time + 0.1;
+
 	airstrike->think = Airstrike_Confirm;
 
 	// kernel: restrict arty now
