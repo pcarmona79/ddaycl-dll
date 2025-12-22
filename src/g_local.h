@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.057" // ddaychile
+#define DEVVERSION	"5.058" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -813,6 +813,7 @@ extern cvar_t *limit_flamer;
 
 // kernel: make dday faster again
 extern cvar_t *fast_arty;
+extern cvar_t *fast_bleeding;
 
 //extern	cvar_t	*crosshair;
 

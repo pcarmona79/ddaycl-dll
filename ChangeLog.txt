@@ -1,3 +1,9 @@
+Versión 5.058
+-------------
+
+- Agrega cvar "fast_bleeding" para separar característica de sangrado
+  que no se detiene si el jugador se queda detenido.
+
 Versión 5.057
 -------------
 

@@ -4165,10 +4165,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	    if (client->jump_stamina < JUMP_MAX)
 			client->jump_stamina += JUMP_REGEN;
 */
-	// kernel: real men just keep moving
-	//if (ent->die_time &&
-	//	!ent->client->movement)
-	//	ent->die_time = level.time + .5;
+	// kernel: this will delay the bleeding
+	if (!fast_bleeding->value && ent->die_time && !ent->client->movement)
+		ent->die_time = level.time + .5;
 
 	// Check to see if its time to die from a wound...		
 		if ( (ent->die_time) && (level.time > ent->die_time))//faf
@@ -4186,7 +4185,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				temp_damage += 0; // kernel: no bleeding leg wound
 
 			// kernel: reduce damage 50% when not moving
-			if (!ent->client->movement)
+			if (fast_bleeding->value && !ent->client->movement)
 				temp_damage /= 2;
 
 			// kernel: attacker should be the last wound inflictor
@@ -4197,7 +4196,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			//ent->die_time = level.time + (crandom() + 1) * 2;
 
 			// kernel: if not moving increase die time
-			if (!ent->client->movement)
+			if (fast_bleeding->value && !ent->client->movement)
 				ent->die_time = level.time + 6;
 			else
 				ent->die_time = level.time + 2;
