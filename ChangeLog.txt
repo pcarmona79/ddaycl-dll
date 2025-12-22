@@ -13,6 +13,9 @@ Versión 5.058
   para que solo reproduzca el sonido de confirmación si la variable
   "arty_confirm" tiene un valor mayor que cero.
 
+- Agrega una verificación de distancia mayor a 200 unidades al aplicar
+  daño en los pies mediante rifles de cerrojo.
+
 Versión 5.057
 -------------
 
