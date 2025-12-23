@@ -23,6 +23,9 @@ Versión 5.058
   comando de servidor "sv resetscore", que restablecerá los puntajes del
   equipo a cero.
 
+- Muestra un cuchillo giratorio si al lanzarlo la variable "fast_knife"
+  no está habilitada.
+
 Versión 5.057
 -------------
 
