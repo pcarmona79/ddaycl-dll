@@ -16,6 +16,9 @@ Versión 5.058
 - Agrega una verificación de distancia mayor a 200 unidades al aplicar
   daño en los pies mediante rifles de cerrojo.
 
+- Se vuelven a poner los mensajes de chat en diferente color, como solía
+  ocurrir en la versión 4.x.
+
 Versión 5.057
 -------------
 

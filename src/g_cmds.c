@@ -2556,8 +2556,9 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 			if (entR->client->resp.team_on	&&
 				entR->client->resp.mos		&&
 				entR->client->resp.team_on == ent->client->resp.team_on)
-			{safe_cprintf(entR, PRINT_HIGH, "%s", teamname);
-			safe_cprintf(entR, PRINT_CHAT, "%s", text);}
+			{
+				safe_cprintf(entR, PRINT_CHAT, "%s%s", teamname, text);
+			}
 		}
 
 	}
@@ -2571,9 +2572,8 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 			entR=&g_edicts[j];
 			if (!entR->inuse || !entR->client)
 				continue;
-			safe_cprintf(entR, PRINT_HIGH, "%s", teamname);
-			safe_cprintf(entR, PRINT_CHAT, "%s", text);
-		} 
+			safe_cprintf(entR, PRINT_CHAT, "%s%s", teamname, text);
+		}
 	}
 
 	if (ent->flyingnun || ent->deadflag || ent->health < 1)
