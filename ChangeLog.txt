@@ -26,6 +26,9 @@ Versión 5.058
 - Muestra un cuchillo giratorio si al lanzarlo la variable "fast_knife"
   no está habilitada.
 
+- Modifica centerprintall() de g_utils.c para imprimir también en la
+  consola del servidor.
+
 Versión 5.057
 -------------
 

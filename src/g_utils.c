@@ -765,6 +765,9 @@ void centerprintall (char *mesg, ...)
 		Com_Printf ("centerprintall: overflow of %i in %i\n", len, size);
 
 	strncpy (print, buffer, size-1);
+
+	// kernel: print to server console
+	gi.dprintf("*** %s ***\n", print);
 	
 	for (i = 1; i <= game.maxclients; i++)
 	{

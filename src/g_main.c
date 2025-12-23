@@ -1252,29 +1252,29 @@ void CheckDMRules (void)
 		if (timeRemaining == 300 && !fiveMinWarning)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/5_minute.wav"), 1, ATTN_NONE, 0);
-			centerprintall("Quedan 5 minutos de tiempo!\n");
+			centerprintall("Quedan 5 minutos de tiempo!");
 			fiveMinWarning = true;
 		}
 
 		if (timeRemaining == 60 && !oneMinWarning)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/1_minute.wav"), 1, ATTN_NONE, 0);
-			centerprintall("Queda 1 minuto de tiempo!\n", 5.0f);
+			centerprintall("Queda 1 minuto de tiempo!", 5.0f);
 			oneMinWarning = true;
 		}
 
 		if (timeRemaining == 4 && !threeSeconds)
 		{
 			gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("misc/final_count.wav"), 1, ATTN_NONE, 0);
-			centerprintall("Quedan 3 segundos!\n", 5.0f);
+			centerprintall("Quedan 3 segundos!", 5.0f);
 			threeSeconds = true;
 		}
 
 		if (timeRemaining == 3)
-			centerprintall("Quedan 2 segundos!\n", 5.0f);
+			centerprintall("Quedan 2 segundos!", 5.0f);
 
 		if (timeRemaining == 2)
-			centerprintall("Queda 1 segundo!\n", 5.0f);
+			centerprintall("Queda 1 segundo!", 5.0f);
 
 		// end game if timelimit hits
 		if (timeRemaining <= 0)

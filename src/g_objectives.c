@@ -104,7 +104,7 @@ void objective_area_think (edict_t *self) {
 		if (dedicated->value)
 			safe_cprintf(NULL, PRINT_HIGH, "Objective %s taken by team %s!\n",  self->obj_name,  team_list[self->obj_owner]->teamname);
 
-		centerprintall("Objective %s taken\n by team %s!\n", 
+		centerprintall("Objective %s taken\n by team %s!",
 			self->obj_name, 
 			team_list[self->obj_owner]->teamname);
 	}
