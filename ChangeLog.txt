@@ -19,6 +19,10 @@ Versión 5.058
 - Se vuelven a poner los mensajes de chat en diferente color, como solía
   ocurrir en la versión 4.x.
 
+- Agrega Svcmd_ResetScore_f() a g_svcmds.c para habilitar el nuevo
+  comando de servidor "sv resetscore", que restablecerá los puntajes del
+  equipo a cero.
+
 Versión 5.057
 -------------
 

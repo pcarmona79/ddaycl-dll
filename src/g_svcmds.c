@@ -655,6 +655,22 @@ void SVCmd_KillPlayer_f()
 	gi.bprintf(PRINT_HIGH, "El jugador %s (ID: %d) ha sido asesinado por RCON.\n", player->client->pers.netname, player_id);
 }
 
+void Svcmd_ResetScore_f(void)
+{
+	int i;
+
+	for (i = 0; i < MAX_TEAMS; ++i)
+	{
+		if (team_list[i])
+		{
+			team_list[i]->kills = 0;
+			team_list[i]->score = 0;
+		}
+	}
+
+	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
+}
+
 /*
 =================
 ServerCommand
@@ -694,7 +710,8 @@ void	ServerCommand (void)
 		SVCmd_StartCountdown_f();
 	else if (Q_stricmp(cmd, "timeleft") == 0)
 		Svcmd_Timeleft_f();
-
+	else if (Q_stricmp(cmd, "resetscore") == 0)
+		Svcmd_ResetScore_f();
 	else if (Q_stricmp(cmd, "listplayers") == 0)
 		SVCmd_ListPlayers_f();
 
