@@ -29,6 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_maps.h"
 #include "p_menus.h"
 #include "q_shared.h"
+#include <stdio.h>
+#include <string.h>
 
 void Cmd_Objectives (edict_t *ent);
 void M_ChooseMOS(edict_t *ent);
@@ -698,6 +700,7 @@ void M_ChooseMOS(edict_t *ent)
 {
 	int i,j;
 	char* theText = NULL;
+	char mosname[13];
 	int taken;
 	int maxSlots;
 //	int index;
@@ -842,7 +845,15 @@ continue;
 			strcpy (theText, "                    ");
 		}
 		else
-			strcpy(theText, va("%12s [%i/%i]", ent->client->resp.team_on->mos[i]->name, taken, maxSlots));
+		{
+			// kernel: truncate mos name to 12 chars max
+			strncpy(mosname, ent->client->resp.team_on->mos[i]->name, 12);
+			if (strlen(ent->client->resp.team_on->mos[i]->name) > 12)
+				mosname[12] = '\0';
+
+			if (snprintf(theText, 21, "%12s [%i/%i]", mosname, taken, maxSlots) >= 21)
+				gi.dprintf("M_ChooseMOS: text truncated\n");
+		}
 
 		ent->client->menu_cur[i+6].text  = (class_limits->value)?(char *)theText:ent->client->resp.team_on->mos[i]->name;
 		
@@ -1004,6 +1015,7 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 void ChooseTeam(edict_t *ent) {
 	int i;//,j;
 	char* theText = NULL;
+	char teamname[17];
 	int max_clients;
 
 	PMenu_Close(ent);
@@ -1079,8 +1091,15 @@ void ChooseTeam(edict_t *ent) {
 
 			max_clients = maxclients->value;
 			// Make the text look good
-			theText = gi.TagMalloc(sizeof("123456789012 [00/00]"), TAG_GAME);
-			strcat(theText, va("%12s [%i/%i]", team_list[i]->teamname, PlayerCountForTeam(i), max_clients));//faf: removed "team_list[i]->total,"
+			theText = gi.TagMalloc(sizeof("1234567890123456 [00/00]"), TAG_GAME);
+
+			// kernel: truncate team name to 16 chars max
+			strncpy(teamname, team_list[i]->teamname, 16);
+			if (strlen(team_list[i]->teamname) > 16)
+				teamname[16] = '\0';
+
+			if (snprintf(theText, 25, "%12s [%i/%i]", teamname, PlayerCountForTeam(i), max_clients) >= 25)
+				gi.dprintf("ChooseTeam: text truncated\n");
 
 			// Put it on the menu
 			client_menu(ent, (i + 11), theText, PMENU_ALIGN_LEFT, NULL, M_Team_Join );
@@ -1417,6 +1436,7 @@ void MapVote(edict_t *ent)
 	FILE	*f;
 	qboolean botmap = false;
 	char* theText = NULL;
+	char mapname[18];
 	char *add;
 
 	PMenu_Close(ent);
@@ -1454,7 +1474,14 @@ void MapVote(edict_t *ent)
 			add = "";
 
 		theText = gi.TagMalloc(sizeof("1234567890123456789012345"), TAG_GAME);
-		strcat(theText, va("      %s %s",add,votemaps[i]));
+
+		// kernel: truncate map name to 17 chars max
+		strncpy(mapname, votemaps[i], 17);
+		if (strlen(votemaps[i]) > 17)
+			mapname[17] = '\0';
+
+		if (snprintf(theText, 26, "      %s %s", add, votemaps[i]) >= 26)
+			gi.dprintf("MapVote: text truncated\n");
 
 		client_menu(ent, 7+(i*2),  theText,		PMENU_ALIGN_LEFT,	NULL, VoteMap );
 	}

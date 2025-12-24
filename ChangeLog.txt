@@ -32,6 +32,9 @@ Versión 5.058
 - Imprimir mensaje de advertencia cuando un jugador recibe una herida en
   el pie causada por un rifle de cerrojo.
 
+- Corrige M_ChooseMOS(), ChooseTeam() y MapVote() de p_observer.c para
+  truncar las cadenas utilizadas al crear los elementos del menú.
+
 Versión 5.057
 -------------
 
