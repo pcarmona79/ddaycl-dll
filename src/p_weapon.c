@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // g_weapon.c
 
+#include "ai/ai.h"
 #include "g_local.h"
 #include "m_player.h"
 
@@ -1714,13 +1715,19 @@ void Knife_Throw (edict_t *self, vec3_t start, vec3_t dir, int damage)
 	}
 	else
 	{
-		VectorSet (blade->avelocity, 0, 0, 0);//-2000,0,0 cuchillo girador
+		if (fast_knife->value)
+			VectorSet (blade->avelocity, 0, 0, 0);
+		else
+			VectorSet (blade->avelocity, -2000, 0, 0); // rotating knife
+
 		blade->movetype = MOVETYPE_TOSS;
 		VectorSet (blade->mins, -1, -1, -1);
 		VectorSet (blade->maxs, 1, 1, 1);
 //		VectorClear (blade->mins);
 //		VectorClear (blade->maxs);
-		//blade->s.sound = gi.soundindex("knife/spin.wav");
+
+		if (!fast_knife->value)
+			blade->s.sound = gi.soundindex("knife/spin.wav");
 	}
 
 	blade->s.modelindex = (fistarmed)?gi.modelindex ("models/weapons/g_helmet/tris.md2"):
@@ -2058,7 +2065,11 @@ void Binocular_Fire(edict_t *ent)
 	airstrike->owner = ent;
 
 	// kernel: add arty_confirm delay to nextthink
-	airstrike->nextthink = level.time + arty_confirm->value;
+	if (arty_confirm->value > 0.1)
+		airstrike->nextthink = level.time + arty_confirm->value;
+	else
+		airstrike->nextthink = level.time + 0.1;
+
 	airstrike->think = Airstrike_Confirm;
 
 	// kernel: restrict arty now

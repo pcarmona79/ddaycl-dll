@@ -862,17 +862,17 @@ void Spawn_Plane(edict_t *ent)
 //faf
 void Airstrike_Plane_Launch(edict_t *ent)
 {
-/* kernel: this is not necessary
-	if (!ent->owner ||
+	if (arty_confirm->value <= 0 &&
+		(!ent->owner ||
 		!ent->owner->client ||
 		!ent->owner->inuse ||
-		!ent->owner->client->resp.team_on ||
-		ent->owner->flyingnun)
+		ent->owner->flyingnun))
 	{
 		G_FreeEdict(ent);
 		return;
 	}
 
+/* kernel: this is not necessary
 	if (!ent->owner->client->airstrike)
 	{
 		G_FreeEdict(ent);
@@ -886,6 +886,20 @@ void Airstrike_Plane_Launch(edict_t *ent)
 		return;
 	}
 */
+	// kernel: cancel if player is dead
+	if (arty_confirm->value <= 0 && (ent->owner->deadflag || ent->owner->client->limbo_mode))
+	{
+		// kernel: cancel just one arty
+		if (ent->owner->client->resp.team_on->arty_num > 0)
+			ent->owner->client->resp.team_on->arty_num--;
+		else
+			ent->owner->client->resp.team_on->arty_num = 0;
+
+		ent->owner->client->airstrike = NULL;
+		G_FreeEdict(ent);
+		return;
+	}
+
 	if (!strcmp(ent->arty_teamid, "usa"))
 	{
 		if (fast_arty->value)
@@ -940,7 +954,10 @@ void Airstrike_Confirm(edict_t *ent)
 
 	// if not dead play sound and print confirmation
 	safe_centerprintf(ent->owner, "Sir, give us %d seconds to reach the target!\n", (int)arty_delay->value);
-	gi.positioned_sound(ent->owner->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/radioint.wav"), 1.0, ATTN_NORM, 0);
+
+	// kernel: play audio confirmation
+	if (arty_confirm->value > 0)
+		gi.positioned_sound(ent->owner->s.origin, g_edicts, CHAN_AUTO, gi.soundindex("faf/radioint.wav"), 1.0, ATTN_NORM, 0);
 
 	// kernel: fast plane approaching
 	if (fast_arty->value)
@@ -950,7 +967,9 @@ void Airstrike_Confirm(edict_t *ent)
 	{
 		ent->think = Airstrike_Plane_Launch;
 
-		if (arty_delay->value > 2.1)
+		if (fast_arty->value)
+			ent->nextthink = level.time + arty_delay->value;
+		else if (arty_delay->value > 2.1)
 			ent->nextthink = level.time + arty_delay->value - 2;
 		else
 			ent->nextthink = level.time + .1;
@@ -959,7 +978,9 @@ void Airstrike_Confirm(edict_t *ent)
 	{
 		ent->think = Arty_Sound;
 
-		if (arty_delay->value > 3.1)
+		if (fast_arty->value)
+			ent->nextthink = level.time + arty_delay->value;
+		else if (arty_delay->value > 3.1)
 			ent->nextthink = level.time + arty_delay->value - 3;
 		else
 			ent->nextthink = level.time + .1;

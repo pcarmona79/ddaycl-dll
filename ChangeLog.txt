@@ -1,3 +1,40 @@
+Versión 5.058
+-------------
+
+- Agrega cvar "fast_bleeding" para separar característica de sangrado
+  que no se detiene si el jugador se queda detenido.
+
+- Agrega cvar "fast_sniper" que permite desactivar limitación de tiempo
+  entre disparos. Se considera desactivada por defecto.
+
+- Se modifica Airstrike_Plane_Launch() de g_arty.c para permitir
+  cancelar la orden de ataque aéreo si el oficial muere antes de que el
+  avión aparezca en el mapa. También se modifica Airstrike_Confirm()
+  para que solo reproduzca el sonido de confirmación si la variable
+  "arty_confirm" tiene un valor mayor que cero.
+
+- Agrega una verificación de distancia mayor a 200 unidades al aplicar
+  daño en los pies mediante rifles de cerrojo.
+
+- Se vuelven a poner los mensajes de chat en diferente color, como solía
+  ocurrir en la versión 4.x.
+
+- Agrega Svcmd_ResetScore_f() a g_svcmds.c para habilitar el nuevo
+  comando de servidor "sv resetscore", que restablecerá los puntajes del
+  equipo a cero.
+
+- Muestra un cuchillo giratorio si al lanzarlo la variable "fast_knife"
+  no está habilitada.
+
+- Modifica centerprintall() de g_utils.c para imprimir también en la
+  consola del servidor.
+
+- Imprimir mensaje de advertencia cuando un jugador recibe una herida en
+  el pie causada por un rifle de cerrojo.
+
+- Corrige M_ChooseMOS(), ChooseTeam() y MapVote() de p_observer.c para
+  truncar las cadenas utilizadas al crear los elementos del menú.
+
 Versión 5.057
 -------------
 
