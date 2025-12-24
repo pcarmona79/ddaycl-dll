@@ -29,6 +29,9 @@ Versión 5.058
 - Modifica centerprintall() de g_utils.c para imprimir también en la
   consola del servidor.
 
+- Imprimir mensaje de advertencia cuando un jugador recibe una herida en
+  el pie causada por un rifle de cerrojo.
+
 Versión 5.057
 -------------
 
