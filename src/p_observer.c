@@ -706,6 +706,8 @@ void M_ChooseMOS(edict_t *ent)
 //	int index;
 	edict_t *cl_ent;
 
+	memset(mosname, 0, sizeof(mosname));
+
 	//pmenu = (ent->client->resp.team_on->index) ? menu_classes_grm : menu_classes_usa;
 	//memcpy(ent->client->menu_cur, menu_classes, sizeof(pmenu_t));
 
@@ -1017,6 +1019,8 @@ void ChooseTeam(edict_t *ent) {
 	char* theText = NULL;
 	char teamname[17];
 	int max_clients;
+
+	memset(teamname, 0, sizeof(teamname));
 
 	PMenu_Close(ent);
 
@@ -1438,6 +1442,8 @@ void MapVote(edict_t *ent)
 	char* theText = NULL;
 	char mapname[18];
 	char *add;
+
+	memset(mapname, 0, sizeof(mapname));
 
 	PMenu_Close(ent);
 
