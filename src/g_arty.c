@@ -886,8 +886,9 @@ void Airstrike_Plane_Launch(edict_t *ent)
 		return;
 	}
 */
-	// kernel: cancel if player is dead
-	if (arty_confirm->value <= 0 && (ent->owner->deadflag || ent->owner->client->limbo_mode))
+	// kernel: cancel if player is dead or already respawn
+	if (arty_confirm->value <= 0 &&
+		(ent->owner->deadflag || ent->owner->client->limbo_mode || !ent->owner->client->airstrike))
 	{
 		// kernel: cancel just one arty
 		if (ent->owner->client->resp.team_on->arty_num > 0)
