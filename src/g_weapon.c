@@ -4427,7 +4427,7 @@ void Weapon_PIAT_Fire (edict_t *ent)
 
 				}
 
-		else if (ent->client->movement) {
+		else if (ent->client->movement_keys) {
 
 			if (ent->client->machinegun_shots == 0)
 				safe_centerprintf(ent, "Stop bloody moving when you fire!!\n");
