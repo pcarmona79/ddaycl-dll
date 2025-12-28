@@ -4,6 +4,9 @@ Versión 5.059
 - Cambia la detección de movimiento usada en Weapon_PIAT_Fire() para
   utilizar las teclas de movimiento enviadas por el usuario.
 
+- La confirmación del ataque aéreo también debe informarse como un
+  mensaje centrado en la pantalla en Plane_Fire() de g_arty.c.
+
 Versión 5.058
 -------------
 
