@@ -46,6 +46,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define SPAWN_CAMP_TIME	10 //seconds
 
 
+// evil: global variables for countdown
+extern float countdownTimeLimit;
 
 /*
 ============
@@ -796,6 +798,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
     qboolean saved=false;
 	
 	if (!(dflags & DAMAGE_NO_PROTECTION) && IsValidPlayer(targ) && level.time < targ->client->spawntime + invuln_spawn->value) // pbowens: invulnerability
+		return;
+
+	// kernel: do not allow damage if the match has not begun yet
+	if (tournament->value && countdownTimeLimit <= 0)
 		return;
 
 	//faf

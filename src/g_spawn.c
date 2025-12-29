@@ -1524,6 +1524,8 @@ void SP_worldspawn (edict_t *ent)
 	else if (skill->value > 3)
 		gi.cvar_forceset ("skill", "3");
 
+	// kernel: must reset countdown settings
+	ResetCountTimer();
 
 	//snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
 	snd_fry = gi.soundindex ("players/tear.wav");	// standing in lava / slime
