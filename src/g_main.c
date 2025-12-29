@@ -179,6 +179,9 @@ cvar_t *fast_arty;
 cvar_t *fast_bleeding;
 cvar_t *fast_sniper;
 
+// kernel: spawn retention for tournament mode
+cvar_t *tournament;
+
 // evil: global variables for countdown
 int countdownActive = 0;
 int countdownValue = 0;

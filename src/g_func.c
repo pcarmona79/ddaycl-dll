@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "game.h"
 
 /*
 =========================================================
@@ -2256,6 +2257,7 @@ void SP_spawn_protect (edict_t *self)
 	vec3_t min;
 	vec3_t max;
 	int i;
+	edict_t *area;
 
 
 	self->touch = Touch_Spawn_Protect;
@@ -2299,6 +2301,14 @@ void SP_spawn_protect (edict_t *self)
 
 	gi.linkentity (self);
 
+	// kernel: save this ent to TeamS_t
+	for (i = 0; i < 5; ++i)
+	{
+		if (team_list[self->obj_owner]->confined_spawn_areas[i])
+			continue;
 
+		team_list[self->obj_owner]->confined_spawn_areas[i] = self;
+		break;
+	}
 }
 

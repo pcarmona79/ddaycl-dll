@@ -27,8 +27,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // g_utils.c -- misc utility functions for game module
 
+#include "ai/ai.h"
 #include "g_defines.h"
 #include "g_local.h"
+#include "game.h"
+#include "q_shared.h"
 
 void change_stance(edict_t *self, int stance);
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
@@ -791,6 +794,94 @@ qboolean IsValidPlayer(edict_t *ent) {
 		return true;
 	else
 		return false;
+}
+
+qboolean IsPlayerInsideSpawnProtect(edict_t *ent)
+{
+	int i;
+	edict_t *area;
+
+	// player must be on a team and should be exist spawn_protect areas
+	if (ent->client->resp.team_on &&
+		(team_list[0]->confined_spawn_areas[0] || team_list[1]->confined_spawn_areas[0]))
+	{
+		for (i = 0; i < 5; ++i)
+		{
+			area = ent->client->resp.team_on->confined_spawn_areas[i];
+			if (area)
+			{
+				if (ent->s.origin[0] > area->absmin[0] && ent->s.origin[0] < area->absmax[0] &&
+					ent->s.origin[1] > area->absmin[1] && ent->s.origin[1] < area->absmax[1] &&
+					ent->s.origin[2] > area->absmin[2] && ent->s.origin[2] < area->absmax[2])
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+edict_t *SelectNearestSpawnPoint(int team);
+void Spawn_Chute(edict_t *ent);
+
+// kernel: run this when starting the countdown, if the player is outside his spawn area.
+void MoveToTheirSpawnPoint(edict_t *ent)
+{
+	edict_t *spot;
+	vec3_t spawn_origin, spawn_angles;
+	int i;
+
+	if(!ent->client->resp.team_on)
+		return;
+
+	//ok put the player where he's supposed to be
+	spot = SelectNearestSpawnPoint(ent->obj_owner);
+
+	if (spot)
+	{
+		VectorCopy(spot->s.origin, spawn_origin);
+		VectorCopy(spot->s.angles, spawn_angles);
+	}
+	else
+		Find_Mission_Start_Point(ent, spawn_origin, spawn_angles);
+
+	// unlink to make sure it can't possibly interfere with KillBox
+	gi.unlinkentity(ent);
+
+	ent->client->ps.pmove.origin[0] = spawn_origin[0]*8;
+	ent->client->ps.pmove.origin[1] = spawn_origin[1]*8;
+	ent->client->ps.pmove.origin[2] = spawn_origin[2]*8;
+	VectorCopy(spawn_origin, ent->s.origin);
+	ent->s.origin[2] += 1;	// make sure off ground
+	VectorCopy(ent->s.origin, ent->s.old_origin);
+
+	// clear the velocity and hold them in place briefly
+	VectorClear(ent->velocity);
+
+	ent->client->ps.pmove.pm_time = 160>>3;		// hold time
+	ent->client->ps.pmove.pm_flags |= PMF_TIME_LAND; // pbowens: changed from PMF_TIME_TELEPORT, no particles
+
+	for (i = 0; i < 3; i++)
+		ent->client->ps.pmove.delta_angles[i] = ANGLE2SHORT(spawn_angles[i] - ent->client->resp.cmd_angles[i]);
+
+	ent->s.angles[PITCH] = 0;
+	ent->s.angles[YAW] = spawn_angles[YAW];
+	ent->s.angles[ROLL] = 0;
+	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
+	VectorCopy(ent->s.angles, ent->client->v_angle);
+
+	gi.linkentity(ent);
+
+	ent->client->resp.AlreadySpawned = true;
+	WeighPlayer(ent);
+
+	ent->client->landed = true;
+	//faf
+	if (ent->client->resp.mos == SPECIAL)
+	{
+		ent->client->has_chute = true;
+		Spawn_Chute(ent);
+	}
 }
 
 /*

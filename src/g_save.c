@@ -404,6 +404,9 @@ void InitGame (void)
 	fast_bleeding = gi.cvar("fast_bleeding", "0", 0);
 	fast_sniper = gi.cvar("fast_sniper", "0", 0);
 
+	// kernel: spawn retention for tournament mode
+	tournament = gi.cvar("tournament", "0", CVAR_SERVERINFO);
+
 	// items
 	InitItems ();
 

@@ -816,6 +816,9 @@ extern cvar_t *fast_arty;
 extern cvar_t *fast_bleeding;
 extern cvar_t *fast_sniper;
 
+// kernel: spawn retention for tournament mode
+extern cvar_t *tournament;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])
@@ -964,6 +967,9 @@ void reinforcement_think(edict_t *ent);
 void centerprintall (char *mesg, ...);
 
 qboolean IsValidPlayer(edict_t *ent);
+
+qboolean IsPlayerInsideSpawnProtect(edict_t *ent);
+void MoveToTheirSpawnPoint(edict_t *ent);
 
 //
 // g_combat.c
@@ -1269,6 +1275,9 @@ typedef struct
 	qboolean	kills_and_points; // if team need both minimum kills and minimum points to win
 	qboolean chute;
 	float		delay;//delay at start of map
+
+	// kernel: spawn_protect areas
+	edict_t *confined_spawn_areas[5];
 
 }TeamS_t;
 

@@ -1,6 +1,12 @@
 Versión 5.059
 -------------
 
+- Se añade la nueva variable "tournament" para realizar una retención en
+  una zona de aparición antes de que finalice la cuenta regresiva. Las
+  nuevas funciones en g_utils.c permiten detectar cuándo un jugador se
+  encuentra dentro de su zona de aparición protegida y moverlo a una
+  zona protegida si se encontraba fuera.
+
 - Cambia la detección de movimiento usada en Weapon_PIAT_Fire() para
   utilizar las teclas de movimiento enviadas por el usuario.
 
