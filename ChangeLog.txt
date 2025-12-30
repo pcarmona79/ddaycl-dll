@@ -8,8 +8,11 @@ Versión 5.059
   aparición protegida y moverlo a una zona protegida si se encontraba
   fuera.
 
-- Modifica T_Damage() de g_combat.c para no permitir daño si el partido
-  aún no ha comenzado cuando está en modo torneo.
+- Se modifica T_Damage() de g_combat.c para que no se permita causar
+  daño si la partida aún no ha comenzado en el modo torneo. Tampoco se
+  permite que los jugadores se incendien y suelten armas, incluso si
+  cambian de equipo. Además, los bots no pueden soltar armas al ser
+  eliminados.
 
 - Cambia la detección de movimiento usada en Weapon_PIAT_Fire() para
   utilizar las teclas de movimiento enviadas por el usuario.
