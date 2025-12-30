@@ -800,8 +800,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	if (!(dflags & DAMAGE_NO_PROTECTION) && IsValidPlayer(targ) && level.time < targ->client->spawntime + invuln_spawn->value) // pbowens: invulnerability
 		return;
 
-	// kernel: do not allow damage if the match has not begun yet
-	if (tournament->value && countdownTimeLimit <= 0)
+	// kernel: do not allow damage if the match has not begun yet, but allow it when changing teams
+	if (tournament->value && countdownTimeLimit <= 0 && mod != MOD_CHANGETEAM && mod != MOD_CHANGETEAM_WOUNDED)
 		return;
 
 	//faf
