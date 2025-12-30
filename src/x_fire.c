@@ -70,6 +70,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "x_fire.h"
 
+// evil: global variables for countdown
+extern float countdownTimeLimit;
 
 /*============================/  Fire Dodge  /============================*/
 
@@ -547,6 +549,11 @@ void PBM_Ignite (edict_t *victim, edict_t *attacker, vec3_t point)
 	{
 		if (level.time < victim->client->spawntime + invuln_spawn->value)
 			return;
+
+		// kernel: do not allow to set on fire if the match has not begun yet
+		if (tournament->value && countdownTimeLimit <= 0)
+			return;
+
 	}
 /* Some entities vulnerable to fire damage can resist burning. */
         if (PBM_FireResistant(victim, point))  return;

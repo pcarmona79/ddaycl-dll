@@ -1395,6 +1395,10 @@ void Cmd_Drop_f (edict_t *ent)
 	if (!ent->client->resp.team_on || !ent->client->resp.mos || ent->client->grenade || ent->client->grenade_index )
 		return;
 
+	// kernel: do not allow to drop anything if the match has not begun yet
+	if (tournament->value && countdownTimeLimit <= 0)
+		return;
+
 	s = gi.args(); 
 	it = FindItemInTeam(s, ent->client->resp.team_on->teamid);
 
