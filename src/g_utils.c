@@ -845,6 +845,8 @@ void MoveToTheirSpawnPoint(edict_t *ent)
 	else
 		Find_Mission_Start_Point(ent, spawn_origin, spawn_angles);
 
+	ent->solid = SOLID_TRIGGER; //don't set this until seconds after respawn
+
 	// unlink to make sure it can't possibly interfere with KillBox
 	gi.unlinkentity(ent);
 
