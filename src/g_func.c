@@ -2202,7 +2202,8 @@ void Touch_Spawn_Protect (edict_t *ent, edict_t *other, cplane_t *plane, csurfac
 			if (other->client->enter_spawn_time > level.time - 4 &&
 				other->client->spawn_kill_time < level.time)
 			{
-				other->health = 1;
+				// kernel: not needed
+				//other->health = 1;
 				T_Damage(other, other, other, other->maxs, other->s.origin, NULL, 999, 0,  DAMAGE_NO_PROTECTION, MOD_SPAWNCAMP);
 			}
 		}
