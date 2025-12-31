@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "game.h"
 
 /*
 =========================================================
@@ -2201,7 +2202,8 @@ void Touch_Spawn_Protect (edict_t *ent, edict_t *other, cplane_t *plane, csurfac
 			if (other->client->enter_spawn_time > level.time - 4 &&
 				other->client->spawn_kill_time < level.time)
 			{
-				other->health = 1;
+				// kernel: not needed
+				//other->health = 1;
 				T_Damage(other, other, other, other->maxs, other->s.origin, NULL, 999, 0,  DAMAGE_NO_PROTECTION, MOD_SPAWNCAMP);
 			}
 		}
@@ -2256,6 +2258,7 @@ void SP_spawn_protect (edict_t *self)
 	vec3_t min;
 	vec3_t max;
 	int i;
+	edict_t *area;
 
 
 	self->touch = Touch_Spawn_Protect;
@@ -2299,6 +2302,14 @@ void SP_spawn_protect (edict_t *self)
 
 	gi.linkentity (self);
 
+	// kernel: save this ent to TeamS_t
+	for (i = 0; i < 5; ++i)
+	{
+		if (team_list[self->obj_owner]->confined_spawn_areas[i])
+			continue;
 
+		team_list[self->obj_owner]->confined_spawn_areas[i] = self;
+		break;
+	}
 }
 

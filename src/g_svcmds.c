@@ -571,6 +571,9 @@ void SVCmd_ListPlayers_f(void)
 // evil: command for set and start countdown 
 void SVCmd_StartCountdown_f()
 {
+	int i;
+	edict_t* player;
+
 	if (gi.argc() < 2) {
 		gi.cprintf(NULL, PRINT_HIGH, "Uso: sv countdown <minutos>\n");
 		return;
@@ -584,13 +587,29 @@ void SVCmd_StartCountdown_f()
 		return;
 	}
 
+	// kernel: check if there are players outside their spawn protect areas
+	if (tournament->value)
+	{
+		for (i = 1; i <= maxclients->value; i++)
+		{
+			player = &g_edicts[i];
+
+			// check only players in teams
+			if (player->inuse && player->client && player->client->resp.team_on &&
+				!IsPlayerInsideSpawnProtect(player))
+			{
+				// move player to nearest spawn point
+				safe_bprintf(PRINT_HIGH, "** Moving %s to his spawn point **\n", player->client->pers.netname);
+				MoveToTheirSpawnPoint(player);
+			}
+		}
+	}
+
 	// Set countdown configuration
 	countdownActive = 1;
 	countdownValue = 5;
 	countdownTimer = 10;
 	countdownTimeLimit = minutes;
-
-	int levelTimelimit = minutes * 60;
 }
 
 

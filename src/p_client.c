@@ -34,6 +34,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "x_fire.h"
 //#include "p_menus.h"
 
+// evil: global variables for countdown
+extern int countdownActive;
+extern float countdownTimeLimit;
+
 void ShowGun(edict_t *ent);
 
 void SwitchToObserver(edict_t *ent);
@@ -1240,8 +1244,13 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		//bcass end
 		else
 		{
-			// kernel: if player does not have a live TNT, then toss the weapon
-			TossClientWeapon(self);
+			// kernel: do not allow to toss weapon when changing teams in tournament mode, bots also can not drop weapon
+			if (!(tournament->value && countdownTimeLimit <= 0 &&
+				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED || self->ai)))
+			{
+				// kernel: if player does not have a live TNT, then toss the weapon
+				TossClientWeapon(self);
+			}
 		}
 	}
 	
@@ -3873,10 +3882,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	}
 
-	
+	// kernel: verify if player is trying to exit his spawn_protect in tournament mode
+	if (!client->limbo_mode && !ent->flyingnun &&
+		tournament->value && countdownActive &&
+		!IsPlayerInsideSpawnProtect(ent))
+	{
+		// make a retention effect
+		ent->velocity[PITCH] = -0.5 * ent->velocity[PITCH];
+		ent->velocity[YAW] = -0.5 * ent->velocity[YAW];
+		VectorCopy(ent->s.old_origin, ent->s.origin);
 
-
-
+		safe_centerprintf(ent, "You're confined to this Spawn Area until the match begins\n");
+	}
 
 	//ClientSetMaxSpeed(ent, true);
 

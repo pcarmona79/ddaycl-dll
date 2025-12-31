@@ -568,7 +568,7 @@ void Plane_Fire (edict_t *ent)
 
 	//if (ent->count == 0  && ent->owner->client) // kernel: no need to check client references
 	if (ent->count == 0)
-		safe_cprintf(ent->owner, PRINT_HIGH, "Airstrike confirmed, sir!\n");
+		safe_centerprintf(ent->owner, "Airstrike confirmed, sir!\n");
 
 	Drop_Bomb(ent);
 	ent->count++;

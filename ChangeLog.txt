@@ -1,3 +1,25 @@
+Versión 5.059
+-------------
+
+- Se añade la nueva variable "tournament" para el nuevo "modo torneo"
+  que permite realizar una retención en una zona de aparición antes de
+  que finalice la cuenta regresiva. Las nuevas funciones en g_utils.c
+  permiten detectar cuándo un jugador se encuentra dentro de su zona de
+  aparición protegida y moverlo a una zona protegida si se encontraba
+  fuera.
+
+- Se modifica T_Damage() de g_combat.c para que no se permita causar
+  daño si la partida aún no ha comenzado en el modo torneo. Tampoco se
+  permite que los jugadores se incendien y suelten armas, incluso si
+  cambian de equipo. Además, los bots no pueden soltar armas al ser
+  eliminados.
+
+- Cambia la detección de movimiento usada en Weapon_PIAT_Fire() para
+  utilizar las teclas de movimiento enviadas por el usuario.
+
+- La confirmación del ataque aéreo también debe informarse como un
+  mensaje centrado en la pantalla en Plane_Fire() de g_arty.c.
+
 Versión 5.058
 -------------
 
