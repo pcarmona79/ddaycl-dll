@@ -1,3 +1,9 @@
+Version 5.060
+-------------
+
+- Corrige la visualización de una imagen de servidor vacía cuando la
+  cvar "serverimg" no está definida en la configuración.
+
 Versión 5.059
 -------------
 
