@@ -8,6 +8,10 @@ Version 5.060
   servidor está en modo torneo y la cuenta regresiva aún no ha
   comenzado.
 
+- Modifica SP_worldspawn() de g_spawn.c para restablecer la matriz
+  global "mapclasslimits". Esto impedirá que la configuración del mapa
+  anterior se aplique al mapa actual.
+
 Versión 5.059
 -------------
 
