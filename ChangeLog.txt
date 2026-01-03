@@ -4,6 +4,10 @@ Version 5.060
 - Corrige la visualización de una imagen de servidor vacía cuando la
   cvar "serverimg" no está definida en la configuración.
 
+- Agrega un mensaje central para informar a los jugadores cuando el
+  servidor está en modo torneo y la cuenta regresiva aún no ha
+  comenzado.
+
 Versión 5.059
 -------------
 
