@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define FLAMERH		100
 //bcass end
 
+// evil: global variables for countdown
+extern float countdownTimeLimit;
 
 
 void SV_AddBlend (float r, float g, float b, float a, float *v_blend);
@@ -2355,8 +2357,13 @@ void ClientEndServerFrame (edict_t *ent)
 		if (level.framenum - ent->client->resp.enterframe == 10)
 			Cmd_MOTD(ent);
 
+		if (tournament->value && countdownTimeLimit <= 0 && !level.intermissiontime
+			&& (level.framenum - ent->client->resp.enterframe) % 100 == 0)
+			safe_centerprintf(ent, "Server is running in \"Tournament\" mode.\n\n"
+							  "Please wait for the countdown to begin the battle.");
+
 		if (nohud->value && level.framenum - ent->client->resp.enterframe == 100)
-			safe_centerprintf(ent, "Server is running in \"No Hud\" mode.\nRealism!!!\n");
+			safe_centerprintf(ent, "Server is running in \"No Hud\" mode.\nRealism!!!");
 
 		//		gi.dprintf ("%i frame\n", (level.framenum - ent->client->resp.enterframe) );
 	

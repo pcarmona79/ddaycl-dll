@@ -1052,7 +1052,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				gi.sound (targ, CHAN_BODY, gi.soundindex("misc/hitfeet.wav"), 1, ATTN_NORM, 0);
 
 				if (exbattleinfo->value >= 1)
-					safe_bprintf(PRINT_MEDIUM, "** %s almost lost a foot! He need a medic urgently!!! **\n",
+					safe_bprintf(PRINT_MEDIUM, "** %s almost lost a foot! He needs a medic urgently!!! **\n",
 								 targ->client->pers.netname);
 				else
 					safe_cprintf(targ, PRINT_HIGH, "You almost lost a foot! Call a medic or your will bleed to death!\n");

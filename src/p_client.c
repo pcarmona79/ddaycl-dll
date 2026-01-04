@@ -2588,7 +2588,7 @@ void ClientBeginDeathmatch (edict_t *ent)
 		ent->client->layout_type = SHOW_CAMPAIGN;
 		ShowCampaign (ent);
 	}
-	else if (serverimg->string)
+	else if (*serverimg->string)
 	{
 		ent->client->layout_type = SHOW_SERVERIMG;
 		ShowServerImg (ent);

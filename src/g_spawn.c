@@ -1449,6 +1449,9 @@ void SP_worldspawn (edict_t *ent)
 	if (st.nextmap)
 		strcpy (level.nextmap, st.nextmap);
 
+	// kernel: reset map class limits
+	memset(mapclasslimits[0], 0, sizeof(mapclasslimits[0]));
+	memset(mapclasslimits[1], 0, sizeof(mapclasslimits[1]));
 
 //	map_tree[0][0]=0;
 	// make some data visible to the server

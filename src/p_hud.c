@@ -1421,7 +1421,7 @@ void ShowServerImg (edict_t *ent)
 		return;
 	//[end]
 
-	if (!serverimg->string)
+	if (!*serverimg->string)
 		return;
 
 
