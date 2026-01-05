@@ -1396,7 +1396,7 @@ void Cmd_Drop_f (edict_t *ent)
 		return;
 
 	// kernel: do not allow to drop anything if the match has not begun yet
-	if (tournament->value && countdownTimeLimit <= 0)
+	if (tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0))
 		return;
 
 	s = gi.args(); 

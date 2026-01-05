@@ -1245,7 +1245,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		else
 		{
 			// kernel: do not allow to toss weapon when changing teams in tournament mode, bots also can not drop weapon
-			if (!(tournament->value && countdownTimeLimit <= 0 &&
+			if (!(tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0) &&
 				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED || self->ai)))
 			{
 				// kernel: if player does not have a live TNT, then toss the weapon

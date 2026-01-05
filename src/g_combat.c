@@ -47,6 +47,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 // evil: global variables for countdown
+extern float countdownActive;
 extern float countdownTimeLimit;
 
 /*
@@ -798,7 +799,8 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
     qboolean saved=false;
 
 	// kernel: do not allow damage if the match has not begun yet, but allow it when changing teams
-	if (tournament->value && countdownTimeLimit <= 0 && mod != MOD_CHANGETEAM && mod != MOD_CHANGETEAM_WOUNDED)
+	if (tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0)
+		&& mod != MOD_CHANGETEAM && mod != MOD_CHANGETEAM_WOUNDED)
 		return;
 
 	if (!(dflags & DAMAGE_NO_PROTECTION) && IsValidPlayer(targ) && level.time < targ->client->spawntime + invuln_spawn->value) // pbowens: invulnerability
