@@ -1,4 +1,10 @@
-Version 5.060
+Versión 5.061
+-------------
+
+- Se corrige la función IsPlayerInsideSpawnProtect() de g_utils.c para
+  que sólo se revise en las zonas de reaparición del equipo del jugador.
+
+Versión 5.060
 -------------
 
 - Corrige la visualización de una imagen de servidor vacía cuando la
