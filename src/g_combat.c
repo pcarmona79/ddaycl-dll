@@ -1030,7 +1030,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	{
 		case FEET_WOUND:
 			randnum = rand() % 100;
-			if (targ->client) safe_cprintf(targ, PRINT_HIGH, "You've been hit in the feet!\n");
 			wound_location |= FEET_WOUND;
 
 			// kernel: need distance to the attacker
@@ -1040,6 +1039,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			// kernel: decrease damage to allow a bleeding leg wound
 			if (chile->value &&
 				randnum >= BLEEDING_FEET_WOUND &&
+				targ->health >= 85 && // kernel: no decrease if health if less than 85 because player will die anyways
 				VectorLength(dist) >= 200 && // kernel: add distance check
 				damage >= 100) // kernel: this will match only bolting rifles
 			{
@@ -1056,13 +1056,15 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				if (exbattleinfo->value >= 1)
 					safe_bprintf(PRINT_MEDIUM, "** %s almost lost a foot! He needs a medic urgently!!! **\n",
 								 targ->client->pers.netname);
-				else
-					safe_cprintf(targ, PRINT_HIGH, "You almost lost a foot! Call a medic or your will bleed to death!\n");
+
+				safe_cprintf(targ, PRINT_HIGH, "You almost lost a foot! Call a medic or your will bleed to death!\n");
 			}
 			else
 			{
 				damage *= 1.15;
 				gi.sound (targ, CHAN_BODY, gi.soundindex("misc/hitleg.wav"), 1, ATTN_NORM, 0);
+
+				safe_cprintf(targ, PRINT_HIGH, "You've been hit in the feet!\n");
 			}
 
 			if (targ->client)

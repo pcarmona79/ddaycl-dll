@@ -4,6 +4,10 @@ Versión 5.061
 - Se corrige la función IsPlayerInsideSpawnProtect() de g_utils.c para
   que sólo se revise en las zonas de reaparición del equipo del jugador.
 
+- No disminuye el daño en T_Damage() de g_combat.c si la salud es menor
+  a 85, porque el jugador morirá de todos modos si se aplica el daño que
+  deja un pie sangrando.
+
 Versión 5.060
 -------------
 
