@@ -2025,7 +2025,7 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles)
 
 
 	// first, find the class spot
-	if (!spot)
+	if (!spot && ent->client->resp.team_on && ent->client->resp.mos != NONE)
 		spot = SelectRandomDDaySpawnPoint (ent->client->resp.team_on->mos[ent->client->resp.mos]->MOS_Spaw_Point, team);
 
 	if (!spot)
