@@ -8,6 +8,10 @@ Versión 5.061
   a 85, porque el jugador morirá de todos modos si se aplica el daño que
   deja un pie sangrando.
 
+- Corrige Find_Mission_Start_Point() de p_client.c para evitar la
+  búsqueda del punto de spawn de clase cuando el cliente no ha
+  seleccionado un equipo o una clase.
+
 Versión 5.060
 -------------
 
