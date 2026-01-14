@@ -822,6 +822,9 @@ extern cvar_t *fast_sniper;
 // kernel: spawn retention for tournament mode
 extern cvar_t *tournament;
 
+// kernel: maximum knives to drop
+extern cvar_t *knife_maxdrop;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])

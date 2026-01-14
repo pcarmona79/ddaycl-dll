@@ -410,6 +410,9 @@ void InitGame (void)
 	// kernel: spawn retention for tournament mode
 	tournament = gi.cvar("tournament", "0", CVAR_SERVERINFO);
 
+	// kernel: maximum knives to drop
+	knife_maxdrop = gi.cvar("knife_maxdrop", "0", 0);
+
 	// items
 	InitItems ();
 
