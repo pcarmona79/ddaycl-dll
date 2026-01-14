@@ -1,6 +1,13 @@
 Versión 5.061
 -------------
 
+- Se añade la nueva función Drop_All_Knives() a p_client.c para permitir
+  soltar cuchillos al morir el jugador. El número de cuchillos que se
+  sueltan se puede controlar con la cvar "knife_maxdrop":
+   - 0: No se soltará ningún cuchillo (valor predeterminado).
+   - Valor positivo: Máximo de cuchillos que se soltarán.
+   - Valor negativo: Se sueltan todos los cuchillos.
+
 - Se corrige la función IsPlayerInsideSpawnProtect() de g_utils.c para
   que sólo se revise en las zonas de reaparición del equipo del jugador.
 
