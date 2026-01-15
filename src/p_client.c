@@ -3924,7 +3924,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	// kernel: verify if player is trying to exit his spawn_protect in tournament mode
-	if (!client->limbo_mode && !ent->flyingnun &&
+	if (!ent->ai &&
+		!client->limbo_mode && !ent->flyingnun &&
 		tournament->value && countdownActive &&
 		!IsPlayerInsideSpawnProtect(ent))
 	{
