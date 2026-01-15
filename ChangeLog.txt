@@ -8,6 +8,9 @@ Versión 5.061
    - Valor positivo: Máximo de cuchillos que se soltarán.
    - Valor negativo: Se sueltan todos los cuchillos.
 
+- Hace que la retención del área de spawn para el modo torneo no se
+  aplique a los bots en ClientThink() de p_client.c.
+
 - Se corrige la función IsPlayerInsideSpawnProtect() de g_utils.c para
   que sólo se revise en las zonas de reaparición del equipo del jugador.
 
