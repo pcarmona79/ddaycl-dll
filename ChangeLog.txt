@@ -26,6 +26,9 @@ Versión 5.061
   búsqueda del punto de spawn de clase cuando el cliente no ha
   seleccionado un equipo o una clase.
 
+- Corrige la función Assign_Bot_Class() de bot_spawn.c al verificar si
+  hay una clase disponible.
+
 Versión 5.060
 -------------
 
