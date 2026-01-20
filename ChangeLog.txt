@@ -1,6 +1,10 @@
 Versión 5.061
 -------------
 
+- Agrega nueva cvar "afk_time" para designar el tiempo en segundos antes
+  de cambiar a modo observador a un jugador que no ha mostrado
+  actividad. Por defecto este tiempo se fija en 120 segundos.
+
 - Se añade la nueva función Drop_All_Knives() a p_client.c para permitir
   soltar cuchillos al morir el jugador. El número de cuchillos que se
   sueltan se puede controlar con la cvar "knife_maxdrop":
