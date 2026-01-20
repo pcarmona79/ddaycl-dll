@@ -112,7 +112,7 @@ void Assign_Bot_Class (edict_t *self)
 			available = MAX_ENGINEER - taken;
 			break;
 		case MEDIC:
-			available = 1 - taken;
+			available = MAX_MEDIC - taken;
 			break;
 		case FLAMER:
 			available = MAX_FLAMER - taken;

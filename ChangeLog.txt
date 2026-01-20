@@ -1,4 +1,35 @@
-Version 5.060
+Versión 5.061
+-------------
+
+- Agrega nueva cvar "afk_time" para designar el tiempo en segundos antes
+  de cambiar a modo observador a un jugador que no ha mostrado
+  actividad. Por defecto este tiempo se fija en 120 segundos.
+
+- Se añade la nueva función Drop_All_Knives() a p_client.c para permitir
+  soltar cuchillos al morir el jugador. El número de cuchillos que se
+  sueltan se puede controlar con la cvar "knife_maxdrop":
+   - 0: No se soltará ningún cuchillo (valor predeterminado).
+   - Valor positivo: Máximo de cuchillos que se soltarán.
+   - Valor negativo: Se sueltan todos los cuchillos.
+
+- Hace que la retención del área de spawn para el modo torneo no se
+  aplique a los bots en ClientThink() de p_client.c.
+
+- Se corrige la función IsPlayerInsideSpawnProtect() de g_utils.c para
+  que sólo se revise en las zonas de reaparición del equipo del jugador.
+
+- No disminuye el daño en T_Damage() de g_combat.c si la salud es menor
+  a 85, porque el jugador morirá de todos modos si se aplica el daño que
+  deja un pie sangrando.
+
+- Corrige Find_Mission_Start_Point() de p_client.c para evitar la
+  búsqueda del punto de spawn de clase cuando el cliente no ha
+  seleccionado un equipo o una clase.
+
+- Corrige la función Assign_Bot_Class() de bot_spawn.c al verificar si
+  hay una clase disponible.
+
+Versión 5.060
 -------------
 
 - Corrige la visualización de una imagen de servidor vacía cuando la

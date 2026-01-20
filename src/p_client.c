@@ -1175,6 +1175,35 @@ void AlignToGround(edict_t *ent)
 
 }
 */
+
+/*
+ * If the player has 2 or more knives, drop it all.
+ */
+void Drop_All_Knives(edict_t *self)
+{
+	gitem_t *knife_item;
+	int knife_index, i, count;
+
+	knife_item = FindItem("Knife");
+	knife_index = ITEM_INDEX(knife_item);
+	count = self->client->pers.inventory[knife_index];
+
+	// only drop if there are 2 or more knives
+	if (count <= 1)
+		return;
+
+	// drop only the maximum allowed (negative value of knife_maxdrop will cause to drop it all)
+	if (knife_maxdrop->value > 0 && count > knife_maxdrop->value)
+		count = (int) knife_maxdrop->value;
+
+	for (i = 0; i < count; i++)
+		Drop_Item(self, knife_item);
+
+	// clear the knives inventory
+	self->client->pers.inventory[knife_index] = 0;
+}
+
+
 void turret_off (edict_t *self);
 void CopyToBodyQue (edict_t *ent);
 /*
@@ -1231,7 +1260,11 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			meansOfDeath != MOD_CHANGETEAM_WOUNDED) {
 			if (deathmatch->value && !self->client->menu)
 				Cmd_Help_f (self);		// show scores
-		} 
+		}
+
+		// kernel: drop the knives
+		if (knife_maxdrop->value)
+			Drop_All_Knives(self);
 
 		if (self->client->grenade)
 			weapon_grenade_fire(self);
@@ -2025,7 +2058,7 @@ void Find_Mission_Start_Point(edict_t *ent, vec3_t origin, vec3_t angles)
 
 
 	// first, find the class spot
-	if (!spot)
+	if (!spot && ent->client->resp.team_on && ent->client->resp.mos != NONE)
 		spot = SelectRandomDDaySpawnPoint (ent->client->resp.team_on->mos[ent->client->resp.mos]->MOS_Spaw_Point, team);
 
 	if (!spot)
@@ -3891,7 +3924,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	// kernel: verify if player is trying to exit his spawn_protect in tournament mode
-	if (!client->limbo_mode && !ent->flyingnun &&
+	if (!ent->ai &&
+		!client->limbo_mode && !ent->flyingnun &&
 		tournament->value && countdownActive &&
 		!IsPlayerInsideSpawnProtect(ent))
 	{

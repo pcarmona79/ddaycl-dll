@@ -184,6 +184,9 @@ cvar_t *fast_sniper;
 // kernel: spawn retention for tournament mode
 cvar_t *tournament;
 
+// kernel: maximum knives to drop
+cvar_t *knife_maxdrop;
+
 // evil: global variables for countdown
 int countdownActive = 0;
 int countdownValue = 0;

@@ -803,7 +803,7 @@ qboolean IsPlayerInsideSpawnProtect(edict_t *ent)
 
 	// player must be on a team and should be exist spawn_protect areas
 	if (ent->client->resp.team_on &&
-		(team_list[0]->confined_spawn_areas[0] || team_list[1]->confined_spawn_areas[0]))
+		ent->client->resp.team_on->confined_spawn_areas[0])
 	{
 		for (i = 0; i < 5; ++i)
 		{
