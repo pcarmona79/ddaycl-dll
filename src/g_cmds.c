@@ -59,6 +59,8 @@ void SV_Remove_Node(edict_t *ent);
 
 extern	int			GlobalAliciaModeVariable;
 void ClientBeginDeathmatch (edict_t *ent);
+void DoObserverMode(edict_t *ent);
+
 // Ref/Observer Mode
 void Cmd_FlyingNunMode_f(edict_t *ent)
 {
@@ -85,8 +87,11 @@ void Cmd_FlyingNunMode_f(edict_t *ent)
 		return;
 	}
 
+	DoObserverMode(ent);
+}
 
-
+void DoObserverMode(edict_t *ent)
+{
 	if (ent->flyingnun)
 	{
 		ent->flyingnun = false;

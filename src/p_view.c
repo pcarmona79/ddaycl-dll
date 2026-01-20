@@ -2333,6 +2333,8 @@ void A_ScoreboardMessage2 (edict_t *ent);
 void SplittedScoreboardMessage (edict_t *ent);
 void SplittedScoreboardMessage2 (edict_t *ent);
 void change_stance(edict_t *self, int stance);
+void DoObserverMode(edict_t *ent);
+
 void ClientEndServerFrame (edict_t *ent)
 {
 	float	bobtime;
@@ -3208,13 +3210,7 @@ if (ent->client->turret)
 		if (!ent->ai && level.framenum - ent->client->pers.afk_check_time > (10 * afk_time->value))
 		{
 			safe_bprintf(PRINT_HIGH, "%s is being removed from his team for being AFK.\n", ent->client->pers.netname);
-
-			ent->flags &= ~FL_GODMODE;
-			ent->health = 0;
-			meansOfDeath = MOD_SUICIDE;
-			player_die(ent, ent, ent, 100000, vec3_origin);
-
-			Cmd_FlyingNunMode_f(ent);
+			DoObserverMode(ent);
 		}
 	}
 }
