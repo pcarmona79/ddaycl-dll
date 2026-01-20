@@ -795,6 +795,9 @@ extern cvar_t  *campaign;
 // kernel: to split the scoreboard
 extern cvar_t *observer_bscore;
 
+// AFK time cvar
+extern cvar_t* afk_time;
+
 // kernel: this will come from q2pro
 extern cvar_t *sys_basedir;
 extern cvar_t *sys_homedir;
@@ -1328,6 +1331,9 @@ typedef struct
 	int		stat_bot_deaths;
 
 	char		*ip;
+
+	int			afk_check_time; // hans: AFK borrowed from InFerYEs
+	vec3_t		last_angles; // view angles from last check
 
 } client_persistant_t;
 
