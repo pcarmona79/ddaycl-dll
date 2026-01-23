@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "game.h"
 //#include "p_menus.h"
 
 // g_objectives.c
@@ -861,265 +862,6 @@ void briefcase_warn (edict_t *ent)
 	ent->nextthink = level.time + 30;
 }
 
-void SP_briefcase(edict_t *self);
-void SP_usa_base (edict_t *ent);
-void SP_grm_base (edict_t *ent);
-
-//faf: ctb code
-void Create_CTB_Entities (edict_t *self)
-{
-	edict_t	*spot;
-	spot = NULL;
-
-	return;
-
-	if (!stricmp(level.mapname, "dday3"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -1519.5;
-		spot->s.origin[1] = 1397.3;
-		spot->s.origin[2] = 86.5;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 1605.7;
-		spot->s.origin[1] = 176.9;
-		spot->s.origin[2] = 199.3;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 0;
-		spot->s.origin[0] = -1085.5;
-		spot->s.origin[1] = 27.4;
-		spot->s.origin[2] = 345.3;
-//		spot->s.angles[1] = 90;
-		SP_briefcase(spot);
-	}
-	else if (!stricmp(level.mapname, "dday2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 1288.2;
-		spot->s.origin[1] = 1080.6;
-		spot->s.origin[2] = -60;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -2262.5;
-		spot->s.origin[1] = 280;
-		spot->s.origin[2] = -100.2;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->s.origin[0] = -768.4;
-		spot->s.origin[1] = 1017.6;
-		spot->s.origin[2] = 91.9;
-		SP_briefcase(spot);		
-		gi.dprintf("dfjklsdfjklsdfjklsdfjkl\n");
-		
-	}
-	else if (!stricmp(level.mapname, "invade2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -2498.4;
-		spot->s.origin[1] = 2213.1;
-		spot->s.origin[2] = -510.5;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 580.9;
-		spot->s.origin[1] = -931.2;
-		spot->s.origin[2] = -508.5;
-		SP_grm_base(spot);
-
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -1501.4;
-		spot->s.origin[1] = 691.5;
-		spot->s.origin[2] = -467.9;
-		SP_briefcase(spot);
-		
-	}
-	else if (!stricmp(level.mapname, "mp1dday2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 3326.5;
-		spot->s.origin[1] = -2496;
-		spot->s.origin[2] = -310.8;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 3126.4;
-		spot->s.origin[1] = 852.6;
-		spot->s.origin[2] = 122.4;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 0;
-		spot->s.origin[0] = 145.5;
-		spot->s.origin[1] = -923.9;
-		spot->s.origin[2] = 94.3;
-		SP_briefcase(spot);
-		
-	}
-	else if (!stricmp(level.mapname, "inland4"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -2445.6;
-		spot->s.origin[1] = -164.9;
-		spot->s.origin[2] = -130.1;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 2092.4;
-		spot->s.origin[1] = 303;
-		spot->s.origin[2] = -153.5;
-		SP_grm_base(spot);
-
-	
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 1;
-		spot->s.origin[0] = 7.5;
-		spot->s.origin[1] = 1321.7;
-		spot->s.origin[2] = -75.6;
-		spot->s.angles[1] = 270;
-		SP_briefcase(spot);
-			
-	}
-	else if (!stricmp(level.mapname, "dunkirk"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -399.7;
-		spot->s.origin[1] = 2840.4;
-		spot->s.origin[2] = -190.8;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-	
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -646.3;
-		spot->s.origin[1] = -218;
-		spot->s.origin[2] = -190.8;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = 1401.3;
-		spot->s.origin[1] = -260.7;
-		spot->s.origin[2] = -165.7;
-		spot->s.angles[1] = 315;
-		SP_briefcase(spot);
-		
-	}	  
-	else if (!stricmp(level.mapname, "inland1"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 373;
-		spot->s.origin[1] = 1044;
-		spot->s.origin[2] = -280;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-	
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 50;
-		spot->s.origin[1] = -1179;
-		spot->s.origin[2] = 7;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -373;
-		spot->s.origin[1] = -131;
-		spot->s.origin[2] = 56;
-		spot->s.angles[1] = 315;
-		SP_briefcase(spot);
-	}	  
-	else if (!stricmp(level.mapname, "inland2"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 329;
-		spot->s.origin[1] = -352;
-		spot->s.origin[2] = -93;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -2513;
-		spot->s.origin[1] = 912;
-		spot->s.origin[2] = -65;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -1021;
-		spot->s.origin[1] = 213;
-		spot->s.origin[2] = 74;
-		spot->s.angles[1] = 10;
-		SP_briefcase(spot);
-	}
-	else if (!stricmp(level.mapname, "invade6"))
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 914;
-		spot->s.origin[1] = -370;
-		spot->s.origin[2] = -510;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -1428;
-		spot->s.origin[1] = 3190;
-		spot->s.origin[2] = -510;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = 525;
-		spot->s.origin[1] = 2543;
-		spot->s.origin[2] = -423;
-		spot->s.angles[1] = 10;
-		SP_briefcase(spot);
-	}	  
-
-
-}
-
-
 
 //faf:  ctb code
 void base_think (edict_t *ent)
@@ -1128,10 +870,16 @@ void base_think (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+// kernel: ctb code
+void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
+{
+	safe_centerprintf(other, "base_touch: %s %s %d", self->classname, other->classname, self->health);
+}
+
 void SP_usa_base (edict_t *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_NOT;
+	ent->solid = SOLID_TRIGGER;
 	ent->s.modelindex = gi.modelindex ("models/objects/usaflag/tris.md2");
 //	ent->s.frame = rand() % 16;
 //	ent->s.frame = 1;
@@ -1140,12 +888,14 @@ void SP_usa_base (edict_t *ent)
 	ent->think = base_think;
 	ent->nextthink = level.time + FRAMETIME;
 	ent->s.sound = gi.soundindex("faf/flag.wav");
-	
+
+	ent->touch = base_touch;
 }
+
 void SP_grm_base (edict_t *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_NOT;
+	ent->solid = SOLID_TRIGGER;
 	ent->s.modelindex = gi.modelindex ("models/objects/grmflag/tris.md2");
 //	ent->s.frame = rand() % 16;
 //	ent->s.frame = 1;
@@ -1155,6 +905,7 @@ void SP_grm_base (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 	ent->s.sound = gi.soundindex("faf/flag.wav");
 
+	ent->touch = base_touch;
 }
 //end faf
 

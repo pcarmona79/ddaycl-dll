@@ -217,6 +217,8 @@ void SP_Spawn_Toggle (edict_t *self);
 
 void SP_item_botroam (edict_t *self);	//JABot
 void SP_briefcase(edict_t *self);//faf  ctb code
+void SP_usa_base(edict_t *self);
+void SP_grm_base(edict_t *self);
 
 
 
@@ -417,6 +419,8 @@ spawn_t spawns[MAX_EDICTS] = {
 	{"item_botroam", SP_item_botroam},	//JABot
 
 	{"briefcase", SP_briefcase},//faf:ctb code
+	{"usa_base", SP_usa_base},
+	{"grm_base", SP_grm_base},
 
 
 	{NULL, NULL}
@@ -902,6 +906,33 @@ char *LoadCTCFile(char *mapname, char *entities)
 }
 
 
+char *LoadCTBFile(char *mapname, char *entities)
+{
+	char entfilename[MAX_QPATH] = "";
+	char *newentities;
+	int	i;
+
+	sprintf(entfilename, "ents/%s.ctb", mapname);
+
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
+
+	newentities = ReadEntFile(entfilename);
+
+	if (newentities)
+	{
+		gi.dprintf("%s.ctb Loaded\n", mapname);
+		return newentities;	// reassign the ents
+	}
+	else
+	{
+		gi.dprintf("No .ctb File for %s.bsp\n", mapname);
+		return entities;
+	}
+}
+
+
 void LoadCampFile(void)
 {
 	char	cmpfilename[MAX_QPATH] = "";
@@ -1068,8 +1099,10 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 
 	InitItems ();
 
-
-	if (ctc->value)
+	// kernel: CTC is in deathmatch mode, CTB needs cooperative
+	if (deathmatch->value == 0 && coop->value)
+		entities = LoadCTBFile(mapname, entities);
+	else if (ctc->value)
 		entities = LoadCTCFile(mapname,entities);
 	else
 		entities = LoadEntFile(mapname, entities);//faf
