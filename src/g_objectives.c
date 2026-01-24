@@ -744,7 +744,7 @@ qboolean briefcase_respawn_needed;
 void SP_briefcase(edict_t *self)
 {
 	if (!self->count)
-		level.ctb_time = 180;
+		level.ctb_time = 900; // kernel: 15 minutes by default
 	else
 		level.ctb_time = self->count;
 
@@ -916,5 +916,6 @@ void SP_ctb_base(edict_t *ent)
 
 	// load needed points to team
 	team_list[ent->obj_owner]->need_points = ent->health;
+	team_list[ent->obj_owner]->kills_and_points = false;
 }
 //end faf

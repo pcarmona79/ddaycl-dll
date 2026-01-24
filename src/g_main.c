@@ -986,9 +986,9 @@ void CheckDMRules (void)
 	if (level.intermissiontime)
 		return;
 
-	if (!deathmatch->value)
-		return;
-
+	// kernel: commented out to allow cooperative mode for CTB
+	//if (!deathmatch->value)
+	//	return;
 
 	//faf: ctb code
 	if (level.ctb_time)
@@ -996,8 +996,8 @@ void CheckDMRules (void)
 		vec3_t		w; //faf
 		float		range;//faf
 		edict_t		*check;
-		edict_t		*usaflag;
-		edict_t     *grmflag;
+		edict_t		*alliedflag;
+		edict_t     *axisflag;
 		edict_t     *e;
 
 		if (level.time == level.ctb_time)
@@ -1015,26 +1015,17 @@ void CheckDMRules (void)
 				if (!check->inuse)
 					continue;
 
-				if (!strcmp(check->classname, "usa_base"))
+				if (!strcmp(check->classname, "ctb_base"))
 				{
-					usaflag = check;
-				}
+					if (check->obj_owner == 0)
+						alliedflag = check;
 
-			}
-
-			for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
-			{
-				if (!check->inuse)
-					continue;
-
-				if (!strcmp(check->classname, "grm_base"))
-				{
-					grmflag = check;
+					if (check->obj_owner == 1)
+						axisflag = check;
 				}
 			}
 
-
-			if (grmflag && usaflag)
+			if (axisflag && alliedflag)
 			{
 				for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
 				{
@@ -1044,11 +1035,9 @@ void CheckDMRules (void)
 					if (check->deadflag)
 						continue;
 
-
 					if (!strcmp(check->classname, "briefcase"))
 					{
-
-						VectorSubtract (check->s.origin, usaflag->s.origin, w);
+						VectorSubtract (check->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near usa flag at end of map
@@ -1056,17 +1045,16 @@ void CheckDMRules (void)
 							team_list[0]->score	+= 100;
 						}
 
-						VectorSubtract (check->s.origin, grmflag->s.origin, w);
+						VectorSubtract (check->s.origin, axisflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near grm flag at end of map
 						{
 							team_list[1]->score	+= 100;
-
 						}
 					}
-					
 				}
+
 				//see if anyone's carrying a briefcase near the flag
 				for (i=0 ; i < game.maxclients ; i++)
 				{
@@ -1076,7 +1064,7 @@ void CheckDMRules (void)
 
 					if(e->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
 					{
-						VectorSubtract (e->s.origin, usaflag->s.origin, w);
+						VectorSubtract (e->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near usa flag at end of map
@@ -1084,7 +1072,7 @@ void CheckDMRules (void)
 							team_list[0]->score	+= 100;
 						}
 
-						VectorSubtract (e->s.origin, grmflag->s.origin, w);
+						VectorSubtract (e->s.origin, axisflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near grm flag at end of map
@@ -1093,7 +1081,6 @@ void CheckDMRules (void)
 
 						}
 					}
-				
 				}
 			}
 		}
