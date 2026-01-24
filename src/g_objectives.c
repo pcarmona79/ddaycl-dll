@@ -873,30 +873,17 @@ void base_think (edict_t *ent)
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	safe_centerprintf(other, "base_touch: %s %s %d", self->classname, other->classname, self->health);
+	if (self->obj_owner != other->obj_owner)
+		return;
+
+	safe_centerprintf(other, "base_touch: %d %s %s %d", self->obj_owner, self->classname, other->classname, self->health);
 }
 
-void SP_usa_base (edict_t *ent)
+void SP_ctb_base(edict_t *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
 	ent->solid = SOLID_TRIGGER;
-	ent->s.modelindex = gi.modelindex ("models/objects/usaflag/tris.md2");
-//	ent->s.frame = rand() % 16;
-//	ent->s.frame = 1;
-	gi.linkentity (ent);
-
-	ent->think = base_think;
-	ent->nextthink = level.time + FRAMETIME;
-	ent->s.sound = gi.soundindex("faf/flag.wav");
-
-	ent->touch = base_touch;
-}
-
-void SP_grm_base (edict_t *ent)
-{
-	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_TRIGGER;
-	ent->s.modelindex = gi.modelindex ("models/objects/grmflag/tris.md2");
+	ent->s.modelindex = gi.modelindex(va("models/objects/%sflag/tris.md2", team_list[ent->obj_owner]->teamid));
 //	ent->s.frame = rand() % 16;
 //	ent->s.frame = 1;
 	gi.linkentity (ent);
@@ -908,6 +895,3 @@ void SP_grm_base (edict_t *ent)
 	ent->touch = base_touch;
 }
 //end faf
-
-
-
