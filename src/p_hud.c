@@ -199,7 +199,7 @@ void BeginIntermission (edict_t *targ)
 	}
 	else
 	{
-		if (!deathmatch->value)
+		if (!deathmatch->value && !coop->value) // kernel: not ctb mode
 		{
 			level.exitintermission = 1;		// go immediately to the next level
 			return;
@@ -1235,8 +1235,9 @@ void Cmd_Score_f (edict_t *ent)
 	if (ent->client->menu)
 		PMenu_Close(ent);
 
-	if (!deathmatch->value && !coop->value)
-		return; 
+	// kernel: commented out because scoreboard should not be blocked in cooperative mode
+	//if (!deathmatch->value && !coop->value)
+	//	return;
 
 	if (level.intermissiontime)
 	{
