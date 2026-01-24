@@ -1688,7 +1688,6 @@ struct gclient_s
 	qboolean	has_chute;
 
 	edict_t		*briefcase;
-	qboolean	has_briefcase;
 
 	// evil: for topcenter screen messages
 	char topcenter_message[1024];

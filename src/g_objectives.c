@@ -789,14 +789,13 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
 	gi.bprintf (PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname, other->client->resp.team_on->teamname);
 
-	//if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
+	if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
 		Set_Briefcase_Respawn (ent);
 
 	briefcase_respawn_needed = false;
 
 	other->client->briefcase = ent;
-	other->client->has_briefcase = true;//used to display icon in hud
-	
+
 	return true;
 }
 
@@ -812,7 +811,6 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	ent->s.modelindex3 = 0;
 	gi.cprintf(ent, PRINT_HIGH, "You dropped the briefcase!\n");
 
-	ent->client->has_briefcase = false;//used to display icon in hud
 	ent->client->briefcase = NULL;
 }
 
@@ -861,7 +859,7 @@ void briefcase_warn (edict_t *ent)
 			if (!e->inuse || !e->client)
 				continue;
 			
-			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\nIt will be respawned in 30 seconds if it's not picked up!");
+			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\n\nIt will be respawned in 30 seconds if it's not picked up!");
 		}
 	}
 
@@ -883,12 +881,11 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (self->obj_owner != other->obj_owner)
 		return;
 
-	if (other->client && !other->client->has_briefcase)
+	if (other->client && !other->client->briefcase)
 		return;
 
 	// remove briefcase model
 	other->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))]--;
-	other->client->has_briefcase = false;
 	other->s.modelindex3 = 0;
 
 	// respawn the briefcase
