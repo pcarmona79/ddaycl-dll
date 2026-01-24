@@ -916,6 +916,7 @@ void SP_ctb_base(edict_t *ent)
 
 	// load needed points to team
 	team_list[ent->obj_owner]->need_points = ent->health;
+	team_list[ent->obj_owner]->need_kills = 0;
 	team_list[ent->obj_owner]->kills_and_points = false;
 }
 //end faf
