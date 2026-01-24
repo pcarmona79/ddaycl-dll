@@ -1496,9 +1496,8 @@ Display the current help message
 */
 void Cmd_Help_f (edict_t *ent)
 {
-
-
-	if (deathmatch->value)
+	// kernel: allow in cooperative mode
+	if (deathmatch->value || coop->value)
 	{
 		Cmd_Score_f (ent);
 		return;
