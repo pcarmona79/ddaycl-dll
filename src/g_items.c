@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
 
 void Weapon_Katana (edict_t *ent);
 qboolean	Pickup_Weapon (edict_t *ent, edict_t *other);
@@ -923,14 +924,21 @@ static void drop_make_touchable (edict_t *ent)
 //   VectorClear(ent->avelocity);//faf:  stop spinning
 
 	ent->touch = Touch_Item;
+	ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
+
 	if (deathmatch->value)
 	{
-		ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
-
+		ent->think = G_FreeEdict;
+	}
+	else if (coop->value) // kernel: ctb needs coop mode
+	{
 		if (strcmp(ent->classname, "briefcase"))//if it's briefcase, dont remove it.  //faf: ctb code
 			ent->think = G_FreeEdict;
 		else
+		{
+			ent->nextthink = level.time + 29;
 			ent->think = briefcase_warn;
+		}
 	}
 }
 

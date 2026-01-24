@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "game.h"
+#include "q_shared.h"
 //#include "p_menus.h"
 
 // g_objectives.c
@@ -788,11 +789,12 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
 	gi.bprintf (PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname, other->client->resp.team_on->teamname);
 
-	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
+	//if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
 		Set_Briefcase_Respawn (ent);
 
 	briefcase_respawn_needed = false;
 
+	other->client->briefcase = ent;
 	other->client->has_briefcase = true;//used to display icon in hud
 	
 	return true;
@@ -811,12 +813,18 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	gi.cprintf(ent, PRINT_HIGH, "You dropped the briefcase!\n");
 
 	ent->client->has_briefcase = false;//used to display icon in hud
-
+	ent->client->briefcase = NULL;
 }
 
 void briefcase_respawn (edict_t *ent)
 {
 //	edict_t *check;
+
+	// send effect
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent-g_edicts);
+	gi.WriteByte(MZ_RESPAWN);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (ent);
 
@@ -849,12 +857,11 @@ void briefcase_warn (edict_t *ent)
 	{
 		for (i=0 ; i < game.maxclients ; i++)
 		{
-
 			e = g_edicts + 1 + i;
 			if (!e->inuse || !e->client)
 				continue;
 			
-			gi.cprintf(e, PRINT_HIGH, "The briefcase has not been touched in 1 minute.  It will be respawned in 30 seconds if it's not picked up!\n");
+			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\nIt will be respawned in 30 seconds if it's not picked up!");
 		}
 	}
 
@@ -876,7 +883,21 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (self->obj_owner != other->obj_owner)
 		return;
 
-	safe_centerprintf(other, "base_touch: %d %s %s %d", self->obj_owner, self->classname, other->classname, self->health);
+	if (other->client && !other->client->has_briefcase)
+		return;
+
+	// remove briefcase model
+	other->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))]--;
+	other->client->has_briefcase = false;
+	other->s.modelindex3 = 0;
+
+	// respawn the briefcase
+	Set_Briefcase_Respawn(other->client->briefcase);
+	briefcase_respawn_needed = true;
+	other->client->briefcase = NULL;
+
+	// TODO sum 1 point
+	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
 }
 
 void SP_ctb_base(edict_t *ent)
@@ -893,5 +914,8 @@ void SP_ctb_base(edict_t *ent)
 	ent->s.sound = gi.soundindex("faf/flag.wav");
 
 	ent->touch = base_touch;
+
+	// load needed points to team
+	team_list[ent->obj_owner]->need_points = ent->health;
 }
 //end faf
