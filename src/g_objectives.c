@@ -878,10 +878,11 @@ void base_think (edict_t *ent)
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	if (self->obj_owner != other->obj_owner)
+	if (!other->client)
 		return;
 
-	if (other->client && !other->client->briefcase)
+	// player must be carrying the briefcase and be in the same team of flag to score a point
+	if (!other->client->briefcase || self->obj_owner != other->client->resp.team_on->index)
 		return;
 
 	// remove briefcase model
@@ -893,7 +894,8 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	briefcase_respawn_needed = true;
 	other->client->briefcase = NULL;
 
-	// TODO sum 1 point
+	// add 1 point to player's team
+	other->client->resp.team_on->score++;
 	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
 }
 
