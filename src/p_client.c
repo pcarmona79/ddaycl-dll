@@ -4507,8 +4507,8 @@ void ClientBeginServerFrame (edict_t *ent)
 		// wait for any button just going down
 		if ( level.time > client->respawn_time)
 		{
-			// in deathmatch, only wait for attack button
-			if (deathmatch->value)
+			// kernel: in deathmatch and coop, wait for attack button
+			if (deathmatch->value || coop->value)
 				buttonMask = BUTTON_ATTACK;
 			else
 				buttonMask = -1;
