@@ -1681,11 +1681,10 @@ void G_SetStats (edict_t *ent)
 	{
 		if ((level.ctb_time - level.time) > 0)
 		{
-			ent->client->ps.stats[STAT_TIMER2] = ((level.ctb_time) - (level.time));
 			if  (((level.ctb_time) - level.time) < 100)
-			{
 				ent->client->ps.stats[STAT_TIMER2] = ((level.ctb_time) - level.time);
-			}
+			else
+				ent->client->ps.stats[STAT_TIMER2] = 0;
 		}
 		else
 			ent->client->ps.stats[STAT_TIMER2] = 0;

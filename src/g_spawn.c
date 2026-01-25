@@ -216,7 +216,7 @@ void SP_airstrike (edict_t *ent);
 void SP_Spawn_Toggle (edict_t *self);
 
 void SP_item_botroam (edict_t *self);	//JABot
-void SP_briefcase(edict_t *self);//faf  ctb code
+void SP_ctb_briefcase(edict_t *self);//faf  ctb code
 void SP_ctb_base(edict_t *self);
 
 
@@ -417,7 +417,7 @@ spawn_t spawns[MAX_EDICTS] = {
 
 	{"item_botroam", SP_item_botroam},	//JABot
 
-	{"briefcase", SP_briefcase},//faf:ctb code
+	{"ctb_briefcase", SP_ctb_briefcase},//faf:ctb code
 	{"ctb_base", SP_ctb_base},
 
 

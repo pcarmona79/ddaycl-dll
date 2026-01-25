@@ -745,7 +745,7 @@ void GetMapObjective(void)
 
 qboolean briefcase_respawn_needed;
 
-void SP_briefcase(edict_t *self)
+void SP_ctb_briefcase(edict_t *self)
 {
 	if (!self->count)
 		level.ctb_time = 900; // kernel: 15 minutes by default
@@ -756,7 +756,7 @@ void SP_briefcase(edict_t *self)
 	VectorCopy(self->s.origin, level.briefcase_origin);
 	VectorCopy(self->s.angles, level.briefcase_angles);
 
-    SpawnItem(self,FindItemByClassname("briefcase"));
+	SpawnItem(self, FindItemByClassname("briefcase"));
 }
 
 
