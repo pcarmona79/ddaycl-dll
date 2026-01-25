@@ -912,8 +912,9 @@ void TossClientWeapon (edict_t *self)
 	qboolean	quad;
 	float		spread;
 
-	if (!deathmatch->value)
-		return;
+	// kernel: commented out to allow cooperative mode for CTB
+	//if (!deathmatch->value)
+	//	return;
 
 
 	if (self->client->weaponstate == WEAPON_DROPPING)
