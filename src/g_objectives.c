@@ -748,6 +748,10 @@ void SP_briefcase(edict_t *self)
 	else
 		level.ctb_time = self->count;
 
+	// kernel: save position and angles
+	VectorCopy(self->s.origin, level.briefcase_origin);
+	VectorCopy(self->s.angles, level.briefcase_angles);
+
     SpawnItem(self,FindItemByClassname("briefcase"));
 }
 
@@ -757,6 +761,8 @@ void briefcase_spawn_think(edict_t *ent)
 {
 	if (briefcase_respawn_needed)
 	{
+		VectorCompare(level.briefcase_origin, ent->s.origin);
+		VectorCompare(level.briefcase_angles, ent->s.angles);
 		ent->think = DoRespawn;
 		ent->nextthink = level.time + 1;
 		briefcase_respawn_needed = false;

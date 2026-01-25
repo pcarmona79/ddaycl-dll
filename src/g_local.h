@@ -469,6 +469,8 @@ typedef struct
 	char        *botfiles;  //whether override file is used or not
 
 	float		ctb_time;
+	vec3_t		briefcase_origin; // kernel: ctb code
+	vec3_t		briefcase_angles;
 
 	int 		allied_sandbags;
 	int 		axis_sandbags;
