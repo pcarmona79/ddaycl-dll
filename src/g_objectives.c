@@ -609,10 +609,14 @@ void func_explosive_objective_explode (edict_t *self, edict_t *inflictor, edict_
 	} else
 		enemy = 99;
 
-	if (self->obj_owner != attacker->client->resp.team_on->index)
-		team_list[attacker->client->resp.team_on->index]->score += self->obj_gain;
-	else if (self->obj_owner == attacker->client->resp.team_on->index && enemy != 99)
-		team_list[enemy]->score += self->obj_gain;
+	// kernel: only adds to score when in deathmatch mode
+	if (deathmatch->value)
+	{
+		if (self->obj_owner != attacker->client->resp.team_on->index)
+			team_list[attacker->client->resp.team_on->index]->score += self->obj_gain;
+		else if (self->obj_owner == attacker->client->resp.team_on->index && enemy != 99)
+			team_list[enemy]->score += self->obj_gain;
+	}
 
 	if (dedicated->value)
 		safe_cprintf(NULL, PRINT_HIGH, "%s destroyed by %s [%s]\n", 
