@@ -45,6 +45,7 @@ edict_t		*g_edicts;
 
 cvar_t	*deathmatch;
 cvar_t	*coop;
+cvar_t	*ctb_mode; // kernel: selects mode for CTB
 cvar_t	*dmflags;
 cvar_t	*skill;
 cvar_t	*fraglimit;
@@ -991,7 +992,7 @@ void CheckDMRules (void)
 	//	return;
 
 	//faf: ctb code
-	if (level.ctb_time)
+	if (ctb_mode->value == 0 && level.ctb_time)
 	{	
 		vec3_t		w; //faf
 		float		range;//faf
@@ -1004,7 +1005,7 @@ void CheckDMRules (void)
 			gi.bprintf (PRINT_HIGH, "Timelimit hit!\n");
 
 		if (level.time == level.ctb_time + 1)
-			gi.bprintf (PRINT_HIGH, "Next team to bring the briefcase to their base wins!\n");
+			centerprintall("Next team to bring the briefcase to their base wins!");
 
 		if (level.time >= level.ctb_time)
 		{

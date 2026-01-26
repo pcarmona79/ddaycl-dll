@@ -747,8 +747,8 @@ qboolean briefcase_respawn_needed;
 
 void SP_ctb_briefcase(edict_t *self)
 {
-	if (!self->count)
-		level.ctb_time = 900; // kernel: 15 minutes by default
+	if (!self->count || ctb_mode->value == 0)
+		level.ctb_time = 300; // kernel: 5 minutes by default
 	else
 		level.ctb_time = self->count;
 
@@ -797,7 +797,8 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 
 	other->client->pers.inventory[index]++;
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
-	gi.bprintf (PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname, other->client->resp.team_on->teamname);
+	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
+			   other->client->resp.team_on->teamname);
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
 		Set_Briefcase_Respawn (ent);
@@ -869,7 +870,8 @@ void briefcase_warn (edict_t *ent)
 			if (!e->inuse || !e->client)
 				continue;
 			
-			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\n\nIt will be respawned in 30 seconds if it's not picked up!");
+			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\n\n"
+							"It will be respawned in 30 seconds if it's not picked up!");
 		}
 	}
 
@@ -888,6 +890,10 @@ void base_think (edict_t *ent)
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
+	// kernel: this touch function will used only by ctb_mode 1
+	if (ctb_mode->value == 0)
+		return;
+
 	if (!other->client)
 		return;
 
@@ -925,7 +931,11 @@ void SP_ctb_base(edict_t *ent)
 	ent->touch = base_touch;
 
 	// load needed points to team
-	team_list[ent->obj_owner]->need_points = ent->health;
+	if (ctb_mode->value == 0)
+		team_list[ent->obj_owner]->need_points = 100;
+	else
+		team_list[ent->obj_owner]->need_points = ent->health;
+
 	team_list[ent->obj_owner]->need_kills = 0;
 	team_list[ent->obj_owner]->kills_and_points = false;
 }

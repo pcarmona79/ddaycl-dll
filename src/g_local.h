@@ -683,6 +683,7 @@ extern	cvar_t	*maxentities;
 extern	cvar_t	*deathmatch;
 
 extern	cvar_t	*coop;
+extern	cvar_t	*ctb_mode; // kernel: selects mode for CTB
 
 extern	cvar_t	*dmflags;
 
