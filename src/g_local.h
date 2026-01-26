@@ -1395,7 +1395,7 @@ typedef struct
 // ZeRo - Variables usadas en el sistema de rachas.
 	int			streak;
 
-
+	int			points; // kernel: to count points in coop mode
 
 } client_respawn_t;
 

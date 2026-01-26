@@ -918,6 +918,7 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 
 	// add 1 point to player's team
 	other->client->resp.team_on->score++;
+	other->client->resp.points++;
 	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
 }
 

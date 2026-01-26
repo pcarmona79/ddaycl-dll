@@ -785,7 +785,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 					pingstring,
 					va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 					   game.clients[sorted[TEAM1][i]].pers.netname),
-					game.clients[sorted[TEAM1][i]].resp.score);
+					(coop->value) ? game.clients[sorted[TEAM1][i]].resp.points : game.clients[sorted[TEAM1][i]].resp.score);
 			}
 			else
 			{
@@ -832,7 +832,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 						pingstring,
 						va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM2][i]].pers.netname),
-						game.clients[sorted[TEAM2][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM2][i]].resp.points : game.clients[sorted[TEAM2][i]].resp.score);
 			}
 			else
 			{
@@ -2036,7 +2036,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM1][i]].pers.netname),
-						game.clients[sorted[TEAM1][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM1][i]].resp.points : game.clients[sorted[TEAM1][i]].resp.score);
 			}
 			else
 			{
@@ -2075,7 +2075,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM2][i]].pers.netname),
-						game.clients[sorted[TEAM2][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM2][i]].resp.points : game.clients[sorted[TEAM2][i]].resp.score);
 			}
 			else
 			{
