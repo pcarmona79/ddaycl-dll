@@ -747,10 +747,16 @@ qboolean briefcase_respawn_needed;
 
 void SP_ctb_briefcase(edict_t *self)
 {
-	if (!self->count || ctb_mode->value == 0)
-		level.ctb_time = 300; // kernel: 5 minutes by default
+	// kernel: the value readed from the .ctb file will be used only in ctb_mode 0
+	if (ctb_mode->value == 0)
+	{
+		if (!self->count)
+			level.ctb_time = 300; // kernel: 5 minutes by default
+		else
+			level.ctb_time = self->count;
+	}
 	else
-		level.ctb_time = self->count;
+		level.ctb_time = 0;
 
 	// kernel: save position and angles
 	VectorCopy(self->s.origin, level.briefcase_origin);
