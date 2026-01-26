@@ -998,6 +998,9 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 	ent->client->resp.changeteam = true;
 	ent->client->forcespawn = level.time + .5;//faf: fixes standing corpse bug
 
+	// kernel: reset player score
+	ent->client->resp.score = 0;
+	ent->client->resp.points = 0;
 
 //	stuffcmd(ent, va("play %s/shout/yes1.wav", team_list[choice]->teamid));
 				
