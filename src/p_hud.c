@@ -28,6 +28,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include <stdio.h>
 
+// evil: global variables for countdown
+extern float gameStartTime;
+
 void SplittedScoreboardMessage (edict_t *ent);
 void SplittedScoreboardMessage2 (edict_t *ent);
 
@@ -1664,7 +1667,18 @@ void G_SetStats (edict_t *ent)
 	}
 	else
 	{
-		ent->client->ps.stats[STAT_TIMER2] =0;
+		// kernel: show the timer when there is a timelimit and there are 60 seconds left
+		if (!level.ctb_time && timelimit->value)
+		{
+			int totalTime = timelimit->value * 60;
+			int timeElapsed = level.time - gameStartTime;
+			int timeLeft = totalTime - timeElapsed;
+
+			if (timeLeft < 60)
+				ent->client->ps.stats[STAT_TIMER2] = timeLeft;
+		}
+		else
+			ent->client->ps.stats[STAT_TIMER2] = 0;
 	}
 
 	if (ent->client->resp.autopickup == true)
