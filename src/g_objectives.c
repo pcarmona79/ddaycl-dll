@@ -826,7 +826,8 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	ValidateSelectedItem (ent);
 	
 	ent->s.modelindex3 = 0;
-	gi.cprintf(ent, PRINT_HIGH, "You dropped the briefcase!\n");
+	gi.bprintf(PRINT_HIGH, "%s lost the briefcase of team %s!\n", ent->client->pers.netname,
+			   ent->client->resp.team_on->teamname);
 
 	ent->client->briefcase = NULL;
 }
@@ -920,6 +921,9 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	other->client->resp.team_on->score++;
 	other->client->resp.points++;
 	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
+
+	gi.bprintf(PRINT_HIGH, "%s recovered the briefcase for team %s!\n", other->client->pers.netname,
+			   other->client->resp.team_on->teamname);
 }
 
 void SP_ctb_base(edict_t *ent)
