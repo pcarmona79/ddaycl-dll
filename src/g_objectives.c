@@ -747,8 +747,8 @@ qboolean briefcase_respawn_needed;
 
 void SP_ctb_briefcase(edict_t *self)
 {
-	// kernel: the value readed from the .ctb file will be used only in ctb_mode 0
-	if (ctb_mode->value == 0)
+	// kernel: the value readed from the .ctb file will be used only in ctb_mode 1
+	if (ctb_mode->value == 1)
 	{
 		if (!self->count)
 			level.ctb_time = 300; // kernel: 5 minutes by default
@@ -897,8 +897,8 @@ void base_think (edict_t *ent)
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	// kernel: this touch function will used only by ctb_mode 1
-	if (ctb_mode->value == 0)
+	// kernel: this touch function will used only by ctb_mode 2
+	if (ctb_mode->value <= 1)
 		return;
 
 	if (!other->client)
@@ -942,7 +942,7 @@ void SP_ctb_base(edict_t *ent)
 	ent->touch = base_touch;
 
 	// load needed points to team
-	if (ctb_mode->value == 0)
+	if (ctb_mode->value == 1)
 		team_list[ent->obj_owner]->need_points = 100;
 	else
 		team_list[ent->obj_owner]->need_points = ent->health;

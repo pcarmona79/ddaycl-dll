@@ -45,7 +45,7 @@ edict_t		*g_edicts;
 
 cvar_t	*deathmatch;
 cvar_t	*coop;
-cvar_t	*ctb_mode; // kernel: selects mode for CTB
+cvar_t	*ctb_mode; // kernel: selects mode for CTB (0 disabled, 1 one briefcase, 2 many briefcases)
 cvar_t	*dmflags;
 cvar_t	*skill;
 cvar_t	*fraglimit;
@@ -992,7 +992,7 @@ void CheckDMRules (void)
 	//	return;
 
 	//faf: ctb code
-	if (ctb_mode->value == 0 && level.ctb_time)
+	if (ctb_mode->value == 1 && level.ctb_time)
 	{	
 		vec3_t		w; //faf
 		float		range;//faf

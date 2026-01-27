@@ -413,8 +413,8 @@ void InitGame (void)
 	// kernel: maximum knives to drop
 	knife_maxdrop = gi.cvar("knife_maxdrop", "0", 0);
 
-	// kernel: modes for CTB: 0	one briefcase, 1 many briefcases
-	ctb_mode = gi.cvar("ctb_mode", "1", CVAR_LATCH);
+	// kernel: modes for CTB: (0 disabled, 1 one briefcase, 2 many briefcases)
+	ctb_mode = gi.cvar("ctb_mode", "0", CVAR_LATCH);
 
 	// items
 	InitItems ();
