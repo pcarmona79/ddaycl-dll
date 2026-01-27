@@ -2692,10 +2692,8 @@ void ClientBegin (edict_t *ent)
 	ent->client = game.clients + (ent - g_edicts - 1);
 	ent->client->resp.AlreadySpawned=false;
 
-
-
-
-	if (deathmatch->value)
+	// kernel: CTB also needs this to clear structs at the beginning
+	if (deathmatch->value || ctb_mode->value)
 	{
 		ClientBeginDeathmatch (ent);
 		//LevelStartUserDLLs(ent);
