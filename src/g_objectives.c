@@ -771,8 +771,8 @@ void briefcase_spawn_think(edict_t *ent)
 {
 	if (briefcase_respawn_needed)
 	{
-		VectorCompare(level.briefcase_origin, ent->s.origin);
-		VectorCompare(level.briefcase_angles, ent->s.angles);
+		VectorCopy(level.briefcase_origin, ent->s.origin);
+		VectorCopy(level.briefcase_angles, ent->s.angles);
 		ent->think = DoRespawn;
 		ent->nextthink = level.time + 1;
 		briefcase_respawn_needed = false;
