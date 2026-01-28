@@ -894,6 +894,8 @@ void base_think (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
+void PlayTeamSound(int teamidx, char* soundfile);
+
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
@@ -920,9 +922,16 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	// add 1 point to player's team
 	other->client->resp.team_on->score++;
 	other->client->resp.points++;
-	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
-	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
-	gi.sound(world, CHAN_NO_PHS_ADD, gi.soundindex("faf/flagcap.wav"), 1, ATTN_NONE, 0);
+
+	// scoring team will listen flagcap
+	PlayTeamSound(other->client->resp.team_on->index, "faf/flagcap.wav");
+
+	// the other team will get an alert voice
+	int otheridx = (other->client->resp.team_on->index + 1) % 2;
+	if (otheridx == 0)
+		PlayTeamSound(otheridx, "ctb/axisbriefcase.wav");
+	else
+		PlayTeamSound(otheridx, "ctb/alliedbriefcase.wav");
 
 	gi.bprintf(PRINT_HIGH, "%s recovered the briefcase for team %s!\n", other->client->pers.netname,
 			   other->client->resp.team_on->teamname);
