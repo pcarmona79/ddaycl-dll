@@ -1267,6 +1267,25 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		item->drop = NULL;
 	}
 
+	// kernel: CTB code
+	if (!Q_stricmp("briefcase", ent->classname))
+	{
+		// kernel: the value readed from the .ctb file will be used only in ctb_mode 1
+		if (ctb_mode->value == 1)
+		{
+			if (!ent->count)
+				level.ctb_time = 300; // kernel: 5 minutes by default
+			else
+				level.ctb_time = ent->count;
+		}
+		else
+			level.ctb_time = 0;
+
+		// kernel: save position and angles
+		VectorCopy(ent->s.origin, level.briefcase_origin);
+		VectorCopy(ent->s.angles, level.briefcase_angles);
+	}
+
 	ent->item = item;
 	ent->nextthink = level.time + 2 * FRAMETIME;    // items start after other solids
 	ent->think = droptofloor;

@@ -1800,7 +1800,7 @@ void G_SetStats (edict_t *ent)
 	TeamStats(ent);
 
 	//faf:  ctb code:  always put briefcase pic here if holding briefcase
-	if (ent->client->briefcase)
+	if (ent->client->has_briefcase)
 		ent->client->ps.stats[STAT_HELPICON] = gi.imageindex ("briefcase");
 
 

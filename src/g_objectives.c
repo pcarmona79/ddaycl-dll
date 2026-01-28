@@ -745,28 +745,7 @@ void GetMapObjective(void)
 
 qboolean briefcase_respawn_needed;
 
-void SP_ctb_briefcase(edict_t *self)
-{
-	// kernel: the value readed from the .ctb file will be used only in ctb_mode 1
-	if (ctb_mode->value == 1)
-	{
-		if (!self->count)
-			level.ctb_time = 300; // kernel: 5 minutes by default
-		else
-			level.ctb_time = self->count;
-	}
-	else
-		level.ctb_time = 0;
-
-	// kernel: save position and angles
-	VectorCopy(self->s.origin, level.briefcase_origin);
-	VectorCopy(self->s.angles, level.briefcase_angles);
-
-	SpawnItem(self, FindItemByClassname("briefcase"));
-}
-
-
-void DoRespawn(edict_t * ent ); 
+void DoRespawn(edict_t * ent );
 void briefcase_spawn_think(edict_t *ent)
 {
 	if (briefcase_respawn_needed)
@@ -801,6 +780,7 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 
 	item = ent->item;
 
+	other->client->has_briefcase = true;
 	other->client->pers.inventory[index]++;
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
 	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
@@ -810,8 +790,6 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 		Set_Briefcase_Respawn (ent);
 
 	briefcase_respawn_needed = false;
-
-	other->client->briefcase = ent;
 
 	return true;
 }
@@ -824,12 +802,12 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	Drop_Item (ent, item);
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
-	
+
+	ent->client->has_briefcase = false;
 	ent->s.modelindex3 = 0;
+
 	gi.bprintf(PRINT_HIGH, "%s lost the briefcase of team %s!\n", ent->client->pers.netname,
 			   ent->client->resp.team_on->teamname);
-
-	ent->client->briefcase = NULL;
 }
 
 void briefcase_respawn (edict_t *ent)
@@ -907,7 +885,7 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;
 
 	// player must be carrying the briefcase and be in the same team of flag to score a point
-	if (!other->client->briefcase || self->obj_owner != other->client->resp.team_on->index)
+	if (!other->client->has_briefcase || self->obj_owner != other->client->resp.team_on->index)
 		return;
 
 	// remove briefcase model
@@ -915,9 +893,8 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	other->s.modelindex3 = 0;
 
 	// respawn the briefcase
-	Set_Briefcase_Respawn(other->client->briefcase);
 	briefcase_respawn_needed = true;
-	other->client->briefcase = NULL;
+	other->client->has_briefcase = false;
 
 	// add 1 point to player's team
 	other->client->resp.team_on->score++;
