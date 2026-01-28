@@ -2595,14 +2595,11 @@ void ClientBeginDeathmatch (edict_t *ent)
 {
 	G_InitEdict (ent);
 
+	// kernel: CTB needs to clear persistant data when changing levels
+	if (ctb_mode->value)
+		InitClientPersistant(ent->client);
+
 	InitClientResp (ent->client);
-
-
-
-
-
-
-
 
 //faf	if (level.framenum > ((int)level_wait->value * 10))
 	ent->client->resp.scopewobble = 192;
