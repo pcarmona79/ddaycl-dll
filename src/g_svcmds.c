@@ -612,6 +612,12 @@ void SVCmd_StartCountdown_f()
 	countdownTimeLimit = minutes;
 }
 
+// kernel: reset timelimit and countdown
+void Svcmd_ResetCountdown_f()
+{
+	ResetCountTimer();
+	centerprintall("The running timelimit has been reset.");
+}
 
 // kernel: broadcast the time left if a countdown is running
 void Svcmd_Timeleft_f()
@@ -727,6 +733,8 @@ void	ServerCommand (void)
 
 	else if (Q_stricmp(cmd, "startcount") == 0)
 		SVCmd_StartCountdown_f();
+	else if (Q_stricmp(cmd, "resetcount") == 0)
+		Svcmd_ResetCountdown_f();
 	else if (Q_stricmp(cmd, "timeleft") == 0)
 		Svcmd_Timeleft_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
