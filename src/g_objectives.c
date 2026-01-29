@@ -33,6 +33,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // g_objectives.c
 // D-Day: Normandy Objective Entities
 
+// evil: global variables for countdown
+extern float countdownTimeLimit;
+
 #if 0
 
 	char *obj_name;
@@ -778,10 +781,11 @@ void Set_Briefcase_Respawn (edict_t *ent)
 qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 {
 	int			index;
-	gitem_t		*item;
 	index = ITEM_INDEX(ent->item);
 
-	item = ent->item;
+	// kernel: do not allow to pick up if the match has not begun yet
+	if (tournament->value && countdownTimeLimit <= 0)
+		return false;
 
 	other->client->has_briefcase = true;
 	other->client->pers.inventory[index]++;
