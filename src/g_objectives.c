@@ -745,14 +745,17 @@ void GetMapObjective(void)
 
 qboolean briefcase_respawn_needed;
 
-void DoRespawn(edict_t * ent );
+void droptofloor(edict_t *ent);
 void briefcase_spawn_think(edict_t *ent)
 {
 	if (briefcase_respawn_needed)
 	{
 		VectorCopy(level.briefcase_origin, ent->s.origin);
 		VectorCopy(level.briefcase_angles, ent->s.angles);
-		ent->think = DoRespawn;
+
+		ent->svflags &= ~SVF_NOCLIENT;
+		ent->s.event = EV_ITEM_RESPAWN;
+		ent->think = droptofloor;
 		ent->nextthink = level.time + 1;
 		briefcase_respawn_needed = false;
 	}
