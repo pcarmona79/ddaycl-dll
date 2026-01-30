@@ -777,6 +777,7 @@ void Set_Briefcase_Respawn (edict_t *ent)
 }
 
 
+void PlayTeamSound(int teamidx, char* soundfile);
 
 qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 {
@@ -790,13 +791,21 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	other->client->has_briefcase = true;
 	other->client->pers.inventory[index]++;
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
-	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
-			   other->client->resp.team_on->teamname);
 
 	if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
 		Set_Briefcase_Respawn (ent);
 
 	briefcase_respawn_needed = false;
+
+	// emit a capture sound for team who pickups
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/pickup.wav");
+
+	// the other team will get an alert
+	int otheridx = (other->client->resp.team_on->index + 1) % 2;
+	PlayTeamSound(otheridx, "ctb/alert.wav");
+
+	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
+			   other->client->resp.team_on->teamname);
 
 	return true;
 }
@@ -879,8 +888,6 @@ void base_think (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-void PlayTeamSound(int teamidx, char* soundfile);
-
 // kernel: ctb code
 void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
@@ -908,7 +915,7 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	other->client->resp.points++;
 
 	// scoring team will listen flagcap
-	PlayTeamSound(other->client->resp.team_on->index, "faf/flagcap.wav");
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/flagcap.wav");
 
 	// the other team will get an alert voice
 	int otheridx = (other->client->resp.team_on->index + 1) % 2;
