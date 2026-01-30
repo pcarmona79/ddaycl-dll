@@ -1670,8 +1670,8 @@ void G_SetStats (edict_t *ent)
 		// kernel: show the timer when there is a timelimit and there are 60 seconds left
 		if (!level.ctb_time && timelimit->value)
 		{
-			int totalTime = timelimit->value * 60;
-			int timeElapsed = level.time - gameStartTime;
+			float totalTime = timelimit->value * 60.0;
+			float timeElapsed = level.time - gameStartTime;
 			int timeLeft = totalTime - timeElapsed;
 
 			if (timeLeft < 60)

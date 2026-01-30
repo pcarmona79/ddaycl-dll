@@ -37,6 +37,9 @@ extern int countdownTimer;
 extern float countdownTimeLimit;
 extern float gameStartTime;
 
+// kernel: to freeze them all
+extern qboolean freeze_mode;
+extern int freeze_remaining;
 
 void Svcmd_Teamswitch_f (void)
 {
@@ -567,28 +570,34 @@ void SVCmd_ListPlayers_f(void)
 	}
 }
 
+void StartCount(int seconds);
 
 // evil: command for set and start countdown 
 void SVCmd_StartCountdown_f()
 {
-	int i;
-	edict_t* player;
-
 	if (gi.argc() < 2) {
 		gi.cprintf(NULL, PRINT_HIGH, "Uso: sv countdown <minutos>\n");
 		return;
 	}
 
 	char* minutesStr = gi.argv(2);
-	float minutes = atof(minutesStr);
-	if (minutes <= 0)
+	float seconds = 60.0 * atof(minutesStr);
+	if (seconds <= 0)
 	{
 		gi.cprintf(NULL, PRINT_HIGH, "El tiempo debe ser mayor a 0.\n");
 		return;
 	}
 
+	StartCount((int) seconds);
+}
+
+void StartCount(int seconds)
+{
+	int i;
+	edict_t* player;
+
 	// kernel: check if there are players outside their spawn protect areas
-	if (tournament->value)
+	if (tournament->value && freeze_remaining <= 0)
 	{
 		for (i = 1; i <= maxclients->value; i++)
 		{
@@ -609,7 +618,7 @@ void SVCmd_StartCountdown_f()
 	countdownActive = 1;
 	countdownValue = 5;
 	countdownTimer = 10;
-	countdownTimeLimit = minutes;
+	countdownTimeLimit = (float) seconds;
 }
 
 // kernel: reset timelimit and countdown
@@ -624,8 +633,8 @@ void Svcmd_Timeleft_f()
 {
 	if (timelimit->value > 0)
 	{
-		int totalTime = timelimit->value * 60;
-		int timeElapsed = level.time - gameStartTime;
+		float totalTime = timelimit->value * 60.0;
+		float timeElapsed = level.time - gameStartTime;
 		int timeLeft = totalTime - timeElapsed;
 
 		if (timeLeft < 0)
@@ -696,6 +705,35 @@ void Svcmd_ResetScore_f(void)
 	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
 }
 
+void Svcmd_FreezeMode_f()
+{
+	freeze_mode = !freeze_mode;
+	safe_bprintf(PRINT_HIGH, "Freeze mode is %s.\n", (freeze_mode) ? "enabled" : "disabled");
+
+	if (freeze_mode)
+	{
+		// if a countdown is active, save the remaining time and reset the countdown
+		if (countdownTimeLimit > 0)
+		{
+			freeze_remaining = countdownTimeLimit - (level.time - gameStartTime);
+			ResetCountTimer();
+			safe_bprintf(PRINT_HIGH, "Remaining time: %d minutes %d seconds\n",
+						 freeze_remaining / 60, freeze_remaining % 60);
+		}
+	}
+	else
+	{
+		// if there is a remaining time saved, start a countdown with that value
+		if (freeze_remaining)
+		{
+			safe_bprintf(PRINT_HIGH, "Starting countdown for remaining time: %d minutes %d seconds\n",
+						 freeze_remaining / 60, freeze_remaining % 60);
+			StartCount(freeze_remaining);
+			freeze_remaining = 0;
+		}
+	}
+}
+
 /*
 =================
 ServerCommand
@@ -744,7 +782,8 @@ void	ServerCommand (void)
 
 	else if (Q_stricmp(cmd, "killplayer") == 0)
 		SVCmd_KillPlayer_f();
-
+	else if (Q_stricmp(cmd, "freeze") == 0)
+		Svcmd_FreezeMode_f();
 
 	else
 		safe_cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);

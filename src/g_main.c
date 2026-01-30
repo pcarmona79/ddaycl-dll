@@ -200,6 +200,7 @@ qboolean threeSeconds = false;
 
 // kernel: to freeze them all
 qboolean freeze_mode = false;
+int freeze_remaining = 0;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -1244,8 +1245,8 @@ void CheckDMRules (void)
 	// evil: print and play sound for timelimit if is setted
 	if (timelimit->value)
 	{
-		int totalTime = timelimit->value * 60;
-		int timeElapsed = level.time - gameStartTime;
+		float totalTime = timelimit->value * 60.0;
+		float timeElapsed = level.time - gameStartTime;
 		int timeRemaining = totalTime - timeElapsed;
 
 		if (timeRemaining == 300 && !fiveMinWarning)
@@ -1296,6 +1297,7 @@ void CheckDMRules (void)
 			}
 						
 			ResetCountTimer();
+			ResetFreezeMode();
 			EndDMLevel();
 			return;
 		}
@@ -1339,6 +1341,12 @@ void ResetCountTimer(void)
 	threeSeconds = false;
 }
 
+// kernel: resets freeze mode variables
+void ResetFreezeMode(void)
+{
+	freeze_mode = false;
+	freeze_remaining = 0;
+}
 
 /*
 =============
@@ -1619,7 +1627,7 @@ void G_RunFrame (void)
 			{
 				centerprintall("Que comience el juego!");
 				gameStartTime = level.time;
-				timelimit->value = countdownTimeLimit;				
+				timelimit->value = countdownTimeLimit / 60.0; // kernel: now in seconds
 				countdownActive = 0;
 			}
 		}

@@ -1558,6 +1558,7 @@ void SP_worldspawn (edict_t *ent)
 
 	// kernel: must reset countdown settings
 	ResetCountTimer();
+	ResetFreezeMode();
 
 	//snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
 	snd_fry = gi.soundindex ("players/tear.wav");	// standing in lava / slime

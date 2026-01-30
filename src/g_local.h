@@ -1186,6 +1186,7 @@ void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
 int HumanPlayerCount(void);
 void ResetCountTimer(void); //evil: for function in g_main.cs
+void ResetFreezeMode(void); // kernel: to freeze them all
 
 // 
 // g_maps.c 

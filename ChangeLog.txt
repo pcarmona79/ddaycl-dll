@@ -32,6 +32,17 @@ Versión 5.062
   torneo impidiendo que se hagan daño los jugadores hasta que se
   reinicie la cuenta regresiva.
 
+- Añade el nuevo "freeze_mode" para bloquear el movimiento del jugador y
+  evitar daños cuando está activo si el servidor está en modo de torneo.
+  Además añade Svcmd_FreezeMode_f() a g_svcmds.c para añadir el comando
+  de servidor "sv freeze" para activar o desactivar este modo de
+  congelación. También añade la variable "freeze_remaining" a g_main.c
+  para almacenar el tiempo restante cuando se aplicó la congelación
+  durante una partida cronometrada. Tras desactivar el modo de
+  congelación, si este tiempo remanente existe, no se devolverán los
+  jugadores a sus spawns y se le utilizará como tiempo para ejecutar una
+  nueva cuenta regresiva.
+
 Versión 5.061
 -------------
 
