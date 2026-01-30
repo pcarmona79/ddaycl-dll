@@ -198,6 +198,9 @@ qboolean fiveMinWarning = false;
 qboolean oneMinWarning = false;
 qboolean threeSeconds = false;
 
+// kernel: to freeze them all
+qboolean freeze_mode = false;
+
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
 qboolean ClientConnect (edict_t *ent, char *userinfo);

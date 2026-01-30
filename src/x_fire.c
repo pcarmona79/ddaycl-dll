@@ -71,7 +71,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "x_fire.h"
 
 // evil: global variables for countdown
-extern float countdownActive;
+extern int countdownActive;
 extern float countdownTimeLimit;
 
 /*============================/  Fire Dodge  /============================*/
