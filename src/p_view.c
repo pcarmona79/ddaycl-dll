@@ -390,7 +390,7 @@ void P_ExplosionEffects (edict_t *player)
 											:	 0;
 */
 		player->client->explosion_angles[YAW] =	(frame > SWAY_START && intensity > 15) ?				\
-												sin(frame + 145) * (intensity / 10) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
+												sin(frame + 145) * (intensity / 10.0) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
 											:	 0;
 /*
 		player->client->explosion_angles[ROLL] =	(frame == 0) ?											\
@@ -409,8 +409,8 @@ void P_ExplosionEffects (edict_t *player)
 												:	intensity * -0.5								\
 											:	(frame > SWAY_START && intensity > 15) ?			\
 													(intensity % 2) ?								\
-														sin(frame + 90) * (intensity / 10) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
-													:	sin(frame + 90) * (intensity / 10) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+														sin(frame + 90) * (intensity / 10.0) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+													:	sin(frame + 90) * (intensity / 10.0) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
 												:	0;
 
 		if (frame > 0 && frame < 11 && player->client->dmgef_flash == true) {
@@ -426,9 +426,9 @@ void P_ExplosionEffects (edict_t *player)
 
 //faf: screen shaking effect
 	intensity *=.5;
-	player->client->screen_shake[0]= (intensity/2 - crandom()* intensity)/16;
-	player->client->screen_shake[1]= (intensity/2 - crandom()* intensity)/16;
-	player->client->screen_shake[2]= (intensity/2 - crandom()* intensity)/16;
+	player->client->screen_shake[0]= (intensity/2.0 - crandom()* intensity)/16;
+	player->client->screen_shake[1]= (intensity/2.0 - crandom()* intensity)/16;
+	player->client->screen_shake[2]= (intensity/2.0 - crandom()* intensity)/16;
 
 
 //faf: add ground moving effect

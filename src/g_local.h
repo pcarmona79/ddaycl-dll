@@ -1602,7 +1602,7 @@ struct gclient_s
 	//pbowens
 	int			dmgef_startframe;
 	int			dmgef_sway_value;
-	qboolean	dmgef_sway_switch;
+	int			dmgef_sway_switch;
 	float		dmgef_intensity;
 	qboolean	dmgef_flash;
 	float		dmgef_ablend;
