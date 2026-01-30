@@ -455,7 +455,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	
 /*-----/ PM /-----/ MODIFIED:  Condition split up for portability. /-----*/
 	if (coop->value)
-		if (attacker->client)
+		if (attacker && attacker->client)
 			meansOfDeath |= MOD_FRIENDLY_FIRE;
 /*-----------------------------------------------------------------------*/
 
@@ -1280,7 +1280,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		{
 			// kernel: do not allow to toss weapon when changing teams in tournament mode, bots also can not drop weapon
 			if (!(tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0) &&
-				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED || self->ai)))
+				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED
+				   || meansOfDeath == MOD_SUICIDE || self->ai)))
 			{
 				// kernel: if player does not have a live TNT, then toss the weapon
 				TossClientWeapon(self);

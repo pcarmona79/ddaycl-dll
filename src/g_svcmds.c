@@ -681,10 +681,13 @@ void SVCmd_KillPlayer_f()
 	// decrement team frags
 	if (player->client->resp.team_on->kills > 0)
 		player->client->resp.team_on->kills--;
+	else
+		// kernel: if there is no frags to discount, add one frag to the other team
+		team_list[(player->client->resp.team_on->index + 1) % 2]->kills++;
 
 	player->health = 0;
 	meansOfDeath = MOD_SUICIDE;
-	player->die(player, player, player, 100000, vec3_origin); //causes death of player
+	player->die(player, player, NULL, 100000, vec3_origin); //causes death of player
 
 	gi.bprintf(PRINT_HIGH, "El jugador %s (ID: %d) ha sido asesinado por RCON.\n", player->client->pers.netname, player_id);
 }
