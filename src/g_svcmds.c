@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
@@ -692,6 +693,70 @@ void SVCmd_KillPlayer_f()
 	gi.bprintf(PRINT_HIGH, "El jugador %s (ID: %d) ha sido asesinado por RCON.\n", player->client->pers.netname, player_id);
 }
 
+void Svcmd_SetKills_f(void)
+{
+	char *team;
+	int value;
+
+	if (gi.argc() < 3)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Usage: sv setkills <allied|axis> <value>\n");
+		return;
+	}
+
+	value = atoi(gi.argv(3));
+
+	if (value)
+	{
+		team = gi.argv(2);
+
+		if (!Q_stricmp("allied", team))
+		{
+			team_list[0]->kills = value;
+			gi.bprintf(PRINT_HIGH, "The Allied kills has been set to %d.\n", value);
+		}
+		else if (!Q_stricmp("axis", team))
+		{
+			team_list[1]->kills = value;
+			gi.bprintf(PRINT_HIGH, "The Axis kills has been set to %d.\n", value);
+		}
+	}
+	else
+		gi.cprintf(NULL, PRINT_HIGH, "Need a value to set the new kill count.\n");
+}
+
+void Svcmd_SetPoints_f(void)
+{
+	char *team;
+	int value;
+
+	if (gi.argc() < 3)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Usage: sv setpoints <allied|axis> <value>\n");
+		return;
+	}
+
+	value = atoi(gi.argv(3));
+
+	if (value)
+	{
+		team = gi.argv(2);
+
+		if (!Q_stricmp("allied", team))
+		{
+			team_list[0]->score = value;
+			gi.bprintf(PRINT_HIGH, "The Allied points has been set to %d.\n", value);
+		}
+		else if (!Q_stricmp("axis", team))
+		{
+			team_list[1]->score = value;
+			gi.bprintf(PRINT_HIGH, "The Axis points has been set to %d.\n", value);
+		}
+	}
+	else
+		gi.cprintf(NULL, PRINT_HIGH, "Need a value to set the new points.\n");
+}
+
 void Svcmd_ResetScore_f(void)
 {
 	int i;
@@ -705,7 +770,7 @@ void Svcmd_ResetScore_f(void)
 		}
 	}
 
-	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
+	gi.bprintf(PRINT_HIGH, "The scores has been reset.\n");
 }
 
 void Svcmd_FreezeMode_f()
@@ -778,6 +843,10 @@ void	ServerCommand (void)
 		Svcmd_ResetCountdown_f();
 	else if (Q_stricmp(cmd, "timeleft") == 0)
 		Svcmd_Timeleft_f();
+	else if (Q_stricmp(cmd, "setkills") == 0)
+		Svcmd_SetKills_f();
+	else if (Q_stricmp(cmd, "setpoints") == 0)
+		Svcmd_SetPoints_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
 		Svcmd_ResetScore_f();
 	else if (Q_stricmp(cmd, "listplayers") == 0)

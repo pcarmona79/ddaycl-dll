@@ -43,6 +43,33 @@ Versión 5.062
   jugadores a sus spawns y se le utilizará como tiempo para ejecutar una
   nueva cuenta regresiva.
 
+- Añade las nuevas funciones Svcmd_SetKills_f() y Svcmd_SetPoints_f() a
+  g_svcmds.c para implementar los comandos de servidor "sv setkills" y
+  "sv setpoints".
+
+  Uso: sv setkills <allied|axis> <value>
+       sv setpoints <allied|axis> <value>
+
+  Ejemplos:
+    sv setkills allied 10
+    sv setkills axis 11
+    sv setpoints allied 20
+    sv setpoints axis 5
+
+- Se añade la comprobación de MOD_SUICIDE para no lanzar el arma del
+  jugador en player_die() de p_weapon.c, ya que este valor lo usa el
+  comando de servidor "sv killplayer". Además, si el equipo del jugador
+  no tiene frags para remover, SVCmd_KillPlayer_f() de g_svcmd.c añadirá
+  un frag al otro equipo.
+
+- Rehabilita el sobrecalentamiento de la MG42 cuando la variable "chile"
+  está deshabilitada. Se mueve el bloque que genera humo en la MG42 a
+  Weapon_MG42_Fire() en g_weapon.c y se mejora el código en
+  ClientEndServerFrame() de p_view.c para aumentar la temperatura en 0,5
+  grados al disparar y disminuirla en 0,2 grados al no hacerlo. La
+  temperatura base será de 20, el humo se generará a 33 y la MG42 se
+  bloqueará a 45.
+
 Versión 5.061
 -------------
 
