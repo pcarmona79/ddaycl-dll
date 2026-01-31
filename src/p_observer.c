@@ -632,7 +632,10 @@ void DoEndOM(edict_t *ent /*,qboolean notOfficer*/)
 	ent->client->show_obj_temp_time = level.time;
 	Cmd_Objectives(ent);
 
-	ent->client->mg42_temperature = 0;
+	if (chile->value)
+		ent->client->mg42_temperature = 0; // kernel: this disables MG42 heating
+	else
+		ent->client->mg42_temperature = 20;
 
 
 } 

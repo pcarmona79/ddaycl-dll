@@ -2669,63 +2669,31 @@ void ClientEndServerFrame (edict_t *ent)
 		Cmd_Say_f (ent, ent->client->resp.chatsavetype, false, true);
 
 
-
-		//should be done with the gun instead of client, but it won't matter 99% of the time
-		if (ent->client->mg42_temperature > 0)
+	//should be done with the gun instead of client, but it won't matter 99% of the time
+	if (ent->client->pers.weapon &&
+		ent->client->pers.weapon->classnameb == WEAPON_MG42 &&
+		ent->client->mg42_temperature > 0)
+	{
+		if (ent->client->buttons & BUTTON_ATTACK)
 		{
-			ent->client->mg42_temperature -=.15;
-			//gi.dprintf("%f \n", ent->client->mg42_temperature);
-
-			if (ent->client->pers.weapon &&
-				ent->client->pers.weapon->classnameb == WEAPON_MG42 &&
-				ent->client->mg42_temperature > 33)
-			{
-				edict_t *smoke;
-				vec3_t pos, forward;
-				
-
-				AngleVectors (ent->client->v_angle, forward, NULL, NULL);
-				VectorMA (ent->s.origin, 20, forward, pos);  //calculates the range vector  //faf: 10 = range
-				pos[2]+=ent->viewheight;
-
-
-				smoke = G_Spawn ();
-				VectorCopy (pos, smoke->s.origin);
-				smoke->s.modelindex = gi.modelindex ("sprites/null.sp2");
-				smoke->s.frame      = 0;
-				smoke->s.skinnum    = 0;
-				smoke->touch        = NULL;
-				smoke->solid        = SOLID_NOT;
-				smoke->takedamage   = DAMAGE_NO;
-				smoke->clipmask     = 0;
-				smoke->s.effects    = EF_GRENADE;
-				smoke->movetype     = MOVETYPE_FLY;
-				VectorSet(smoke->velocity, 0, 0, 400);
-				smoke->nextthink    = level.time + .2;
-				smoke->think        = G_FreeEdict;
-				VectorAdd(smoke->velocity, ent->velocity, smoke->velocity);
-				gi.linkentity (smoke);
-			}
+			ent->client->mg42_temperature += .5;
+		}
+		else
+		{
+			if (ent->client->mg42_temperature > 20)
+				ent->client->mg42_temperature -= .2;
 		}
 
-		
-
-        
-
-        
-		//we moved player to the void when first joining game, now move them to
-		//death view room
-		if (!ent->ai && ent->client->resp.enterframe == level.framenum - 2)
-		{
-			SelectSpawnPoint (ent, ent->s.origin, ent->s.angles);
-		}
+		//gi.dprintf("mg42_temperature: %.1f\n", ent->client->mg42_temperature);
+	}
 
 
-
-
-
-
-
+	//we moved player to the void when first joining game, now move them to
+	//death view room
+	if (!ent->ai && ent->client->resp.enterframe == level.framenum - 2)
+	{
+		SelectSpawnPoint (ent, ent->s.origin, ent->s.angles);
+	}
 
 
 	VectorCopy (ent->velocity, ent->client->oldvelocity);
