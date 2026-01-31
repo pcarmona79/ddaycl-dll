@@ -582,6 +582,14 @@ void SVCmd_StartCountdown_f()
 		return;
 	}
 
+	// kernel: do not run if there is a remaining time from another countdown
+	if (freeze_remaining)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "There is a remaining time waiting to be resumed with a countdown. "
+				   "Unfreeze the server first.\n");
+		return;
+	}
+
 	char* minutesStr = gi.argv(2);
 	float seconds = 60.0 * atof(minutesStr);
 	if (seconds <= 0)
