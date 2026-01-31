@@ -2176,4 +2176,29 @@ void Weapon_Sandbag (edict_t *ent)
 }
 
 
+void RemoveSandbags(void)
+{
+	int i;
+	edict_t * ent;
 
+	for (i = 0; i < MAX_EDICTS; ++i)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+
+		if (ent->classnameb == SANDBAGS)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing %s sandbag at (%.1f %.1f %.1f)\n",
+					   (ent->obj_owner) ? "axis" : "allied",
+					   ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+
+			if (ent->obj_owner == 0)
+				level.allied_sandbags--;
+			else if (ent->obj_owner == 1)
+				level.axis_sandbags--;
+
+			G_FreeEdict(ent);
+		}
+	}
+}

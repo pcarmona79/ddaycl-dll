@@ -572,6 +572,7 @@ void SVCmd_ListPlayers_f(void)
 }
 
 void StartCount(int seconds);
+void RemoveSandbags(void);
 
 // evil: command for set and start countdown 
 void SVCmd_StartCountdown_f()
@@ -597,9 +598,12 @@ void StartCount(int seconds)
 	int i;
 	edict_t* player;
 
-	// kernel: check if there are players outside their spawn protect areas
 	if (tournament->value && freeze_remaining <= 0)
 	{
+		// kernel: remove sandbags
+		RemoveSandbags();
+
+		// kernel: check if there are players outside their spawn protect areas
 		for (i = 1; i <= maxclients->value; i++)
 		{
 			player = &g_edicts[i];
