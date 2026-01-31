@@ -599,7 +599,7 @@ void SP_info_team_start(edict_t *ent)
 		team_list[i]->need_points = 0;
 
 	// kernel: applies fraglimit if setted
-	if (fraglimit->value > 0)
+	if (fraglimit->value && !ctb_mode->value)
 		team_list[i]->need_kills = (int) fraglimit->value;
 	else if (ent->dmg)
 		team_list[i]->need_kills = ent->dmg;

@@ -1281,19 +1281,26 @@ void CheckDMRules (void)
 		{
 			safe_bprintf(PRINT_HIGH, "Timelimit hit.\n");
 
-			// check who team wins by kills
-			// 0:allies 1:axis
-			if (team_list[0]->kills > team_list[1]->kills)
+			if (ctb_mode->value == 2)
 			{
-				Last_Team_Winner = 0;
+				// kernel: in CTB only points win
+				if (team_list[0]->score > team_list[1]->score)
+					Last_Team_Winner = 0;
+				else if (team_list[0]->score < team_list[1]->score)
+					Last_Team_Winner = 1;
+				else
+					Last_Team_Winner = -1; // tie or draw
 			}
-			else if (team_list[0]->kills < team_list[1]->kills)
-			{
-				Last_Team_Winner = 1;
-			}				
 			else
 			{
-				Last_Team_Winner = -1; // tie or draw
+				// check who team wins by kills
+				// 0:allies 1:axis
+				if (team_list[0]->kills > team_list[1]->kills)
+					Last_Team_Winner = 0;
+				else if (team_list[0]->kills < team_list[1]->kills)
+					Last_Team_Winner = 1;
+				else
+					Last_Team_Winner = -1; // tie or draw
 			}
 						
 			ResetCountTimer();
@@ -1303,7 +1310,8 @@ void CheckDMRules (void)
 		}
 	}
 
-	if (fraglimit->value)
+	// kernel: CTB mode does not count frags to finish
+	if (fraglimit->value && !ctb_mode->value)
 	{
 		// kernel: check if fraglimit changed its value to update need_kills properties
 		for (i = 0; i < MAX_TEAMS; ++i)
