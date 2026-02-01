@@ -1129,7 +1129,7 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 	InitItems ();
 
 	// kernel: CTC is in deathmatch mode, CTB needs cooperative
-	if (deathmatch->value == 0 && coop->value)
+	if (deathmatch->value == 0 && coop->value && ctb_mode->value)
 		entities = LoadCTBFile(mapname, entities);
 	else if (ctc->value)
 		entities = LoadCTCFile(mapname,entities);
