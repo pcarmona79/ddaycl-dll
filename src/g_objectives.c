@@ -82,12 +82,16 @@ void objective_area_think (edict_t *self) {
 		//gi.dprintf("Found %d players\n", count);		
 	}
 
-	if (count >= self->obj_count) {
+	if (count >= self->obj_count)
+	{
+		// kernel: only adds to score when in deathmatch mode
+		if (deathmatch->value)
+		{
+			team_list[self->obj_owner]->score -= self->obj_loss;
 
-		team_list[self->obj_owner]->score -= self->obj_loss;
-
-		self->obj_owner = team_list[newteam]->index;
-		team_list[self->obj_owner]->score += self->obj_gain;
+			self->obj_owner = team_list[newteam]->index;
+			team_list[self->obj_owner]->score += self->obj_gain;
+		}
 
 		if (team_list[self->obj_owner]->time_to_win) // If there already is a counter somwhere else
 		{
@@ -191,26 +195,27 @@ void objective_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		else if ((level.framenum - self->obj_count) <= self->delay)//15) // its been at least a frame since own team touched it
 			return;
 
-		if (self->obj_perm_owner)
+		// kernel: only adds to score when in deathmatch mode
+		if (deathmatch->value)
 		{
-//			if (team_list[self->obj_owner])
-//				team_list[self->obj_owner]->score -= self->dmg;
+			if (self->obj_perm_owner)
+			{
+				self->obj_owner = other->client->resp.team_on->index;
 
-			self->obj_owner = other->client->resp.team_on->index;
-			if (self->obj_perm_owner%2 != other->client->resp.team_on->index)
-				if (team_list[self->obj_owner])
+				if (self->obj_perm_owner % 2 != other->client->resp.team_on->index)
 				{
-					team_list[self->obj_owner]->score += self->health;
+					if (team_list[self->obj_owner])
+						team_list[self->obj_owner]->score += self->health;
 				}
-		}
-		else
-		{
-			if (team_list[self->obj_owner])
-				team_list[self->obj_owner]->score -= self->dmg;
+			}
+			else
+			{
+				if (team_list[self->obj_owner])
+					team_list[self->obj_owner]->score -= self->dmg;
 
-			self->obj_owner = other->client->resp.team_on->index;
-			team_list[self->obj_owner]->score += self->health;
-
+				self->obj_owner = other->client->resp.team_on->index;
+				team_list[self->obj_owner]->score += self->health;
+			}
 		}
 		
 		otherteam = (self->obj_owner);
