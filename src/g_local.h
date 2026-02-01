@@ -1002,6 +1002,8 @@ void SetExplosionEffect (edict_t *inflictor, float damage, float radius);
 
 
 void Load_Weapon (edict_t *ent, gitem_t	*item);
+qboolean TestFile(char *filename);
+qboolean TestEntFile(char *mapname, char *extension);
 char *ReadEntFile(char *filename);
 
 

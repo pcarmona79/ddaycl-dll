@@ -3351,9 +3351,13 @@ qboolean Setup_Map_Vote (void)
 			{
 				if (MapExists(s))
 				{
-					maplisttxt[c] = s;
-					mapcount++;
-					c++;
+					// kernel: CTB mode requeries enabled maps
+					if (!ctb_mode->value || (ctb_mode->value && TestEntFile(s, "ctb")))
+					{
+						maplisttxt[c] = s;
+						mapcount++;
+						c++;
+					}
 				}
 				else
 					gi.dprintf("WARNING: Map '%s' in votemaps.txt not found on server!\n",s);
@@ -3606,7 +3610,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					level.map_vote_time = level.time;
 				else 
 					level.map_vote_time = -1;
-	}
+			}
 
 			if (level.map_vote_time != -1 && !ent->client->vote_started)
 			{

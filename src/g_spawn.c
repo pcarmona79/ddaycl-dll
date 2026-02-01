@@ -784,16 +784,46 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 }
 
 
+qboolean TestFile(char *filename)
+{
+	FILE *fp;
+
+	// kernel: try to open from q2 directories
+	fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+	if (!fp)
+		return false;
+	else
+		fclose(fp);
+
+	return true;
+}
 
 
+qboolean TestEntFile(char *mapname, char *extension)
+{
+	char entfilename[MAX_QPATH] = "";
+	char *newentities;
+	int	i;
 
+	sprintf(entfilename, "ents/%s.%s", mapname, extension);
 
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
 
+	return TestFile(entfilename);
+}
 
 
 char *ReadEntFile(char *filename) 
 {
-
 	FILE		*fp;
 	char		*filestring = NULL;
 	long int	i = 0;
