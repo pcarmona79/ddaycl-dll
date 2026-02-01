@@ -91,22 +91,28 @@ void objective_area_think (edict_t *self) {
 
 			self->obj_owner = team_list[newteam]->index;
 			team_list[self->obj_owner]->score += self->obj_gain;
-		}
 
-		if (team_list[self->obj_owner]->time_to_win) // If there already is a counter somwhere else
-		{
-			if (team_list[self->obj_owner]->time_to_win > (self->obj_time + level.time) )
-			// If the counter is longer, shorten it up to this one
+			if (team_list[self->obj_owner]->time_to_win) // If there already is a counter somwhere else
+			{
+				if (team_list[self->obj_owner]->time_to_win > (self->obj_time + level.time) )
+					// If the counter is longer, shorten it up to this one
+					team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
+			}
+			else
+			{
+				// there is no counter
 				team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
-		} else // there is no counter
-			team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
+			}
 
-		delay = (int)(team_list[self->obj_owner]->time_to_win - level.time);
+			delay = (int)(team_list[self->obj_owner]->time_to_win - level.time);
 
-		if ((delay/60) >= 1)
-			safe_bprintf(PRINT_HIGH, "Team %s has %i minutes before they win the battle.\n", team_list[self->obj_owner]->teamname, (delay/60));
-		else
-			safe_bprintf(PRINT_HIGH, "Team %s has %i seconds before they win the battle.\n", team_list[self->obj_owner]->teamname, delay);
+			if ((delay/60) >= 1)
+				safe_bprintf(PRINT_HIGH, "Team %s has %i minutes before they win the battle.\n",
+							 team_list[self->obj_owner]->teamname, (delay/60));
+			else
+				safe_bprintf(PRINT_HIGH, "Team %s has %i seconds before they win the battle.\n",
+							 team_list[self->obj_owner]->teamname, delay);
+		}
 
 		gi.sound(self, CHAN_NO_PHS_ADD, gi.soundindex(va("%s/objectives/area_cap.wav", team_list[self->obj_owner]->teamid)), 1, 0, 0);
 
@@ -195,13 +201,13 @@ void objective_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		else if ((level.framenum - self->obj_count) <= self->delay)//15) // its been at least a frame since own team touched it
 			return;
 
+		self->obj_owner = other->client->resp.team_on->index;
+
 		// kernel: only adds to score when in deathmatch mode
 		if (deathmatch->value)
 		{
 			if (self->obj_perm_owner)
 			{
-				self->obj_owner = other->client->resp.team_on->index;
-
 				if (self->obj_perm_owner % 2 != other->client->resp.team_on->index)
 				{
 					if (team_list[self->obj_owner])
@@ -213,7 +219,6 @@ void objective_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 				if (team_list[self->obj_owner])
 					team_list[self->obj_owner]->score -= self->dmg;
 
-				self->obj_owner = other->client->resp.team_on->index;
 				team_list[self->obj_owner]->score += self->health;
 			}
 		}

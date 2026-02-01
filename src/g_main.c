@@ -1097,10 +1097,10 @@ void CheckDMRules (void)
 	{
 		if (!team_list[i])
 			break;
-		
-		if (team_list[i]->time_to_win) 
-		{
 
+		// kernel: time to win only will work in deathmatch mode
+		if (deathmatch->value && team_list[i]->time_to_win)
+		{
 			delay = (team_list[i]->time_to_win - level.time);
 		
 		/*	gi.dprintf("time_to_win [%i] = %f\n", i, team_list[i]->time_to_win);
