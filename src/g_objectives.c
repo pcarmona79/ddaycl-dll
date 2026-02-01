@@ -745,16 +745,23 @@ void GetMapObjective(void)
 }
 
 //faf:  ctb code
-
+int briefcase_count = 0;
 qboolean briefcase_respawn_needed;
 
 void droptofloor(edict_t *ent);
 void briefcase_spawn_think(edict_t *ent)
 {
+	int idx;
+
 	if (briefcase_respawn_needed)
 	{
-		VectorCopy(level.briefcase_origin, ent->s.origin);
-		VectorCopy(level.briefcase_angles, ent->s.angles);
+		// kernel: must select one origin from all available for the map
+		if (briefcase_count)
+		{
+			idx = rand() % briefcase_count;
+			VectorCopy(level.briefcase_origin[idx], ent->s.origin);
+			VectorCopy(level.briefcase_angles[idx], ent->s.angles);
+		}
 
 		ent->svflags &= ~SVF_NOCLIENT;
 		ent->s.event = EV_ITEM_RESPAWN;
@@ -804,6 +811,7 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	int otheridx = (other->client->resp.team_on->index + 1) % 2;
 	PlayTeamSound(otheridx, "ctb/alert.wav");
 
+	safe_centerprintf(other, "You've taken the briefcase!\n\nBring it to the base, soldier, immediately!");
 	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
 			   other->client->resp.team_on->teamname);
 

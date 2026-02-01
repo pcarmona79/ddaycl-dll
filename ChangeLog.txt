@@ -25,7 +25,8 @@ Versión 5.062
 
   En este modo cooperativo se desactivaron las protecciones de spawn ya
   que se require que el maletín pueda ser recuperado en cualquier parte
-  del mapa.
+  del mapa. También se pueden agregar hasta 3 entidades de maletín al
+  archivo .ctb y se elegirá una posición aleatoriamente al reaparecer.
 
 - Añade el nuevo "freeze_mode" para bloquear el movimiento del jugador y
   evitar daños cuando está activo si el servidor está en modo de torneo.

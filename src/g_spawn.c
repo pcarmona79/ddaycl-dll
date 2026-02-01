@@ -30,6 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
+// kernel: CTB code
+extern int briefcase_count;
+
 //Ok, since we are modifying this file, we might as well declare the
 //item spawning functions here. These are the functions that actually 
 //cause the item to be spawned. By convention, the actual spawning 
@@ -1559,6 +1562,9 @@ void SP_worldspawn (edict_t *ent)
 	// kernel: must reset countdown settings
 	ResetCountTimer();
 	ResetFreezeMode();
+
+	// kernel: CTB code
+	briefcase_count = 0;
 
 	//snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
 	snd_fry = gi.soundindex ("players/tear.wav");	// standing in lava / slime

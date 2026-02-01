@@ -28,6 +28,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "q_shared.h"
 
+// kernel: CTB code
+extern int briefcase_count;
+
 void Weapon_Katana (edict_t *ent);
 qboolean	Pickup_Weapon (edict_t *ent, edict_t *other);
 void		Use_Weapon (edict_t *ent, gitem_t *inv);
@@ -1270,6 +1273,23 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	// kernel: CTB code
 	if (!Q_stricmp("briefcase", ent->classname))
 	{
+		// loads until 3 briefcases locations but only the first get spawned
+		if (briefcase_count >= 0 && briefcase_count < 3)
+		{
+			++briefcase_count;
+
+			// kernel: save position and angles
+			VectorCopy(ent->s.origin, level.briefcase_origin[briefcase_count - 1]);
+			VectorCopy(ent->s.angles, level.briefcase_angles[briefcase_count - 1]);
+
+			// just allow one briefcase to be spawned
+			if (briefcase_count > 1)
+			{
+				G_FreeEdict (ent);
+				return;
+			}
+		}
+
 		// kernel: the value readed from the .ctb file will be used only in ctb_mode 1
 		if (ctb_mode->value == 1)
 		{
@@ -1280,10 +1300,6 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 		}
 		else
 			level.ctb_time = 0;
-
-		// kernel: save position and angles
-		VectorCopy(ent->s.origin, level.briefcase_origin);
-		VectorCopy(ent->s.angles, level.briefcase_angles);
 	}
 
 	ent->item = item;
