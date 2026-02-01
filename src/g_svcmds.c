@@ -787,6 +787,12 @@ void Svcmd_ResetScore_f(void)
 
 void Svcmd_FreezeMode_f()
 {
+	if (!tournament->value)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Freeze mode only works in tournament mode!\n");
+		return;
+	}
+
 	freeze_mode = !freeze_mode;
 	safe_bprintf(PRINT_HIGH, "Freeze mode is %s.\n", (freeze_mode) ? "enabled" : "disabled");
 
