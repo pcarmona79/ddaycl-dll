@@ -454,7 +454,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 
 	
 /*-----/ PM /-----/ MODIFIED:  Condition split up for portability. /-----*/
-	if (coop->value)
+	if (coop->value && !ctb_mode->value) // kernel: not for CTB
 		if (attacker && attacker->client)
 			meansOfDeath |= MOD_FRIENDLY_FIRE;
 /*-----------------------------------------------------------------------*/
