@@ -435,7 +435,7 @@ void BecomeExplosion1 (edict_t *self)
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 	// kernel: if briefcase explodes must be respawned
-	if (!Q_stricmp("briefcase", self->classname))
+	if (self->classnameb == ITEM_BRIEFCASE)
 		briefcase_respawn_needed = true;
 
 	G_FreeEdict (self);
@@ -450,7 +450,7 @@ void BecomeExplosion2 (edict_t *self)
 	gi.multicast (self->s.origin, MULTICAST_PVS);
 
 	// kernel: if briefcase explodes must be respawned
-	if (!Q_stricmp("briefcase", self->classname))
+	if (self->classnameb == ITEM_BRIEFCASE)
 		briefcase_respawn_needed = true;
 
 	G_FreeEdict (self);

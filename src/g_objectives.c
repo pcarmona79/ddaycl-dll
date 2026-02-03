@@ -852,8 +852,6 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 
 void briefcase_respawn (edict_t *ent)
 {
-//	edict_t *check;
-
 	// send effect
 	gi.WriteByte(svc_muzzleflash);
 	gi.WriteShort(ent-g_edicts);
@@ -863,18 +861,6 @@ void briefcase_respawn (edict_t *ent)
 	G_FreeEdict (ent);
 
 	briefcase_respawn_needed = true;
-	/*
-	for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
-	{
-		if (!check->inuse)
-			continue;
-
-		//the briefcase spawn point
-		if (!strcmp(check->classname, "briefcase"))
-		{
-			SpawnItem(check, FindItemByClassname("briefcase"));
-		}
-	}*/
 }
 
 
@@ -927,7 +913,7 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;
 
 	// remove briefcase model
-	other->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))]--;
+	other->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))]--;
 	other->s.modelindex3 = 0;
 
 	// respawn the briefcase

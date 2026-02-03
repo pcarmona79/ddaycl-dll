@@ -2059,7 +2059,7 @@ char	*last_maps_played[20];
 
 typedef enum
 {
-	ITEM_BRIEFCASE,
+	ITEM_BRIEFCASE = 1,
 	ITEM_HELMET,
 	WEAPON_KNIFE,
 	WEAPON_FISTS,
@@ -2237,6 +2237,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_LFIRE_LAST
 					 int FRAME_DEACTIVATE_LAST, int FRAME_RAISE_LAST,int FRAME_AFIRE_LAST, int FRAME_AIDLE_LAST,
 					 int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent));
 gitem_t	*FindNextPickup (edict_t *ent, int location);
+gitem_t	*FindItemB(classnameb_t classnameb);
 void SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles);
 void ShowServerImg (edict_t *ent);
 void M_ChooseMOS(edict_t *ent);

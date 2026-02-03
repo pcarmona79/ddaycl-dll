@@ -129,6 +129,22 @@ gitem_t	*FindItem (char *pickup_name)
 	return NULL;
 }
 
+// kernel: search items with the binary of item class
+gitem_t	*FindItemB(classnameb_t classnameb)
+{
+	int		i;
+	gitem_t	*it;
+
+	it = itemlist;
+	for (i = 0; i <= game.num_items; i++, it++)
+	{
+		if (it->classnameb == classnameb)
+			return it;
+	}
+
+	return NULL;
+}
+
 // kernel: like FindItem but filtering by team
 gitem_t	*FindItemInTeam(char *pickup_name, char *dllname)
 {
@@ -935,7 +951,7 @@ static void drop_make_touchable (edict_t *ent)
 	}
 	else if (coop->value) // kernel: ctb needs coop mode
 	{
-		if (strcmp(ent->classname, "briefcase"))//if it's briefcase, dont remove it.  //faf: ctb code
+		if (ent->classnameb != ITEM_BRIEFCASE)//if it's briefcase, dont remove it.  //faf: ctb code
 			ent->think = G_FreeEdict;
 		else
 		{
@@ -954,6 +970,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	dropped = G_Spawn();
 
 	dropped->classname = item->classname;
+	dropped->classnameb = item->classnameb;
 	dropped->item = item;
 	dropped->spawnflags = DROPPED_ITEM;
 	dropped->s.effects = item->world_model_flags;
@@ -1273,6 +1290,8 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	// kernel: CTB code
 	if (!Q_stricmp("briefcase", ent->classname))
 	{
+		ent->classnameb = ITEM_BRIEFCASE;
+
 		// loads until 3 briefcases locations but only the first get spawned
 		if (briefcase_count >= 0 && briefcase_count < 3)
 		{

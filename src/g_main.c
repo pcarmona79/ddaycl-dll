@@ -1040,7 +1040,7 @@ void CheckDMRules (void)
 					if (check->deadflag)
 						continue;
 
-					if (!strcmp(check->classname, "briefcase"))
+					if (check->classnameb == ITEM_BRIEFCASE)
 					{
 						VectorSubtract (check->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);
@@ -1067,7 +1067,7 @@ void CheckDMRules (void)
 					if (!e->inuse || e->flyingnun || !e->client)
 						continue;
 
-					if(e->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
+					if(e->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
 					{
 						VectorSubtract (e->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);

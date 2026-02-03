@@ -1223,8 +1223,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 
 
 	self->s.modelindex3 = 0;//faf:  ctb code
-	if(self->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
-		Drop_Briefcase (self, FindItemByClassname("briefcase"));
+	if(self->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
+		Drop_Briefcase(self, FindItemB(ITEM_BRIEFCASE));
 
 
 	VectorClear (self->avelocity);
@@ -3029,8 +3029,8 @@ void ClientDisconnect (edict_t *ent)
 
 
 	//faf:  ctb code
-	if(ent->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
-		Drop_Briefcase (ent, FindItemByClassname("briefcase"));
+	if(ent->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
+		Drop_Briefcase(ent, FindItemB(ITEM_BRIEFCASE));
 
 
 
