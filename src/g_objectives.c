@@ -759,6 +759,16 @@ int briefcase_count = 0;
 qboolean briefcase_respawn_needed;
 
 void droptofloor(edict_t *ent);
+
+void briefcase_spawn_unhide(edict_t *ent)
+{
+	ent->svflags &= ~SVF_NOCLIENT;
+	ent->s.event = EV_ITEM_RESPAWN;
+	ent->think = droptofloor;
+	ent->nextthink = level.time + FRAMETIME;
+	briefcase_respawn_needed = false;
+}
+
 void briefcase_spawn_think(edict_t *ent)
 {
 	int idx;
@@ -771,13 +781,9 @@ void briefcase_spawn_think(edict_t *ent)
 			idx = rand() % briefcase_count;
 			VectorCopy(level.briefcase_origin[idx], ent->s.origin);
 			VectorCopy(level.briefcase_angles[idx], ent->s.angles);
+			ent->think = briefcase_spawn_unhide; // kernel: reveal after movement
+			ent->nextthink = level.time + 1;
 		}
-
-		ent->svflags &= ~SVF_NOCLIENT;
-		ent->s.event = EV_ITEM_RESPAWN;
-		ent->think = droptofloor;
-		ent->nextthink = level.time + 1;
-		briefcase_respawn_needed = false;
 	}
 	else
 		ent->nextthink = level.time + 10; //check every 10 seconds
