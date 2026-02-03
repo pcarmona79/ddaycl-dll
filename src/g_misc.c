@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // g_misc.c
 
 #include "g_local.h"
+#include "q_shared.h"
 #include "x_fire.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
@@ -424,6 +425,7 @@ void ThrowDebris (edict_t *self, char *modelname, float speed, vec3_t origin)
 }
 
 
+extern qboolean briefcase_respawn_needed;
 
 void BecomeExplosion1 (edict_t *self)
 {
@@ -431,6 +433,10 @@ void BecomeExplosion1 (edict_t *self)
 	gi.WriteByte (TE_EXPLOSION1);
 	gi.WritePosition (self->s.origin);
 	gi.multicast (self->s.origin, MULTICAST_PVS);
+
+	// kernel: if briefcase explodes must be respawned
+	if (!Q_stricmp("briefcase", self->classname))
+		briefcase_respawn_needed = true;
 
 	G_FreeEdict (self);
 }
@@ -442,6 +448,10 @@ void BecomeExplosion2 (edict_t *self)
 	gi.WriteByte (TE_EXPLOSION2);
 	gi.WritePosition (self->s.origin);
 	gi.multicast (self->s.origin, MULTICAST_PVS);
+
+	// kernel: if briefcase explodes must be respawned
+	if (!Q_stricmp("briefcase", self->classname))
+		briefcase_respawn_needed = true;
 
 	G_FreeEdict (self);
 }

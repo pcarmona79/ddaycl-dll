@@ -1305,6 +1305,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		|| (meansOfDeath == MOD_G_SPLASH) 
 		|| (meansOfDeath == MOD_HG_SPLASH)		
 		|| (meansOfDeath == MOD_EXPLOSIVE)
+		|| (meansOfDeath == MOD_CRUSH)
 		|| (meansOfDeath == MOD_TANKHIT)
 		|| (meansOfDeath == MOD_TNT)
 		|| (meansOfDeath == MOD_TNT1)
