@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "g_maps.h"
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
@@ -37,6 +38,9 @@ extern int countdownTimer;
 extern float countdownTimeLimit;
 extern float gameStartTime;
 
+// kernel: to freeze them all
+extern qboolean freeze_mode;
+extern int freeze_remaining;
 
 void Svcmd_Teamswitch_f (void)
 {
@@ -336,7 +340,7 @@ void Update_Campaign_Info (void)
 	{
 		if (!strcmp (level.mapname,campaign_spots[i].bspname))
 		{
-			level.mapname,campaign_spots[i].owner=Last_Team_Winner;
+			campaign_spots[i].owner=Last_Team_Winner;
 			if (Last_Team_Winner == 0)
 				axisplatoons--;
 			else if (Last_Team_Winner == 1)
@@ -567,29 +571,47 @@ void SVCmd_ListPlayers_f(void)
 	}
 }
 
+void StartCount(int seconds);
+void RemoveSandbags(void);
 
 // evil: command for set and start countdown 
 void SVCmd_StartCountdown_f()
 {
-	int i;
-	edict_t* player;
-
 	if (gi.argc() < 2) {
 		gi.cprintf(NULL, PRINT_HIGH, "Uso: sv countdown <minutos>\n");
 		return;
 	}
 
+	// kernel: do not run if there is a remaining time from another countdown
+	if (freeze_remaining)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "There is a remaining time waiting to be resumed with a countdown. "
+				   "Unfreeze the server first.\n");
+		return;
+	}
+
 	char* minutesStr = gi.argv(2);
-	float minutes = atof(minutesStr);
-	if (minutes <= 0)
+	float seconds = 60.0 * atof(minutesStr);
+	if (seconds <= 0)
 	{
 		gi.cprintf(NULL, PRINT_HIGH, "El tiempo debe ser mayor a 0.\n");
 		return;
 	}
 
-	// kernel: check if there are players outside their spawn protect areas
-	if (tournament->value)
+	StartCount((int) seconds);
+}
+
+void StartCount(int seconds)
+{
+	int i;
+	edict_t* player;
+
+	if (tournament->value && freeze_remaining <= 0)
 	{
+		// kernel: remove sandbags
+		RemoveSandbags();
+
+		// kernel: check if there are players outside their spawn protect areas
 		for (i = 1; i <= maxclients->value; i++)
 		{
 			player = &g_edicts[i];
@@ -609,17 +631,23 @@ void SVCmd_StartCountdown_f()
 	countdownActive = 1;
 	countdownValue = 5;
 	countdownTimer = 10;
-	countdownTimeLimit = minutes;
+	countdownTimeLimit = (float) seconds;
 }
 
+// kernel: reset timelimit and countdown
+void Svcmd_ResetCountdown_f()
+{
+	ResetCountTimer();
+	centerprintall("The running timelimit has been reset.");
+}
 
 // kernel: broadcast the time left if a countdown is running
 void Svcmd_Timeleft_f()
 {
 	if (timelimit->value > 0)
 	{
-		int totalTime = timelimit->value * 60;
-		int timeElapsed = level.time - gameStartTime;
+		float totalTime = timelimit->value * 60.0;
+		float timeElapsed = level.time - gameStartTime;
 		int timeLeft = totalTime - timeElapsed;
 
 		if (timeLeft < 0)
@@ -666,12 +694,79 @@ void SVCmd_KillPlayer_f()
 	// decrement team frags
 	if (player->client->resp.team_on->kills > 0)
 		player->client->resp.team_on->kills--;
+	else
+		// kernel: if there is no frags to discount, add one frag to the other team
+		team_list[(player->client->resp.team_on->index + 1) % 2]->kills++;
 
 	player->health = 0;
 	meansOfDeath = MOD_SUICIDE;
-	player->die(player, player, player, 100000, vec3_origin); //causes death of player
+	player->die(player, player, NULL, 100000, vec3_origin); //causes death of player
 
 	gi.bprintf(PRINT_HIGH, "El jugador %s (ID: %d) ha sido asesinado por RCON.\n", player->client->pers.netname, player_id);
+}
+
+void Svcmd_SetKills_f(void)
+{
+	char *team;
+	int value;
+
+	if (gi.argc() < 3)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Usage: sv setkills <allied|axis> <value>\n");
+		return;
+	}
+
+	value = atoi(gi.argv(3));
+
+	if (value)
+	{
+		team = gi.argv(2);
+
+		if (!Q_stricmp("allied", team))
+		{
+			team_list[0]->kills = value;
+			gi.bprintf(PRINT_HIGH, "The Allied kills has been set to %d.\n", value);
+		}
+		else if (!Q_stricmp("axis", team))
+		{
+			team_list[1]->kills = value;
+			gi.bprintf(PRINT_HIGH, "The Axis kills has been set to %d.\n", value);
+		}
+	}
+	else
+		gi.cprintf(NULL, PRINT_HIGH, "Need a value to set the new kill count.\n");
+}
+
+void Svcmd_SetPoints_f(void)
+{
+	char *team;
+	int value;
+
+	if (gi.argc() < 3)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Usage: sv setpoints <allied|axis> <value>\n");
+		return;
+	}
+
+	value = atoi(gi.argv(3));
+
+	if (value)
+	{
+		team = gi.argv(2);
+
+		if (!Q_stricmp("allied", team))
+		{
+			team_list[0]->score = value;
+			gi.bprintf(PRINT_HIGH, "The Allied points has been set to %d.\n", value);
+		}
+		else if (!Q_stricmp("axis", team))
+		{
+			team_list[1]->score = value;
+			gi.bprintf(PRINT_HIGH, "The Axis points has been set to %d.\n", value);
+		}
+	}
+	else
+		gi.cprintf(NULL, PRINT_HIGH, "Need a value to set the new points.\n");
 }
 
 void Svcmd_ResetScore_f(void)
@@ -687,7 +782,42 @@ void Svcmd_ResetScore_f(void)
 		}
 	}
 
-	gi.bprintf(PRINT_HIGH, "The scores has been resetted.\n");
+	gi.bprintf(PRINT_HIGH, "The scores has been reset.\n");
+}
+
+void Svcmd_FreezeMode_f()
+{
+	if (!tournament->value)
+	{
+		gi.cprintf(NULL, PRINT_HIGH, "Freeze mode only works in tournament mode!\n");
+		return;
+	}
+
+	freeze_mode = !freeze_mode;
+	safe_bprintf(PRINT_HIGH, "Freeze mode is %s.\n", (freeze_mode) ? "enabled" : "disabled");
+
+	if (freeze_mode)
+	{
+		// if a countdown is active, save the remaining time and reset the countdown
+		if (countdownTimeLimit > 0)
+		{
+			freeze_remaining = countdownTimeLimit - (level.time - gameStartTime);
+			ResetCountTimer();
+			safe_bprintf(PRINT_HIGH, "Remaining time: %d minutes %d seconds\n",
+						 freeze_remaining / 60, freeze_remaining % 60);
+		}
+	}
+	else
+	{
+		// if there is a remaining time saved, start a countdown with that value
+		if (freeze_remaining)
+		{
+			safe_bprintf(PRINT_HIGH, "Starting countdown for remaining time: %d minutes %d seconds\n",
+						 freeze_remaining / 60, freeze_remaining % 60);
+			StartCount(freeze_remaining);
+			freeze_remaining = 0;
+		}
+	}
 }
 
 /*
@@ -727,8 +857,14 @@ void	ServerCommand (void)
 
 	else if (Q_stricmp(cmd, "startcount") == 0)
 		SVCmd_StartCountdown_f();
+	else if (Q_stricmp(cmd, "resetcount") == 0)
+		Svcmd_ResetCountdown_f();
 	else if (Q_stricmp(cmd, "timeleft") == 0)
 		Svcmd_Timeleft_f();
+	else if (Q_stricmp(cmd, "setkills") == 0)
+		Svcmd_SetKills_f();
+	else if (Q_stricmp(cmd, "setpoints") == 0)
+		Svcmd_SetPoints_f();
 	else if (Q_stricmp(cmd, "resetscore") == 0)
 		Svcmd_ResetScore_f();
 	else if (Q_stricmp(cmd, "listplayers") == 0)
@@ -736,7 +872,8 @@ void	ServerCommand (void)
 
 	else if (Q_stricmp(cmd, "killplayer") == 0)
 		SVCmd_KillPlayer_f();
-
+	else if (Q_stricmp(cmd, "freeze") == 0)
+		Svcmd_FreezeMode_f();
 
 	else
 		safe_cprintf (NULL, PRINT_HIGH, "Unknown server command \"%s\"\n", cmd);

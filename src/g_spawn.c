@@ -30,6 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
+// kernel: CTB code
+extern int briefcase_count;
+
 //Ok, since we are modifying this file, we might as well declare the
 //item spawning functions here. These are the functions that actually 
 //cause the item to be spawned. By convention, the actual spawning 
@@ -216,7 +219,7 @@ void SP_airstrike (edict_t *ent);
 void SP_Spawn_Toggle (edict_t *self);
 
 void SP_item_botroam (edict_t *self);	//JABot
-void SP_briefcase(edict_t *self);//faf  ctb code
+void SP_ctb_base(edict_t *self);
 
 
 
@@ -416,7 +419,7 @@ spawn_t spawns[MAX_EDICTS] = {
 
 	{"item_botroam", SP_item_botroam},	//JABot
 
-	{"briefcase", SP_briefcase},//faf:ctb code
+	{"ctb_base", SP_ctb_base},//faf:ctb code
 
 
 	{NULL, NULL}
@@ -781,16 +784,46 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 }
 
 
+qboolean TestFile(char *filename)
+{
+	FILE *fp;
+
+	// kernel: try to open from q2 directories
+	fp = DDay_OpenFullPathFile(sys_homedir->string, GAMEVERSION, filename, "r");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(sys_basedir->string, GAMEVERSION, filename, "r");
+
+	if (!fp)
+		fp = DDay_OpenFullPathFile(".", GAMEVERSION, filename, "r");
+
+	if (!fp)
+		return false;
+	else
+		fclose(fp);
+
+	return true;
+}
 
 
+qboolean TestEntFile(char *mapname, char *extension)
+{
+	char entfilename[MAX_QPATH] = "";
+	char *newentities;
+	int	i;
 
+	sprintf(entfilename, "ents/%s.%s", mapname, extension);
 
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
 
+	return TestFile(entfilename);
+}
 
 
 char *ReadEntFile(char *filename) 
 {
-
 	FILE		*fp;
 	char		*filestring = NULL;
 	long int	i = 0;
@@ -898,6 +931,33 @@ char *LoadCTCFile(char *mapname, char *entities)
 	{
 		gi.dprintf("No .ctc File for %s.bsp\n", mapname);
 		return(entities);
+	}
+}
+
+
+char *LoadCTBFile(char *mapname, char *entities)
+{
+	char entfilename[MAX_QPATH] = "";
+	char *newentities;
+	int	i;
+
+	sprintf(entfilename, "ents/%s.ctb", mapname);
+
+	// convert string to all lowercase (for Linux)
+	for (i = 0; entfilename[i]; i++)
+		entfilename[i] = tolower(entfilename[i]);
+
+	newentities = ReadEntFile(entfilename);
+
+	if (newentities)
+	{
+		gi.dprintf("%s.ctb Loaded\n", mapname);
+		return newentities;	// reassign the ents
+	}
+	else
+	{
+		gi.dprintf("No .ctb File for %s.bsp\n", mapname);
+		return entities;
 	}
 }
 
@@ -1068,8 +1128,10 @@ void SpawnEntities2 (char *mapname, char *entities, char *spawnpoint)
 
 	InitItems ();
 
-
-	if (ctc->value)
+	// kernel: CTC is in deathmatch mode, CTB needs cooperative
+	if (deathmatch->value == 0 && coop->value && ctb_mode->value)
+		entities = LoadCTBFile(mapname, entities);
+	else if (ctc->value)
 		entities = LoadCTCFile(mapname,entities);
 	else
 		entities = LoadEntFile(mapname, entities);//faf
@@ -1529,6 +1591,10 @@ void SP_worldspawn (edict_t *ent)
 
 	// kernel: must reset countdown settings
 	ResetCountTimer();
+	ResetFreezeMode();
+
+	// kernel: CTB code
+	briefcase_count = 0;
 
 	//snd_fry = gi.soundindex ("player/fry.wav");	// standing in lava / slime
 	snd_fry = gi.soundindex ("players/tear.wav");	// standing in lava / slime

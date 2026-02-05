@@ -26,10 +26,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "game.h"
+#include "q_shared.h"
 //#include "p_menus.h"
 
 // g_objectives.c
 // D-Day: Normandy Objective Entities
+
+// evil: global variables for countdown
+extern float countdownTimeLimit;
 
 #if 0
 
@@ -77,27 +82,37 @@ void objective_area_think (edict_t *self) {
 		//gi.dprintf("Found %d players\n", count);		
 	}
 
-	if (count >= self->obj_count) {
-
-		team_list[self->obj_owner]->score -= self->obj_loss;
-
-		self->obj_owner = team_list[newteam]->index;
-		team_list[self->obj_owner]->score += self->obj_gain;
-
-		if (team_list[self->obj_owner]->time_to_win) // If there already is a counter somwhere else
+	if (count >= self->obj_count)
+	{
+		// kernel: only adds to score when in deathmatch mode
+		if (deathmatch->value)
 		{
-			if (team_list[self->obj_owner]->time_to_win > (self->obj_time + level.time) )
-			// If the counter is longer, shorten it up to this one
+			team_list[self->obj_owner]->score -= self->obj_loss;
+
+			self->obj_owner = team_list[newteam]->index;
+			team_list[self->obj_owner]->score += self->obj_gain;
+
+			if (team_list[self->obj_owner]->time_to_win) // If there already is a counter somwhere else
+			{
+				if (team_list[self->obj_owner]->time_to_win > (self->obj_time + level.time) )
+					// If the counter is longer, shorten it up to this one
+					team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
+			}
+			else
+			{
+				// there is no counter
 				team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
-		} else // there is no counter
-			team_list[self->obj_owner]->time_to_win = (self->obj_time + level.time);
+			}
 
-		delay = (int)(team_list[self->obj_owner]->time_to_win - level.time);
+			delay = (int)(team_list[self->obj_owner]->time_to_win - level.time);
 
-		if ((delay/60) >= 1)
-			safe_bprintf(PRINT_HIGH, "Team %s has %i minutes before they win the battle.\n", team_list[self->obj_owner]->teamname, (delay/60));
-		else
-			safe_bprintf(PRINT_HIGH, "Team %s has %i seconds before they win the battle.\n", team_list[self->obj_owner]->teamname, delay);
+			if ((delay/60) >= 1)
+				safe_bprintf(PRINT_HIGH, "Team %s has %i minutes before they win the battle.\n",
+							 team_list[self->obj_owner]->teamname, (delay/60));
+			else
+				safe_bprintf(PRINT_HIGH, "Team %s has %i seconds before they win the battle.\n",
+							 team_list[self->obj_owner]->teamname, delay);
+		}
 
 		gi.sound(self, CHAN_NO_PHS_ADD, gi.soundindex(va("%s/objectives/area_cap.wav", team_list[self->obj_owner]->teamid)), 1, 0, 0);
 
@@ -186,26 +201,26 @@ void objective_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t
 		else if ((level.framenum - self->obj_count) <= self->delay)//15) // its been at least a frame since own team touched it
 			return;
 
-		if (self->obj_perm_owner)
-		{
-//			if (team_list[self->obj_owner])
-//				team_list[self->obj_owner]->score -= self->dmg;
+		self->obj_owner = other->client->resp.team_on->index;
 
-			self->obj_owner = other->client->resp.team_on->index;
-			if (self->obj_perm_owner%2 != other->client->resp.team_on->index)
-				if (team_list[self->obj_owner])
+		// kernel: only adds to score when in deathmatch mode
+		if (deathmatch->value)
+		{
+			if (self->obj_perm_owner)
+			{
+				if (self->obj_perm_owner % 2 != other->client->resp.team_on->index)
 				{
-					team_list[self->obj_owner]->score += self->health;
+					if (team_list[self->obj_owner])
+						team_list[self->obj_owner]->score += self->health;
 				}
-		}
-		else
-		{
-			if (team_list[self->obj_owner])
-				team_list[self->obj_owner]->score -= self->dmg;
+			}
+			else
+			{
+				if (team_list[self->obj_owner])
+					team_list[self->obj_owner]->score -= self->dmg;
 
-			self->obj_owner = other->client->resp.team_on->index;
-			team_list[self->obj_owner]->score += self->health;
-
+				team_list[self->obj_owner]->score += self->health;
+			}
 		}
 		
 		otherteam = (self->obj_owner);
@@ -607,10 +622,14 @@ void func_explosive_objective_explode (edict_t *self, edict_t *inflictor, edict_
 	} else
 		enemy = 99;
 
-	if (self->obj_owner != attacker->client->resp.team_on->index)
-		team_list[attacker->client->resp.team_on->index]->score += self->obj_gain;
-	else if (self->obj_owner == attacker->client->resp.team_on->index && enemy != 99)
-		team_list[enemy]->score += self->obj_gain;
+	// kernel: only adds to score when in deathmatch mode
+	if (deathmatch->value)
+	{
+		if (self->obj_owner != attacker->client->resp.team_on->index)
+			team_list[attacker->client->resp.team_on->index]->score += self->obj_gain;
+		else if (self->obj_owner == attacker->client->resp.team_on->index && enemy != 99)
+			team_list[enemy]->score += self->obj_gain;
+	}
 
 	if (dedicated->value)
 		safe_cprintf(NULL, PRINT_HIGH, "%s destroyed by %s [%s]\n", 
@@ -736,28 +755,35 @@ void GetMapObjective(void)
 }
 
 //faf:  ctb code
-
+int briefcase_count = 0;
 qboolean briefcase_respawn_needed;
 
-void SP_briefcase(edict_t *self)
-{
-	if (!self->count)
-		level.ctb_time = 180;
-	else
-		level.ctb_time = self->count;
+void droptofloor(edict_t *ent);
 
-    SpawnItem(self,FindItemByClassname("briefcase"));
+void briefcase_spawn_unhide(edict_t *ent)
+{
+	ent->svflags &= ~SVF_NOCLIENT;
+	ent->s.event = EV_ITEM_RESPAWN;
+	ent->think = droptofloor;
+	ent->nextthink = level.time + FRAMETIME;
+	briefcase_respawn_needed = false;
 }
 
-
-void DoRespawn(edict_t * ent ); 
 void briefcase_spawn_think(edict_t *ent)
 {
+	int idx;
+
 	if (briefcase_respawn_needed)
 	{
-		ent->think = DoRespawn;
-		ent->nextthink = level.time + 1;
-		briefcase_respawn_needed = false;
+		// kernel: must select one origin from all available for the map
+		if (briefcase_count)
+		{
+			idx = rand() % briefcase_count;
+			VectorCopy(level.briefcase_origin[idx], ent->s.origin);
+			VectorCopy(level.briefcase_angles[idx], ent->s.angles);
+			ent->think = briefcase_spawn_unhide; // kernel: reveal after movement
+			ent->nextthink = level.time + 1;
+		}
 	}
 	else
 		ent->nextthink = level.time + 10; //check every 10 seconds
@@ -774,26 +800,37 @@ void Set_Briefcase_Respawn (edict_t *ent)
 }
 
 
+void PlayTeamSound(int teamidx, char* soundfile);
 
 qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 {
 	int			index;
-	gitem_t		*item;
 	index = ITEM_INDEX(ent->item);
 
-	item = ent->item;
+	// kernel: do not allow to pick up if the match has not begun yet
+	if (tournament->value && countdownTimeLimit <= 0)
+		return false;
 
+	other->client->has_briefcase = true;
 	other->client->pers.inventory[index]++;
 	other->s.modelindex3 = gi.modelindex ("models/objects/briefcase/w_briefcase.md2");
-	gi.bprintf (PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname, other->client->resp.team_on->teamname);
 
-	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
+	if (!(ent->spawnflags & DROPPED_ITEM) && (!deathmatch->value && coop->value))
 		Set_Briefcase_Respawn (ent);
 
 	briefcase_respawn_needed = false;
 
-	other->client->has_briefcase = true;//used to display icon in hud
-	
+	// emit a capture sound for team who pickups
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/pickup.wav");
+
+	// the other team will get an alert
+	int otheridx = (other->client->resp.team_on->index + 1) % 2;
+	PlayTeamSound(otheridx, "ctb/alert.wav");
+
+	safe_centerprintf(other, "You've taken the briefcase!\n\nBring it to the base, soldier, immediately!");
+	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
+			   other->client->resp.team_on->teamname);
+
 	return true;
 }
 
@@ -805,33 +842,25 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	Drop_Item (ent, item);
 	ent->client->pers.inventory[ITEM_INDEX(item)]--;
 	ValidateSelectedItem (ent);
-	
+
+	ent->client->has_briefcase = false;
 	ent->s.modelindex3 = 0;
-	gi.cprintf(ent, PRINT_HIGH, "You dropped the briefcase!\n");
 
-	ent->client->has_briefcase = false;//used to display icon in hud
-
+	gi.bprintf(PRINT_HIGH, "%s lost the briefcase of team %s!\n", ent->client->pers.netname,
+			   ent->client->resp.team_on->teamname);
 }
 
 void briefcase_respawn (edict_t *ent)
 {
-//	edict_t *check;
+	// send effect
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent-g_edicts);
+	gi.WriteByte(MZ_RESPAWN);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
 	G_FreeEdict (ent);
 
 	briefcase_respawn_needed = true;
-	/*
-	for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
-	{
-		if (!check->inuse)
-			continue;
-
-		//the briefcase spawn point
-		if (!strcmp(check->classname, "briefcase"))
-		{
-			SpawnItem(check, FindItemByClassname("briefcase"));
-		}
-	}*/
 }
 
 
@@ -848,277 +877,18 @@ void briefcase_warn (edict_t *ent)
 	{
 		for (i=0 ; i < game.maxclients ; i++)
 		{
-
 			e = g_edicts + 1 + i;
 			if (!e->inuse || !e->client)
 				continue;
 			
-			gi.cprintf(e, PRINT_HIGH, "The briefcase has not been touched in 1 minute.  It will be respawned in 30 seconds if it's not picked up!\n");
+			gi.centerprintf(e, "The briefcase has not been touched in 30 seconds.\n\n"
+							"It will be respawned in 30 seconds if it's not picked up!");
 		}
 	}
 
 	ent->think = briefcase_respawn;
 	ent->nextthink = level.time + 30;
 }
-
-void SP_briefcase(edict_t *self);
-void SP_usa_base (edict_t *ent);
-void SP_grm_base (edict_t *ent);
-
-//faf: ctb code
-void Create_CTB_Entities (edict_t *self)
-{
-	edict_t	*spot;
-	spot = NULL;
-
-	return;
-
-	if (!stricmp(level.mapname, "dday3"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -1519.5;
-		spot->s.origin[1] = 1397.3;
-		spot->s.origin[2] = 86.5;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 1605.7;
-		spot->s.origin[1] = 176.9;
-		spot->s.origin[2] = 199.3;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 0;
-		spot->s.origin[0] = -1085.5;
-		spot->s.origin[1] = 27.4;
-		spot->s.origin[2] = 345.3;
-//		spot->s.angles[1] = 90;
-		SP_briefcase(spot);
-	}
-	else if (!stricmp(level.mapname, "dday2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 1288.2;
-		spot->s.origin[1] = 1080.6;
-		spot->s.origin[2] = -60;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -2262.5;
-		spot->s.origin[1] = 280;
-		spot->s.origin[2] = -100.2;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->s.origin[0] = -768.4;
-		spot->s.origin[1] = 1017.6;
-		spot->s.origin[2] = 91.9;
-		SP_briefcase(spot);		
-		gi.dprintf("dfjklsdfjklsdfjklsdfjkl\n");
-		
-	}
-	else if (!stricmp(level.mapname, "invade2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -2498.4;
-		spot->s.origin[1] = 2213.1;
-		spot->s.origin[2] = -510.5;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 580.9;
-		spot->s.origin[1] = -931.2;
-		spot->s.origin[2] = -508.5;
-		SP_grm_base(spot);
-
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -1501.4;
-		spot->s.origin[1] = 691.5;
-		spot->s.origin[2] = -467.9;
-		SP_briefcase(spot);
-		
-	}
-	else if (!stricmp(level.mapname, "mp1dday2"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 3326.5;
-		spot->s.origin[1] = -2496;
-		spot->s.origin[2] = -310.8;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 3126.4;
-		spot->s.origin[1] = 852.6;
-		spot->s.origin[2] = 122.4;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 0;
-		spot->s.origin[0] = 145.5;
-		spot->s.origin[1] = -923.9;
-		spot->s.origin[2] = 94.3;
-		SP_briefcase(spot);
-		
-	}
-	else if (!stricmp(level.mapname, "inland4"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -2445.6;
-		spot->s.origin[1] = -164.9;
-		spot->s.origin[2] = -130.1;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 2092.4;
-		spot->s.origin[1] = 303;
-		spot->s.origin[2] = -153.5;
-		SP_grm_base(spot);
-
-	
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 1;
-		spot->s.origin[0] = 7.5;
-		spot->s.origin[1] = 1321.7;
-		spot->s.origin[2] = -75.6;
-		spot->s.angles[1] = 270;
-		SP_briefcase(spot);
-			
-	}
-	else if (!stricmp(level.mapname, "dunkirk"))  
-	{
-
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = -399.7;
-		spot->s.origin[1] = 2840.4;
-		spot->s.origin[2] = -190.8;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-	
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -646.3;
-		spot->s.origin[1] = -218;
-		spot->s.origin[2] = -190.8;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = 1401.3;
-		spot->s.origin[1] = -260.7;
-		spot->s.origin[2] = -165.7;
-		spot->s.angles[1] = 315;
-		SP_briefcase(spot);
-		
-	}	  
-	else if (!stricmp(level.mapname, "inland1"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 373;
-		spot->s.origin[1] = 1044;
-		spot->s.origin[2] = -280;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-	
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = 50;
-		spot->s.origin[1] = -1179;
-		spot->s.origin[2] = 7;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -373;
-		spot->s.origin[1] = -131;
-		spot->s.origin[2] = 56;
-		spot->s.angles[1] = 315;
-		SP_briefcase(spot);
-	}	  
-	else if (!stricmp(level.mapname, "inland2"))  
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 329;
-		spot->s.origin[1] = -352;
-		spot->s.origin[2] = -93;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -2513;
-		spot->s.origin[1] = 912;
-		spot->s.origin[2] = -65;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = -1021;
-		spot->s.origin[1] = 213;
-		spot->s.origin[2] = 74;
-		spot->s.angles[1] = 10;
-		SP_briefcase(spot);
-	}
-	else if (!stricmp(level.mapname, "invade6"))
-	{
-		spot = G_Spawn();
-		spot->classname = "usa_base";
-		spot->s.origin[0] = 914;
-		spot->s.origin[1] = -370;
-		spot->s.origin[2] = -510;
-		spot->s.angles[1] = 90;
-		SP_usa_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "grm_base";
-		spot->s.origin[0] = -1428;
-		spot->s.origin[1] = 3190;
-		spot->s.origin[2] = -510;
-		spot->s.angles[1] = 90;
-		SP_grm_base(spot);
-
-		spot = G_Spawn();
-		spot->classname = "briefcase";
-		spot->sounds = 2;
-		spot->s.origin[0] = 525;
-		spot->s.origin[1] = 2543;
-		spot->s.origin[2] = -423;
-		spot->s.angles[1] = 10;
-		SP_briefcase(spot);
-	}	  
-
-
-}
-
 
 
 //faf:  ctb code
@@ -1128,25 +898,51 @@ void base_think (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 }
 
-void SP_usa_base (edict_t *ent)
+// kernel: ctb code
+void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_NOT;
-	ent->s.modelindex = gi.modelindex ("models/objects/usaflag/tris.md2");
-//	ent->s.frame = rand() % 16;
-//	ent->s.frame = 1;
-	gi.linkentity (ent);
+	// kernel: this touch function will used only by ctb_mode 2
+	if (ctb_mode->value <= 1)
+		return;
 
-	ent->think = base_think;
-	ent->nextthink = level.time + FRAMETIME;
-	ent->s.sound = gi.soundindex("faf/flag.wav");
-	
+	if (!other->client)
+		return;
+
+	// player must be carrying the briefcase and be in the same team of flag to score a point
+	if (!other->client->has_briefcase || self->obj_owner != other->client->resp.team_on->index)
+		return;
+
+	// remove briefcase model
+	other->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))]--;
+	other->s.modelindex3 = 0;
+
+	// respawn the briefcase
+	briefcase_respawn_needed = true;
+	other->client->has_briefcase = false;
+
+	// add 1 point to player's team
+	other->client->resp.team_on->score++;
+	other->client->resp.points++;
+
+	// scoring team will listen flagcap
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/flagcap.wav");
+
+	// the other team will get an alert voice
+	int otheridx = (other->client->resp.team_on->index + 1) % 2;
+	if (otheridx == 0)
+		PlayTeamSound(otheridx, "ctb/axisbriefcase.wav");
+	else
+		PlayTeamSound(otheridx, "ctb/alliedbriefcase.wav");
+
+	gi.bprintf(PRINT_HIGH, "%s recovered the briefcase for team %s!\n", other->client->pers.netname,
+			   other->client->resp.team_on->teamname);
 }
-void SP_grm_base (edict_t *ent)
+
+void SP_ctb_base(edict_t *ent)
 {
 	ent->movetype = MOVETYPE_NONE;
-	ent->solid = SOLID_NOT;
-	ent->s.modelindex = gi.modelindex ("models/objects/grmflag/tris.md2");
+	ent->solid = SOLID_TRIGGER;
+	ent->s.modelindex = gi.modelindex(va("models/objects/%sflag/tris.md2", team_list[ent->obj_owner]->teamid));
 //	ent->s.frame = rand() % 16;
 //	ent->s.frame = 1;
 	gi.linkentity (ent);
@@ -1155,8 +951,15 @@ void SP_grm_base (edict_t *ent)
 	ent->nextthink = level.time + FRAMETIME;
 	ent->s.sound = gi.soundindex("faf/flag.wav");
 
+	ent->touch = base_touch;
+
+	// load needed points to team
+	if (ctb_mode->value == 1)
+		team_list[ent->obj_owner]->need_points = 100;
+	else
+		team_list[ent->obj_owner]->need_points = ent->health;
+
+	team_list[ent->obj_owner]->need_kills = 0;
+	team_list[ent->obj_owner]->kills_and_points = false;
 }
 //end faf
-
-
-

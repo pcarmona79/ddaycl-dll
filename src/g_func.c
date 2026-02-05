@@ -2177,6 +2177,9 @@ void Touch_Spawn_Protect (edict_t *ent, edict_t *other, cplane_t *plane, csurfac
 	if (other->ai)
 		return;
 
+	// kernel: no protection in CTB mode
+	if (coop->value)
+		return;
 
 	if (other->client &&
 		!other->deadflag &&

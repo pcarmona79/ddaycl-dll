@@ -42,6 +42,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // evil: global variables for countdown
 extern float countdownTimeLimit;
 
+// kernel: to freeze them all
+extern qboolean freeze_mode;
 
 void SV_AddBlend (float r, float g, float b, float a, float *v_blend);
 qboolean strcmpwld (char *give, char *check);
@@ -390,7 +392,7 @@ void P_ExplosionEffects (edict_t *player)
 											:	 0;
 */
 		player->client->explosion_angles[YAW] =	(frame > SWAY_START && intensity > 15) ?				\
-												sin(frame + 145) * (intensity / 10) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
+												sin(frame + 145) * (intensity / 10.0) * 2 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))					\
 											:	 0;
 /*
 		player->client->explosion_angles[ROLL] =	(frame == 0) ?											\
@@ -409,8 +411,8 @@ void P_ExplosionEffects (edict_t *player)
 												:	intensity * -0.5								\
 											:	(frame > SWAY_START && intensity > 15) ?			\
 													(intensity % 2) ?								\
-														sin(frame + 90) * (intensity / 10) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
-													:	sin(frame + 90) * (intensity / 10) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+														sin(frame + 90) * (intensity / 10.0) * 2 *  0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
+													:	sin(frame + 90) * (intensity / 10.0) * 2 * -0.35 * (1 - (float)(frame) / (SWAY_BREAK * SWAY_MULTI + SWAY_START))	\
 												:	0;
 
 		if (frame > 0 && frame < 11 && player->client->dmgef_flash == true) {
@@ -426,9 +428,9 @@ void P_ExplosionEffects (edict_t *player)
 
 //faf: screen shaking effect
 	intensity *=.5;
-	player->client->screen_shake[0]= (intensity/2 - crandom()* intensity)/16;
-	player->client->screen_shake[1]= (intensity/2 - crandom()* intensity)/16;
-	player->client->screen_shake[2]= (intensity/2 - crandom()* intensity)/16;
+	player->client->screen_shake[0]= (intensity/2.0 - crandom()* intensity)/16;
+	player->client->screen_shake[1]= (intensity/2.0 - crandom()* intensity)/16;
+	player->client->screen_shake[2]= (intensity/2.0 - crandom()* intensity)/16;
 
 
 //faf: add ground moving effect
@@ -1254,8 +1256,10 @@ void P_ShowID (edict_t *ent)
 //		ent->client->last_id_time = level.time;  //faf:  to put delay on player id
 
 		// kernel: show score for streaming
-		gi.configstring(CS_GENERAL + (ent - g_edicts - 1), va("Health:%4d  Score: %d", ent->client->chasetarget->health,
-															  ent->client->chasetarget->client->resp.score));
+		gi.configstring(CS_GENERAL + (ent - g_edicts - 1),
+						va("Health:%4d  Score: %d", ent->client->chasetarget->health,
+						   (coop->value) ? ent->client->chasetarget->client->resp.points
+						   : ent->client->chasetarget->client->resp.score));
 		ent->client->ps.stats[STAT_IDENT_HEALTH] = CS_GENERAL + (ent - g_edicts - 1);
 	}
 	else if (tr.ent->client)
@@ -2359,7 +2363,7 @@ void ClientEndServerFrame (edict_t *ent)
 		if (level.framenum - ent->client->resp.enterframe == 10)
 			Cmd_MOTD(ent);
 
-		if (tournament->value && countdownTimeLimit <= 0 && !level.intermissiontime
+		if (tournament->value && countdownTimeLimit <= 0 && !freeze_mode && !level.intermissiontime
 			&& (level.framenum - ent->client->resp.enterframe) % 100 == 0)
 			safe_centerprintf(ent, "Server is running in \"Tournament\" mode.\n\n"
 							  "Please wait for the countdown to begin the battle.");
@@ -2667,63 +2671,31 @@ void ClientEndServerFrame (edict_t *ent)
 		Cmd_Say_f (ent, ent->client->resp.chatsavetype, false, true);
 
 
-
-		//should be done with the gun instead of client, but it won't matter 99% of the time
-		if (ent->client->mg42_temperature > 0)
+	//should be done with the gun instead of client, but it won't matter 99% of the time
+	if (ent->client->pers.weapon &&
+		ent->client->pers.weapon->classnameb == WEAPON_MG42 &&
+		ent->client->mg42_temperature > 0)
+	{
+		if (ent->client->buttons & BUTTON_ATTACK)
 		{
-			ent->client->mg42_temperature -=.15;
-			//gi.dprintf("%f \n", ent->client->mg42_temperature);
-
-			if (ent->client->pers.weapon &&
-				ent->client->pers.weapon->classnameb == WEAPON_MG42 &&
-				ent->client->mg42_temperature > 33)
-			{
-				edict_t *smoke;
-				vec3_t pos, forward;
-				
-
-				AngleVectors (ent->client->v_angle, forward, NULL, NULL);
-				VectorMA (ent->s.origin, 20, forward, pos);  //calculates the range vector  //faf: 10 = range
-				pos[2]+=ent->viewheight;
-
-
-				smoke = G_Spawn ();
-				VectorCopy (pos, smoke->s.origin);
-				smoke->s.modelindex = gi.modelindex ("sprites/null.sp2");
-				smoke->s.frame      = 0;
-				smoke->s.skinnum    = 0;
-				smoke->touch        = NULL;
-				smoke->solid        = SOLID_NOT;
-				smoke->takedamage   = DAMAGE_NO;
-				smoke->clipmask     = 0;
-				smoke->s.effects    = EF_GRENADE;
-				smoke->movetype     = MOVETYPE_FLY;
-				VectorSet(smoke->velocity, 0, 0, 400);
-				smoke->nextthink    = level.time + .2;
-				smoke->think        = G_FreeEdict;
-				VectorAdd(smoke->velocity, ent->velocity, smoke->velocity);
-				gi.linkentity (smoke);
-			}
+			ent->client->mg42_temperature += .5;
+		}
+		else
+		{
+			if (ent->client->mg42_temperature > 20)
+				ent->client->mg42_temperature -= .2;
 		}
 
-		
-
-        
-
-        
-		//we moved player to the void when first joining game, now move them to
-		//death view room
-		if (!ent->ai && ent->client->resp.enterframe == level.framenum - 2)
-		{
-			SelectSpawnPoint (ent, ent->s.origin, ent->s.angles);
-		}
+		//gi.dprintf("mg42_temperature: %.1f\n", ent->client->mg42_temperature);
+	}
 
 
-
-
-
-
-
+	//we moved player to the void when first joining game, now move them to
+	//death view room
+	if (!ent->ai && ent->client->resp.enterframe == level.framenum - 2)
+	{
+		SelectSpawnPoint (ent, ent->s.origin, ent->s.angles);
+	}
 
 
 	VectorCopy (ent->velocity, ent->client->oldvelocity);

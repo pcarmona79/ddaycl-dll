@@ -3339,24 +3339,46 @@ void Weapon_MG42_Fire (edict_t *ent)
 	}
 
 
+	if (ent->client->mg42_temperature > 33)
+	{
+		edict_t *smoke;
+		vec3_t pos, forward;
 
+		AngleVectors(ent->client->v_angle, forward, NULL, NULL);
+		VectorMA(ent->s.origin, 20, forward, pos);  //calculates the range vector  //faf: 10 = range
+		pos[2] += ent->viewheight;
+
+		smoke = G_Spawn();
+		VectorCopy(pos, smoke->s.origin);
+		smoke->s.modelindex = gi.modelindex("sprites/null.sp2");
+		smoke->s.frame      = 0;
+		smoke->s.skinnum    = 0;
+		smoke->touch        = NULL;
+		smoke->solid        = SOLID_NOT;
+		smoke->takedamage   = DAMAGE_NO;
+		smoke->clipmask     = 0;
+		smoke->s.effects    = EF_GRENADE;
+		smoke->movetype     = MOVETYPE_FLY;
+		VectorSet(smoke->velocity, 0, 0, 400);
+		smoke->nextthink    = level.time + .2;
+		smoke->think        = G_FreeEdict;
+		VectorAdd(smoke->velocity, ent->velocity, smoke->velocity);
+		gi.linkentity(smoke);
+	}
 
 
 //	jamchance = rand() % 100;
 	if (ent->client->mg42_temperature > 45)
 	{
 		gi.sound(ent, CHAN_WEAPON, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
-		safe_centerprintf(ent, "The MG42 overheated! Fire that\nthing in bursts next time!\n"); 
+		safe_centerprintf(ent, "Your MG42 overheated!\nFire that thing in bursts next time!\n");
 		ent->client->mags[mag_index].hmg_rnd= 0;
 
 		//ent->client->mg42_temperature =0;
-		gitem_t* ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
-		ent->client->pers.inventory[ITEM_INDEX(ammo_item)] = 0;
+		//gitem_t* ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		//ent->client->pers.inventory[ITEM_INDEX(ammo_item)] = 0;
 
 		ent->client->mg42_temperature = 43;
-
-
-
 		return;
 	}
 

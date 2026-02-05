@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.061" // ddaychile
+#define DEVVERSION	"5.062" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -469,6 +469,8 @@ typedef struct
 	char        *botfiles;  //whether override file is used or not
 
 	float		ctb_time;
+	vec3_t		briefcase_origin[3]; // kernel: ctb code
+	vec3_t		briefcase_angles[3];
 
 	int 		allied_sandbags;
 	int 		axis_sandbags;
@@ -681,6 +683,7 @@ extern	cvar_t	*maxentities;
 extern	cvar_t	*deathmatch;
 
 extern	cvar_t	*coop;
+extern	cvar_t	*ctb_mode; // kernel: selects mode for CTB (0 disabled, 1 one briefcase, 2 many briefcases)
 
 extern	cvar_t	*dmflags;
 
@@ -999,6 +1002,8 @@ void SetExplosionEffect (edict_t *inflictor, float damage, float radius);
 
 
 void Load_Weapon (edict_t *ent, gitem_t	*item);
+qboolean TestFile(char *filename);
+qboolean TestEntFile(char *mapname, char *extension);
 char *ReadEntFile(char *filename);
 
 
@@ -1183,6 +1188,7 @@ void FetchClientEntData (edict_t *ent);
 void EndDMLevel (void);
 int HumanPlayerCount(void);
 void ResetCountTimer(void); //evil: for function in g_main.cs
+void ResetFreezeMode(void); // kernel: to freeze them all
 
 // 
 // g_maps.c 
@@ -1392,7 +1398,7 @@ typedef struct
 // ZeRo - Variables usadas en el sistema de rachas.
 	int			streak;
 
-
+	int			points; // kernel: to count points in coop mode
 
 } client_respawn_t;
 
@@ -1598,7 +1604,7 @@ struct gclient_s
 	//pbowens
 	int			dmgef_startframe;
 	int			dmgef_sway_value;
-	qboolean	dmgef_sway_switch;
+	int			dmgef_sway_switch;
 	float		dmgef_intensity;
 	qboolean	dmgef_flash;
 	float		dmgef_ablend;
@@ -2053,7 +2059,7 @@ char	*last_maps_played[20];
 
 typedef enum
 {
-	ITEM_BRIEFCASE,
+	ITEM_BRIEFCASE = 1,
 	ITEM_HELMET,
 	WEAPON_KNIFE,
 	WEAPON_FISTS,
@@ -2231,6 +2237,7 @@ void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_LFIRE_LAST
 					 int FRAME_DEACTIVATE_LAST, int FRAME_RAISE_LAST,int FRAME_AFIRE_LAST, int FRAME_AIDLE_LAST,
 					 int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent));
 gitem_t	*FindNextPickup (edict_t *ent, int location);
+gitem_t	*FindItemB(classnameb_t classnameb);
 void SelectSpawnPoint (edict_t *ent, vec3_t origin, vec3_t angles);
 void ShowServerImg (edict_t *ent);
 void M_ChooseMOS(edict_t *ent);

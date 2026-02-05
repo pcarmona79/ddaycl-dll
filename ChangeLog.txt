@@ -1,3 +1,81 @@
+Versión 5.062
+-------------
+
+- Habilita modo cooperativo Capture The Briefcase extendiendo el modo
+  original de un sólo maletín con uno nuevo donde se pueden recuperar
+  varios hasta que un equipo consiga la cantidad requerida para ganar el
+  mapa. Los modos se eligen con la cvar "ctb_mode":
+
+  * set ctb_mode 0: desactivado.
+
+  * set ctb_mode 1: un solo maletín por mapa, debe ser recuperado y
+    llevado cerca de la bandera. Los tiempos por mapa deben ser cortos,
+    5 minutos por defecto.
+
+  * set ctb_mode 2: varios maletines. Se debe recuperar el maletín y
+    llevarlo a la bandera para marcar un punto. Otro maletín reaparecerá
+    y se debe repetir la acción. El mapa se termina al alcanzar la
+    cantidad de recuperaciones requeridas por el mapa.
+
+  Este modo requiere que el servidor esté en modo cooperativo, por lo
+  que primero se debe configurar con estas opciones:
+
+  set deathmatch 0
+  set coop 1
+
+  En este modo cooperativo se desactivaron las protecciones de spawn ya
+  que se require que el maletín pueda ser recuperado en cualquier parte
+  del mapa. También se pueden agregar hasta 3 entidades de maletín al
+  archivo .ctb y se elegirá una posición aleatoriamente al reaparecer.
+
+- Añade el nuevo "freeze_mode" para bloquear el movimiento del jugador y
+  evitar daños cuando está activo si el servidor está en modo de torneo.
+  Además añade Svcmd_FreezeMode_f() a g_svcmds.c para añadir el comando
+  de servidor "sv freeze" para activar o desactivar este modo de
+  congelación. También añade la variable "freeze_remaining" a g_main.c
+  para almacenar el tiempo restante cuando se aplicó la congelación
+  durante una partida cronometrada. Tras desactivar el modo de
+  congelación, si este tiempo remanente existe, no se devolverán los
+  jugadores a sus spawns y se le utilizará como tiempo para ejecutar una
+  nueva cuenta regresiva.
+
+- Añade las nuevas funciones Svcmd_SetKills_f() y Svcmd_SetPoints_f() a
+  g_svcmds.c para implementar los comandos de servidor "sv setkills" y
+  "sv setpoints".
+
+  Uso: sv setkills <allied|axis> <value>
+       sv setpoints <allied|axis> <value>
+
+  Ejemplos:
+    sv setkills allied 10
+    sv setkills axis 11
+    sv setpoints allied 20
+    sv setpoints axis 5
+
+- Se añade la nueva función RemoveSandbags() a g_items.c para eliminar
+  todos los sacos de arena del mapa y descontarlos del recuento del
+  equipo. El comando de servidor "sv startcount" usará esta función al
+  iniciar la cuenta regresiva.
+
+- Agrega nuevo comando de servidor "sv resetcount" para resetear el
+  tiempo límite configurado. Esto permite detener un duelo en modo
+  torneo impidiendo que se hagan daño los jugadores hasta que se
+  reinicie la cuenta regresiva.
+
+- Se añade la comprobación de MOD_SUICIDE para no lanzar el arma del
+  jugador en player_die() de p_weapon.c, ya que este valor lo usa el
+  comando de servidor "sv killplayer". Además, si el equipo del jugador
+  no tiene frags para remover, SVCmd_KillPlayer_f() de g_svcmd.c añadirá
+  un frag al otro equipo.
+
+- Rehabilita el sobrecalentamiento de la MG42 cuando la variable "chile"
+  está deshabilitada. Se mueve el bloque que genera humo en la MG42 a
+  Weapon_MG42_Fire() en g_weapon.c y se mejora el código en
+  ClientEndServerFrame() de p_view.c para aumentar la temperatura en 0,5
+  grados al disparar y disminuirla en 0,2 grados al no hacerlo. La
+  temperatura base será de 20, el humo se generará a 33 y la MG42 se
+  bloqueará a 45.
+
 Versión 5.061
 -------------
 

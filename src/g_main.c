@@ -45,6 +45,7 @@ edict_t		*g_edicts;
 
 cvar_t	*deathmatch;
 cvar_t	*coop;
+cvar_t	*ctb_mode; // kernel: selects mode for CTB (0 disabled, 1 one briefcase, 2 many briefcases)
 cvar_t	*dmflags;
 cvar_t	*skill;
 cvar_t	*fraglimit;
@@ -196,6 +197,10 @@ float gameStartTime = 0.0f;
 qboolean fiveMinWarning = false;
 qboolean oneMinWarning = false;
 qboolean threeSeconds = false;
+
+// kernel: to freeze them all
+qboolean freeze_mode = false;
+int freeze_remaining = 0;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -986,25 +991,25 @@ void CheckDMRules (void)
 	if (level.intermissiontime)
 		return;
 
-	if (!deathmatch->value)
-		return;
-
+	// kernel: commented out to allow cooperative mode for CTB
+	//if (!deathmatch->value)
+	//	return;
 
 	//faf: ctb code
-	if (level.ctb_time)
+	if (ctb_mode->value == 1 && level.ctb_time)
 	{	
 		vec3_t		w; //faf
 		float		range;//faf
 		edict_t		*check;
-		edict_t		*usaflag;
-		edict_t     *grmflag;
+		edict_t		*alliedflag;
+		edict_t     *axisflag;
 		edict_t     *e;
 
 		if (level.time == level.ctb_time)
 			gi.bprintf (PRINT_HIGH, "Timelimit hit!\n");
 
 		if (level.time == level.ctb_time + 1)
-			gi.bprintf (PRINT_HIGH, "Next team to bring the briefcase to their base wins!\n");
+			centerprintall("Next team to bring the briefcase to their base wins!");
 
 		if (level.time >= level.ctb_time)
 		{
@@ -1015,26 +1020,17 @@ void CheckDMRules (void)
 				if (!check->inuse)
 					continue;
 
-				if (!strcmp(check->classname, "usa_base"))
+				if (!strcmp(check->classname, "ctb_base"))
 				{
-					usaflag = check;
-				}
+					if (check->obj_owner == 0)
+						alliedflag = check;
 
-			}
-
-			for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
-			{
-				if (!check->inuse)
-					continue;
-
-				if (!strcmp(check->classname, "grm_base"))
-				{
-					grmflag = check;
+					if (check->obj_owner == 1)
+						axisflag = check;
 				}
 			}
 
-
-			if (grmflag && usaflag)
+			if (axisflag && alliedflag)
 			{
 				for (check = g_edicts; check < &g_edicts[globals.num_edicts]; check++)
 				{
@@ -1044,11 +1040,9 @@ void CheckDMRules (void)
 					if (check->deadflag)
 						continue;
 
-
-					if (!strcmp(check->classname, "briefcase"))
+					if (check->classnameb == ITEM_BRIEFCASE)
 					{
-
-						VectorSubtract (check->s.origin, usaflag->s.origin, w);
+						VectorSubtract (check->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near usa flag at end of map
@@ -1056,17 +1050,16 @@ void CheckDMRules (void)
 							team_list[0]->score	+= 100;
 						}
 
-						VectorSubtract (check->s.origin, grmflag->s.origin, w);
+						VectorSubtract (check->s.origin, axisflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near grm flag at end of map
 						{
 							team_list[1]->score	+= 100;
-
 						}
 					}
-					
 				}
+
 				//see if anyone's carrying a briefcase near the flag
 				for (i=0 ; i < game.maxclients ; i++)
 				{
@@ -1074,9 +1067,9 @@ void CheckDMRules (void)
 					if (!e->inuse || e->flyingnun || !e->client)
 						continue;
 
-					if(e->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
+					if(e->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
 					{
-						VectorSubtract (e->s.origin, usaflag->s.origin, w);
+						VectorSubtract (e->s.origin, alliedflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near usa flag at end of map
@@ -1084,7 +1077,7 @@ void CheckDMRules (void)
 							team_list[0]->score	+= 100;
 						}
 
-						VectorSubtract (e->s.origin, grmflag->s.origin, w);
+						VectorSubtract (e->s.origin, axisflag->s.origin, w);
 						range = VectorLength (w);
 
 						if (range < 40)  //briefcase is near grm flag at end of map
@@ -1093,7 +1086,6 @@ void CheckDMRules (void)
 
 						}
 					}
-				
 				}
 			}
 		}
@@ -1105,10 +1097,10 @@ void CheckDMRules (void)
 	{
 		if (!team_list[i])
 			break;
-		
-		if (team_list[i]->time_to_win) 
-		{
 
+		// kernel: time to win only will work in deathmatch mode
+		if (deathmatch->value && team_list[i]->time_to_win)
+		{
 			delay = (team_list[i]->time_to_win - level.time);
 		
 		/*	gi.dprintf("time_to_win [%i] = %f\n", i, team_list[i]->time_to_win);
@@ -1253,8 +1245,8 @@ void CheckDMRules (void)
 	// evil: print and play sound for timelimit if is setted
 	if (timelimit->value)
 	{
-		int totalTime = timelimit->value * 60;
-		int timeElapsed = level.time - gameStartTime;
+		float totalTime = timelimit->value * 60.0;
+		float timeElapsed = level.time - gameStartTime;
 		int timeRemaining = totalTime - timeElapsed;
 
 		if (timeRemaining == 300 && !fiveMinWarning)
@@ -1289,28 +1281,37 @@ void CheckDMRules (void)
 		{
 			safe_bprintf(PRINT_HIGH, "Timelimit hit.\n");
 
-			// check who team wins by kills
-			// 0:allies 1:axis
-			if (team_list[0]->kills > team_list[1]->kills)
+			if (ctb_mode->value == 2)
 			{
-				Last_Team_Winner = 0;
+				// kernel: in CTB only points win
+				if (team_list[0]->score > team_list[1]->score)
+					Last_Team_Winner = 0;
+				else if (team_list[0]->score < team_list[1]->score)
+					Last_Team_Winner = 1;
+				else
+					Last_Team_Winner = -1; // tie or draw
 			}
-			else if (team_list[0]->kills < team_list[1]->kills)
-			{
-				Last_Team_Winner = 1;
-			}				
 			else
 			{
-				Last_Team_Winner = -1; // tie or draw
+				// check who team wins by kills
+				// 0:allies 1:axis
+				if (team_list[0]->kills > team_list[1]->kills)
+					Last_Team_Winner = 0;
+				else if (team_list[0]->kills < team_list[1]->kills)
+					Last_Team_Winner = 1;
+				else
+					Last_Team_Winner = -1; // tie or draw
 			}
 						
 			ResetCountTimer();
+			ResetFreezeMode();
 			EndDMLevel();
 			return;
 		}
 	}
 
-	if (fraglimit->value)
+	// kernel: CTB mode does not count frags to finish
+	if (fraglimit->value && !ctb_mode->value)
 	{
 		// kernel: check if fraglimit changed its value to update need_kills properties
 		for (i = 0; i < MAX_TEAMS; ++i)
@@ -1348,6 +1349,12 @@ void ResetCountTimer(void)
 	threeSeconds = false;
 }
 
+// kernel: resets freeze mode variables
+void ResetFreezeMode(void)
+{
+	freeze_mode = false;
+	freeze_remaining = 0;
+}
 
 /*
 =============
@@ -1628,7 +1635,7 @@ void G_RunFrame (void)
 			{
 				centerprintall("Que comience el juego!");
 				gameStartTime = level.time;
-				timelimit->value = countdownTimeLimit;				
+				timelimit->value = countdownTimeLimit / 60.0; // kernel: now in seconds
 				countdownActive = 0;
 			}
 		}

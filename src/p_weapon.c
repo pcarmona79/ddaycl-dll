@@ -263,9 +263,10 @@ qboolean Pickup_Weapon (edict_t *ent, edict_t *other)
 		other->client->flame_rnd .....
 */
 
+	// kernel: do not switch weapon in cooperative mode
 	if (other->client->pers.weapon != ent->item && 
 		(other->client->pers.inventory[index] == 1) &&
-		( !deathmatch->value ))//faf:  removing this fixes bug with picking up helmet|| other->client->pers.weapon == FindItem("Colt .45") ) )
+		( !deathmatch->value && !coop->value ))//faf:  removing this fixes bug with picking up helmet|| other->client->pers.weapon == FindItem("Colt .45") ) )
 		other->client->newweapon = ent->item;
 
 	if (!Q_stricmp(other->client->pers.weapon->pickup_name,"Fists") )
@@ -1333,7 +1334,7 @@ void fire_Knife ( edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
 					Play_Bullet_Hit(self, tr.surface->name, tr.endpos, tr.ent);
 					if ((!tr.ent->obj_owner || tr.ent->obj_owner != self->client->resp.team_on->index) && (rand() % 100) < 20)
 					{
-						if (tr.ent->classnameb != OBJECTIVE_VIP && !tr.ent->svflags & SVF_DEADMONSTER)
+						if (tr.ent->classnameb != OBJECTIVE_VIP && !(tr.ent->svflags & SVF_DEADMONSTER))
 							ThrowDebris (self, "models/objects/debris2/tris.md2", 1, tr.endpos);
 					}
 				}

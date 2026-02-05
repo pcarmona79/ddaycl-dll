@@ -31,6 +31,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_defines.h"
 #include "g_local.h"
 #include "game.h"
+#include "p_observer.h"
 #include "q_shared.h"
 
 void change_stance(edict_t *self, int stance);
@@ -883,6 +884,30 @@ void MoveToTheirSpawnPoint(edict_t *ent)
 	{
 		ent->client->has_chute = true;
 		Spawn_Chute(ent);
+	}
+}
+
+void PlayTeamSound(int teamidx, char* soundfile)
+{
+	int i;
+	edict_t *ent;
+	char cmd[MAX_QPATH];
+
+	if (snprintf(cmd, MAX_QPATH, "play %s", soundfile) >= MAX_QPATH)
+		gi.dprintf("PlayTeamSound: play command truncated\n");
+
+	for (i = 1; i <= game.maxclients; i++)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+		if (!ent->client)
+			continue;
+		if (!ent->client->resp.team_on)
+			continue;
+
+		if (ent->client->resp.team_on->index == teamidx)
+			stuffcmd(ent, cmd);
 	}
 }
 

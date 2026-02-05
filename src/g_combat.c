@@ -47,8 +47,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 // evil: global variables for countdown
-extern float countdownActive;
+extern int countdownActive;
 extern float countdownTimeLimit;
+
+// kernel: to freeze them all
+extern qboolean freeze_mode;
 
 /*
 ============
@@ -799,7 +802,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
     qboolean saved=false;
 
 	// kernel: do not allow damage if the match has not begun yet, but allow it when changing teams
-	if (tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0)
+	if (tournament->value && (freeze_mode || countdownTimeLimit <= 0 || countdownActive > 0)
 		&& mod != MOD_CHANGETEAM && mod != MOD_CHANGETEAM_WOUNDED)
 		return;
 

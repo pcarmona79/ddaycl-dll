@@ -38,6 +38,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern int countdownActive;
 extern float countdownTimeLimit;
 
+// kernel: to freeze them all
+extern qboolean freeze_mode;
+
 void ShowGun(edict_t *ent);
 
 void SwitchToObserver(edict_t *ent);
@@ -275,11 +278,8 @@ void Create_InfoTeamStarts (edict_t *self)
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
 the normal starting point for a level.
 */
-void Create_CTB_Entities (edict_t *self);
-
 void SP_info_player_start(edict_t *self)
-{Create_CTB_Entities (self);
-
+{
 	//faf
 //	Create_InfoTeamStarts(self);
 
@@ -454,8 +454,8 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 
 	
 /*-----/ PM /-----/ MODIFIED:  Condition split up for portability. /-----*/
-	if (coop->value)
-		if (attacker->client)
+	if (coop->value && !ctb_mode->value) // kernel: not for CTB
+		if (attacker && attacker->client)
 			meansOfDeath |= MOD_FRIENDLY_FIRE;
 /*-----------------------------------------------------------------------*/
 
@@ -915,8 +915,9 @@ void TossClientWeapon (edict_t *self)
 	qboolean	quad;
 	float		spread;
 
-	if (!deathmatch->value)
-		return;
+	// kernel: commented out to allow cooperative mode for CTB
+	//if (!deathmatch->value)
+	//	return;
 
 
 	if (self->client->weaponstate == WEAPON_DROPPING)
@@ -1222,8 +1223,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 
 
 	self->s.modelindex3 = 0;//faf:  ctb code
-	if(self->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
-		Drop_Briefcase (self, FindItemByClassname("briefcase"));
+	if(self->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
+		Drop_Briefcase(self, FindItemB(ITEM_BRIEFCASE));
 
 
 	VectorClear (self->avelocity);
@@ -1279,7 +1280,8 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		{
 			// kernel: do not allow to toss weapon when changing teams in tournament mode, bots also can not drop weapon
 			if (!(tournament->value && (countdownTimeLimit <= 0 || countdownActive > 0) &&
-				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED || self->ai)))
+				  (meansOfDeath == MOD_CHANGETEAM || meansOfDeath == MOD_CHANGETEAM_WOUNDED
+				   || meansOfDeath == MOD_SUICIDE || self->ai)))
 			{
 				// kernel: if player does not have a live TNT, then toss the weapon
 				TossClientWeapon(self);
@@ -1303,6 +1305,7 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		|| (meansOfDeath == MOD_G_SPLASH) 
 		|| (meansOfDeath == MOD_HG_SPLASH)		
 		|| (meansOfDeath == MOD_EXPLOSIVE)
+		|| (meansOfDeath == MOD_CRUSH)
 		|| (meansOfDeath == MOD_TANKHIT)
 		|| (meansOfDeath == MOD_TNT)
 		|| (meansOfDeath == MOD_TNT1)
@@ -2597,14 +2600,11 @@ void ClientBeginDeathmatch (edict_t *ent)
 {
 	G_InitEdict (ent);
 
+	// kernel: CTB needs to clear persistant data when changing levels
+	if (ctb_mode->value)
+		InitClientPersistant(ent->client);
+
 	InitClientResp (ent->client);
-
-
-
-
-
-
-
 
 //faf	if (level.framenum > ((int)level_wait->value * 10))
 	ent->client->resp.scopewobble = 192;
@@ -2694,10 +2694,8 @@ void ClientBegin (edict_t *ent)
 	ent->client = game.clients + (ent - g_edicts - 1);
 	ent->client->resp.AlreadySpawned=false;
 
-
-
-
-	if (deathmatch->value)
+	// kernel: CTB also needs this to clear structs at the beginning
+	if (deathmatch->value || ctb_mode->value)
 	{
 		ClientBeginDeathmatch (ent);
 		//LevelStartUserDLLs(ent);
@@ -3031,8 +3029,8 @@ void ClientDisconnect (edict_t *ent)
 
 
 	//faf:  ctb code
-	if(ent->client->pers.inventory[ITEM_INDEX(FindItem("briefcase"))])
-		Drop_Briefcase (ent, FindItemByClassname("briefcase"));
+	if(ent->client->pers.inventory[ITEM_INDEX(FindItemB(ITEM_BRIEFCASE))])
+		Drop_Briefcase(ent, FindItemB(ITEM_BRIEFCASE));
 
 
 
@@ -3354,9 +3352,13 @@ qboolean Setup_Map_Vote (void)
 			{
 				if (MapExists(s))
 				{
-					maplisttxt[c] = s;
-					mapcount++;
-					c++;
+					// kernel: CTB mode requeries enabled maps
+					if (!ctb_mode->value || (ctb_mode->value && TestEntFile(s, "ctb")))
+					{
+						maplisttxt[c] = s;
+						mapcount++;
+						c++;
+					}
 				}
 				else
 					gi.dprintf("WARNING: Map '%s' in votemaps.txt not found on server!\n",s);
@@ -3609,7 +3611,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					level.map_vote_time = level.time;
 				else 
 					level.map_vote_time = -1;
-	}
+			}
 
 			if (level.map_vote_time != -1 && !ent->client->vote_started)
 			{
@@ -3926,15 +3928,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	// kernel: verify if player is trying to exit his spawn_protect in tournament mode
 	if (!ent->ai &&
 		!client->limbo_mode && !ent->flyingnun &&
-		tournament->value && countdownActive &&
-		!IsPlayerInsideSpawnProtect(ent))
+		tournament->value &&
+		(freeze_mode || (countdownActive && !IsPlayerInsideSpawnProtect(ent))))
 	{
 		// make a retention effect
 		ent->velocity[PITCH] = -0.5 * ent->velocity[PITCH];
 		ent->velocity[YAW] = -0.5 * ent->velocity[YAW];
 		VectorCopy(ent->s.old_origin, ent->s.origin);
 
-		safe_centerprintf(ent, "You're confined to this Spawn Area until the match begins\n");
+		if (freeze_mode)
+			safe_centerprintf(ent, "You cannot move until the freeze is released!\n");
+		else
+			safe_centerprintf(ent, "You're confined to this Spawn Area until the match begins.\n");
 	}
 
 	//ClientSetMaxSpeed(ent, true);
@@ -4509,8 +4514,8 @@ void ClientBeginServerFrame (edict_t *ent)
 		// wait for any button just going down
 		if ( level.time > client->respawn_time)
 		{
-			// in deathmatch, only wait for attack button
-			if (deathmatch->value)
+			// kernel: in deathmatch and coop, wait for attack button
+			if (deathmatch->value || coop->value)
 				buttonMask = BUTTON_ATTACK;
 			else
 				buttonMask = -1;

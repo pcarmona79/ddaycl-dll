@@ -28,6 +28,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include <stdio.h>
 
+// evil: global variables for countdown
+extern float gameStartTime;
+
 void SplittedScoreboardMessage (edict_t *ent);
 void SplittedScoreboardMessage2 (edict_t *ent);
 
@@ -199,7 +202,7 @@ void BeginIntermission (edict_t *targ)
 	}
 	else
 	{
-		if (!deathmatch->value)
+		if (!deathmatch->value && !coop->value) // kernel: not ctb mode
 		{
 			level.exitintermission = 1;		// go immediately to the next level
 			return;
@@ -782,7 +785,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 					pingstring,
 					va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 					   game.clients[sorted[TEAM1][i]].pers.netname),
-					game.clients[sorted[TEAM1][i]].resp.score);
+					(coop->value) ? game.clients[sorted[TEAM1][i]].resp.points : game.clients[sorted[TEAM1][i]].resp.score);
 			}
 			else
 			{
@@ -829,7 +832,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 						pingstring,
 						va("%s%s",(game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM2][i]].pers.netname),
-						game.clients[sorted[TEAM2][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM2][i]].resp.points : game.clients[sorted[TEAM2][i]].resp.score);
 			}
 			else
 			{
@@ -1235,8 +1238,9 @@ void Cmd_Score_f (edict_t *ent)
 	if (ent->client->menu)
 		PMenu_Close(ent);
 
-	if (!deathmatch->value && !coop->value)
-		return; 
+	// kernel: commented out because scoreboard should not be blocked in cooperative mode
+	//if (!deathmatch->value && !coop->value)
+	//	return;
 
 	if (level.intermissiontime)
 	{
@@ -1495,9 +1499,8 @@ Display the current help message
 */
 void Cmd_Help_f (edict_t *ent)
 {
-
-
-	if (deathmatch->value)
+	// kernel: allow in cooperative mode
+	if (deathmatch->value || coop->value)
 	{
 		Cmd_Score_f (ent);
 		return;
@@ -1664,7 +1667,18 @@ void G_SetStats (edict_t *ent)
 	}
 	else
 	{
-		ent->client->ps.stats[STAT_TIMER2] =0;
+		// kernel: show the timer when there is a timelimit and there are 60 seconds left
+		if (!level.ctb_time && timelimit->value)
+		{
+			float totalTime = timelimit->value * 60.0;
+			float timeElapsed = level.time - gameStartTime;
+			int timeLeft = totalTime - timeElapsed;
+
+			if (timeLeft < 60)
+				ent->client->ps.stats[STAT_TIMER2] = timeLeft;
+		}
+		else
+			ent->client->ps.stats[STAT_TIMER2] = 0;
 	}
 
 	if (ent->client->resp.autopickup == true)
@@ -1681,11 +1695,10 @@ void G_SetStats (edict_t *ent)
 	{
 		if ((level.ctb_time - level.time) > 0)
 		{
-			ent->client->ps.stats[STAT_TIMER2] = ((level.ctb_time) - (level.time));
 			if  (((level.ctb_time) - level.time) < 100)
-			{
 				ent->client->ps.stats[STAT_TIMER2] = ((level.ctb_time) - level.time);
-			}
+			else
+				ent->client->ps.stats[STAT_TIMER2] = 0;
 		}
 		else
 			ent->client->ps.stats[STAT_TIMER2] = 0;
@@ -2023,7 +2036,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM1][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM1][i]].pers.netname),
-						game.clients[sorted[TEAM1][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM1][i]].resp.points : game.clients[sorted[TEAM1][i]].resp.score);
 			}
 			else
 			{
@@ -2062,7 +2075,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 						pingstring,
 						va("%s%s", (game.clients[sorted[TEAM2][i]].resp.mos == MEDIC) ? "+" : " ",
 						   game.clients[sorted[TEAM2][i]].pers.netname),
-						game.clients[sorted[TEAM2][i]].resp.score);
+						(coop->value) ? game.clients[sorted[TEAM2][i]].resp.points : game.clients[sorted[TEAM2][i]].resp.score);
 			}
 			else
 			{

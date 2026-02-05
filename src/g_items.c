@@ -26,6 +26,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "g_local.h"
+#include "q_shared.h"
+
+// kernel: CTB code
+extern int briefcase_count;
 
 void Weapon_Katana (edict_t *ent);
 qboolean	Pickup_Weapon (edict_t *ent, edict_t *other);
@@ -119,6 +123,22 @@ gitem_t	*FindItem (char *pickup_name)
 		if (!it->pickup_name)
 			continue;
 		if (!Q_stricmp(it->pickup_name, pickup_name))
+			return it;
+	}
+
+	return NULL;
+}
+
+// kernel: search items with the binary of item class
+gitem_t	*FindItemB(classnameb_t classnameb)
+{
+	int		i;
+	gitem_t	*it;
+
+	it = itemlist;
+	for (i = 0; i <= game.num_items; i++, it++)
+	{
+		if (it->classnameb == classnameb)
 			return it;
 	}
 
@@ -923,14 +943,21 @@ static void drop_make_touchable (edict_t *ent)
 //   VectorClear(ent->avelocity);//faf:  stop spinning
 
 	ent->touch = Touch_Item;
+	ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
+
 	if (deathmatch->value)
 	{
-		ent->nextthink = level.time + 60; // kernel: was 29, now gives more time
-
-		if (strcmp(ent->classname, "briefcase"))//if it's briefcase, dont remove it.  //faf: ctb code
+		ent->think = G_FreeEdict;
+	}
+	else if (coop->value) // kernel: ctb needs coop mode
+	{
+		if (ent->classnameb != ITEM_BRIEFCASE)//if it's briefcase, dont remove it.  //faf: ctb code
 			ent->think = G_FreeEdict;
 		else
+		{
+			ent->nextthink = level.time + 29;
 			ent->think = briefcase_warn;
+		}
 	}
 }
 
@@ -943,6 +970,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	dropped = G_Spawn();
 
 	dropped->classname = item->classname;
+	dropped->classnameb = item->classnameb;
 	dropped->item = item;
 	dropped->spawnflags = DROPPED_ITEM;
 	dropped->s.effects = item->world_model_flags;
@@ -1257,6 +1285,40 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	if ((coop->value) && (item->flags & IT_STAY_COOP))
 	{
 		item->drop = NULL;
+	}
+
+	// kernel: CTB code
+	if (!Q_stricmp("briefcase", ent->classname))
+	{
+		ent->classnameb = ITEM_BRIEFCASE;
+
+		// loads until 3 briefcases locations but only the first get spawned
+		if (briefcase_count >= 0 && briefcase_count < 3)
+		{
+			++briefcase_count;
+
+			// kernel: save position and angles
+			VectorCopy(ent->s.origin, level.briefcase_origin[briefcase_count - 1]);
+			VectorCopy(ent->s.angles, level.briefcase_angles[briefcase_count - 1]);
+
+			// just allow one briefcase to be spawned
+			if (briefcase_count > 1)
+			{
+				G_FreeEdict (ent);
+				return;
+			}
+		}
+
+		// kernel: the value readed from the .ctb file will be used only in ctb_mode 1
+		if (ctb_mode->value == 1)
+		{
+			if (!ent->count)
+				level.ctb_time = 300; // kernel: 5 minutes by default
+			else
+				level.ctb_time = ent->count;
+		}
+		else
+			level.ctb_time = 0;
 	}
 
 	ent->item = item;
@@ -2149,4 +2211,29 @@ void Weapon_Sandbag (edict_t *ent)
 }
 
 
+void RemoveSandbags(void)
+{
+	int i;
+	edict_t * ent;
 
+	for (i = 0; i < MAX_EDICTS; ++i)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+
+		if (ent->classnameb == SANDBAGS)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing %s sandbag at (%.1f %.1f %.1f)\n",
+					   (ent->obj_owner) ? "axis" : "allied",
+					   ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+
+			if (ent->obj_owner == 0)
+				level.allied_sandbags--;
+			else if (ent->obj_owner == 1)
+				level.axis_sandbags--;
+
+			G_FreeEdict(ent);
+		}
+	}
+}

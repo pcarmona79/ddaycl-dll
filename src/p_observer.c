@@ -632,7 +632,10 @@ void DoEndOM(edict_t *ent /*,qboolean notOfficer*/)
 	ent->client->show_obj_temp_time = level.time;
 	Cmd_Objectives(ent);
 
-	ent->client->mg42_temperature = 0;
+	if (chile->value)
+		ent->client->mg42_temperature = 0; // kernel: this disables MG42 heating
+	else
+		ent->client->mg42_temperature = 20;
 
 
 } 
@@ -998,6 +1001,9 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 	ent->client->resp.changeteam = true;
 	ent->client->forcespawn = level.time + .5;//faf: fixes standing corpse bug
 
+	// kernel: reset player score
+	ent->client->resp.score = 0;
+	ent->client->resp.points = 0;
 
 //	stuffcmd(ent, va("play %s/shout/yes1.wav", team_list[choice]->teamid));
 				
