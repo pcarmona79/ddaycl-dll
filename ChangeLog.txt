@@ -1,3 +1,10 @@
+Versión 5.063
+-------------
+
+- Agrega la nueva cvar "mapvoting_avoid_nextmap" para evitar el uso de
+  la propiedad level.nextmap al seleccionar los mapas que se mostrarán
+  en Setup_Map_Vote() de p_client.c. Estará desactivada por defecto.
+
 Versión 5.062
 -------------
 

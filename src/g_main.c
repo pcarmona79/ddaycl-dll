@@ -137,6 +137,7 @@ cvar_t *sv_maplist;  //faf,  putting this back in from the original quake2 code
 cvar_t	*swords;
 cvar_t	*nohud;
 cvar_t	*mapvoting;
+cvar_t  *mapvoting_avoid_nextmap; // kernel: to skip nextmap check when selecting maps to vote
 cvar_t	*constant_play;
 cvar_t	*serverimg;
 

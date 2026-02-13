@@ -770,6 +770,7 @@ extern cvar_t  *no_nades;
 extern cvar_t  *airstrikes;
 extern cvar_t  *nohud;
 extern cvar_t  *mapvoting;
+extern cvar_t  *mapvoting_avoid_nextmap; // kernel: to skip nextmap check when selecting maps to vote
 extern cvar_t  *constant_play; //for testing
 extern cvar_t  *serverimg; 
 
