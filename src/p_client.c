@@ -3588,7 +3588,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}*/
 
 
-
+	// kernel: this blocks starts map voting
 	if (level.intermissiontime)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
@@ -3596,47 +3596,53 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (campaign_winner > -1)
 		{
 			if (level.time > level.intermissiontime + 20 && (ucmd->buttons & BUTTON_ANY))
-			level.exitintermission = true;
+				level.exitintermission = true;
 		}
-		else if ( (!mapvoting->value || level.map_vote_time == -1) && 
+		// kernel: obey the DF_SAME_LEVEL flag
+		else if (((int)dmflags->value & DF_SAME_LEVEL || !mapvoting->value || level.map_vote_time == -1) &&
 			level.time > level.intermissiontime + 8.0 && (constant_play->value || (ucmd->buttons & BUTTON_ANY)))
+		{
 			level.exitintermission = true;
-
-		else if (mapvoting->value && level.time > level.intermissiontime + 3.0
-			&& (constant_play->value || (ucmd->buttons & BUTTON_ANY)) )
-		{
-			if (!level.map_vote_time)
-			{
-				if (Setup_Map_Vote())
-					level.map_vote_time = level.time;
-				else 
-					level.map_vote_time = -1;
-			}
-
-			if (level.map_vote_time != -1 && !ent->client->vote_started)
-			{
-				MapVote(ent);
-				ent->client->vote_started = true;
-			}
-		}
-		if (level.map_vote_time > 0)
-		{
-			int num_clients = HumanPlayerCount();
-
-			if (level.time > level.map_vote_time + 15)
-			{
-                Count_Votes ();
-				level.exitintermission = true;
-			}
-			else if (level.time > level.intermissiontime + 6.0 &&
-				level.last_vote_time < level.time - 1 &&
-				mapvotes[0]+mapvotes[1]+mapvotes[2]+mapvotes[3] >= num_clients)
-			{
-                Count_Votes ();
-				level.exitintermission = true;
-			}
 		}
 
+		// kernel: DF_SAME_LEVEL must disable the voting
+		if (mapvoting->value && !((int)dmflags->value & DF_SAME_LEVEL))
+		{
+			if (level.time > level.intermissiontime + 3.0
+				&& (constant_play->value || (ucmd->buttons & BUTTON_ANY)) )
+			{
+				if (!level.map_vote_time)
+				{
+					if (Setup_Map_Vote())
+						level.map_vote_time = level.time;
+					else
+						level.map_vote_time = -1;
+				}
+
+				if (level.map_vote_time != -1 && !ent->client->vote_started)
+				{
+					MapVote(ent);
+					ent->client->vote_started = true;
+				}
+			}
+			if (level.map_vote_time > 0)
+			{
+				int num_clients = HumanPlayerCount();
+
+				if (level.time > level.map_vote_time + 15)
+				{
+					Count_Votes ();
+					level.exitintermission = true;
+				}
+				else if (level.time > level.intermissiontime + 6.0 &&
+						 level.last_vote_time < level.time - 1 &&
+						 mapvotes[0]+mapvotes[1]+mapvotes[2]+mapvotes[3] >= num_clients)
+				{
+					Count_Votes ();
+					level.exitintermission = true;
+				}
+			}
+		}
 		return;
 	}
 

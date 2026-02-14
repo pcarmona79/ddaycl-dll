@@ -704,6 +704,8 @@ void EndDMLevel (void)
 		ent->classname = "target_changelevel";
 		ent->map = mapname;
 		safe_bprintf (PRINT_HIGH, "Next map: %s \n", level.mapname);
+		BeginIntermission(ent);
+		return;
 	}
 
 
