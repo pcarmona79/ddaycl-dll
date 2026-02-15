@@ -1801,20 +1801,20 @@ edict_t *SelectNearestSpawnPoint (int team)
 	bestdistance = 0;
 
 	VectorClear (mean_origin);
- 	spot = NULL;
+	spot = NULL;
 	bestspot = NULL;
        
 	for (i = 1; i <= maxclients->value; i++)
     {
-         check_ent = g_edicts + i;
-         if (!check_ent->inuse)
-			 continue;
-		 if (!check_ent->client ||
-			 !check_ent->client->resp.team_on ||
-			 check_ent->health <1)
-			 continue;
-		 if (check_ent->deadflag)
-			 continue;
+		check_ent = g_edicts + i;
+		if (!check_ent->inuse)
+			continue;
+		if (!check_ent->client ||
+			!check_ent->client->resp.team_on ||
+			check_ent->health <1)
+			continue;
+		if (check_ent->deadflag)
+			continue;
 		if (check_ent->client->resp.AlreadySpawned == false)
 			continue;
 		if (check_ent->client->limbo_mode == true)
@@ -1823,13 +1823,13 @@ edict_t *SelectNearestSpawnPoint (int team)
 			continue;
 
 
-		 if (check_ent->client->resp.team_on->index == team)
-		 {
-			 playercount++;
-			 mean_origin[0] = mean_origin[0] + check_ent->s.origin [0];
-			 mean_origin[1] = mean_origin[1] + check_ent->s.origin [1];
-			 mean_origin[2] = mean_origin[2] + check_ent->s.origin [2];
-		 }
+		if (check_ent->client->resp.team_on->index == team)
+		{
+			playercount++;
+			mean_origin[0] = mean_origin[0] + check_ent->s.origin [0];
+			mean_origin[1] = mean_origin[1] + check_ent->s.origin [1];
+			mean_origin[2] = mean_origin[2] + check_ent->s.origin [2];
+		}
 
 
 	}
@@ -3719,7 +3719,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	//faf			ucmd->sidemove *= .9;
 		
 
-	}
+		}
 
 
 //		if (ent->client->aim && VectorLength(dist) > 25 && ent->velocity[2] != 0)
@@ -4400,20 +4400,20 @@ void ClientBeginServerFrame (edict_t *ent)
 
 
 
-		if (!ent->groundentity)
+	if (!ent->groundentity)
+	{
+		ent->client->in_air = true;
+	}
+	else
+	{
+		if (ent->client->in_air)//landed
 		{
-			ent->client->in_air = true;
+			ent->client->footstep_framenum = level.framenum;
+			if (ent->stanceflags == STANCE_STAND)
+				Play_Footstep_Sound(ent);
+			ent->client->in_air = false;
 		}
-		else
-		{
-			if (ent->client->in_air)//landed
-			{
-				ent->client->footstep_framenum = level.framenum;
-				if (ent->stanceflags == STANCE_STAND)
-					Play_Footstep_Sound(ent);
-				ent->client->in_air = false;
-			}
-		}
+	}
 
 
 

@@ -138,9 +138,8 @@ void Chute_Think(edict_t *ent)
 				ent->s.origin[2] = ent->owner->s.origin[2];
 			return;
 		}
-	}
-	else //not on ground
-		if (ent->owner->velocity[2] > 0) //just jumped
+	} //not on ground
+	else if (ent->owner->velocity[2] > 0) //just jumped
 	{
 //			ent->s.frame = 0;
 		ent->s.origin[0] = ent->owner->s.origin[0];
@@ -463,7 +462,7 @@ qboolean OpenSpot (edict_t *ent, mos_t class)
 			!cl_ent->client->resp.team_on->mos ||
 			cl_ent->client->resp.team_on->index != ent->client->resp.team_on->index)
 			continue; 
-			if (class ==
+		if (class ==
 			cl_ent->client->resp.mos)
 			taken++;
 	}
