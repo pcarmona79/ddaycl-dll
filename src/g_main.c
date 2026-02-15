@@ -203,6 +203,9 @@ qboolean threeSeconds = false;
 qboolean freeze_mode = false;
 int freeze_remaining = 0;
 
+// kernel: to disable map voting when forcing to change a map
+qboolean disable_mapvoting = false;
+
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
 qboolean ClientConnect (edict_t *ent, char *userinfo);

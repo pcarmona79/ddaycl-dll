@@ -30,6 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
+// kernel: to disable map voting when forcing to change a map
+extern qboolean disable_mapvoting;
+
 // kernel: CTB code
 extern int briefcase_count;
 
@@ -1592,6 +1595,9 @@ void SP_worldspawn (edict_t *ent)
 	// kernel: must reset countdown settings
 	ResetCountTimer();
 	ResetFreezeMode();
+
+	// kernel: reset disabling map voting
+	disable_mapvoting = false;
 
 	// kernel: CTB code
 	briefcase_count = 0;

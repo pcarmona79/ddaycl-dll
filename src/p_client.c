@@ -41,6 +41,9 @@ extern float countdownTimeLimit;
 // kernel: to freeze them all
 extern qboolean freeze_mode;
 
+// kernel: to disable map voting when forcing to change a map
+extern qboolean disable_mapvoting;
+
 void ShowGun(edict_t *ent);
 
 void SwitchToObserver(edict_t *ent);
@@ -3599,14 +3602,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				level.exitintermission = true;
 		}
 		// kernel: obey the DF_SAME_LEVEL flag
-		else if (((int)dmflags->value & DF_SAME_LEVEL || !mapvoting->value || level.map_vote_time == -1) &&
+		else if ((disable_mapvoting || (int)dmflags->value & DF_SAME_LEVEL || !mapvoting->value || level.map_vote_time == -1) &&
 			level.time > level.intermissiontime + 8.0 && (constant_play->value || (ucmd->buttons & BUTTON_ANY)))
 		{
 			level.exitintermission = true;
 		}
 
 		// kernel: DF_SAME_LEVEL must disable the voting
-		if (mapvoting->value && !((int)dmflags->value & DF_SAME_LEVEL))
+		if (!disable_mapvoting && mapvoting->value && !((int)dmflags->value & DF_SAME_LEVEL))
 		{
 			if (level.time > level.intermissiontime + 3.0
 				&& (constant_play->value || (ucmd->buttons & BUTTON_ANY)) )
