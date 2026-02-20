@@ -12,6 +12,9 @@ Versión 5.063
 - Agrega el comando de servidor "sv nextmap" para permitir omitir el
   mapa actual y cambiar al siguiente en la lista de mapas.
 
+- Corrige el comportamiento de Setup_Map_Vote() al usar la propiedad
+  level.nextmap para evitar repetir el mismo mapa en la votación.
+
 Versión 5.062
 -------------
 

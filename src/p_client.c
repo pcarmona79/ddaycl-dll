@@ -3427,16 +3427,16 @@ qboolean Setup_Map_Vote (void)
 			if (!strcmp(level.nextmap, level.mapname))
 			{
 				changefirstmap = true;
-				votemaps[0] = level.nextmap;
-				continue;
+				//votemaps[0] = level.nextmap;
+				//continue;
 			}
 			for (k = 0; k<20 && last_maps_played[k]; k++)
 			{
 				if (!strcmp (last_maps_played[k], level.nextmap))
 				{	
 					changefirstmap = true;
-					votemaps[0] = votemaps[3];
-					votemaps[3] = level.nextmap;
+					//votemaps[0] = votemaps[3];
+					//votemaps[3] = level.nextmap;
 				}
 			}
 			if (!changefirstmap)
@@ -3446,10 +3446,10 @@ qboolean Setup_Map_Vote (void)
 			}
 		} 
 
-		if (i==3 && changefirstmap)
+		if (i == 3 && changefirstmap)
 		{
-				votemaps[3] = level.nextmap;
-				continue;
+			votemaps[3] = level.nextmap;
+			continue;
 		}
 
 	
