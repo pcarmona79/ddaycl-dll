@@ -252,12 +252,13 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 					attacker->client->resp.stat_human_plus++;
 
 				if (targ->client)
+				{
 					//targ->client->resp.plus_minus--;
 					if (attacker->ai)
 						targ->client->resp.stat_bot_minus++;
 					else
 						targ->client->resp.stat_human_minus++;
-
+				}
 			}
 			targ->client->resp.team_on->losses++;
 
@@ -435,9 +436,9 @@ qboolean In_Vector_Range(vec3_t point, vec3_t origin,
 
 	VectorSubtract(point,origin, temp);
 
-	if( (abs(temp[0])>x_range) ) return false;
-	if( (abs(temp[1])>y_range) ) return false;
-	if( (abs(temp[2])>z_range) ) return false;
+	if( (fabs(temp[0])>x_range) ) return false;
+	if( (fabs(temp[1])>y_range) ) return false;
+	if( (fabs(temp[2])>z_range) ) return false;
 	return true;
 }
 
@@ -830,30 +831,30 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	sniper = false;
 	for (d = 1; d<= maxclients->value; d++)
     {
-         check_ent = g_edicts + d;
-         if (!check_ent->inuse)
-			 continue;
-		 if (!check_ent->ai)
-			 continue;
-		 if (check_ent == targ)
-			 continue;
-		 if (!check_ent->client ||
-			 !check_ent->client->resp.team_on ||
-			 check_ent->health < 1)
-			 continue;
-		  if (!inflictor || !inflictor->client)
-			 continue;
-		 if (!inflictor->client->resp.team_on)
-			 continue;
-		 if (check_ent->client->resp.team_on ==
+		check_ent = g_edicts + d;
+		if (!check_ent->inuse)
+			continue;
+		if (!check_ent->ai)
+			continue;
+		if (check_ent == targ)
+			continue;
+		if (!check_ent->client ||
+			!check_ent->client->resp.team_on ||
+			check_ent->health < 1)
+			continue;
+		if (!inflictor || !inflictor->client)
+			continue;
+		if (!inflictor->client->resp.team_on)
+			continue;
+		if (check_ent->client->resp.team_on ==
 			 inflictor->client->resp.team_on)
-			 continue;
-		 if (check_ent->enemy)
-			 continue;
-		 if (check_ent->deadflag)
-			 continue;
+			continue;
+		if (check_ent->enemy)
+			continue;
+		if (check_ent->deadflag)
+			continue;
 
-		 if (visible (check_ent, targ))
+		if (visible (check_ent, targ))
 		 {
 			 if (!(check_ent->stanceflags != STANCE_STAND && check_ent->client->resp.mos == H_GUNNER))
 			 {
@@ -1347,9 +1348,9 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 				mass = targ->mass;
 
 		if (targ->client  && attacker == targ)
-				VectorScale (dir, 1600.0 * (float)knockback / mass, kvel);	// the rocket jump hack...
-			else
-				VectorScale (dir, 500.0 * (float)knockback / mass, kvel);
+			VectorScale (dir, 1600.0 * (float)knockback / mass, kvel);	// the rocket jump hack...
+		else
+			VectorScale (dir, 500.0 * (float)knockback / mass, kvel);
 
 			VectorAdd (targ->velocity, kvel, targ->velocity);
 		}

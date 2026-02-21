@@ -41,6 +41,9 @@ extern float countdownTimeLimit;
 // kernel: to freeze them all
 extern qboolean freeze_mode;
 
+// kernel: to disable map voting when forcing to change a map
+extern qboolean disable_mapvoting;
+
 void ShowGun(edict_t *ent);
 
 void SwitchToObserver(edict_t *ent);
@@ -1798,20 +1801,20 @@ edict_t *SelectNearestSpawnPoint (int team)
 	bestdistance = 0;
 
 	VectorClear (mean_origin);
- 	spot = NULL;
+	spot = NULL;
 	bestspot = NULL;
        
 	for (i = 1; i <= maxclients->value; i++)
     {
-         check_ent = g_edicts + i;
-         if (!check_ent->inuse)
-			 continue;
-		 if (!check_ent->client ||
-			 !check_ent->client->resp.team_on ||
-			 check_ent->health <1)
-			 continue;
-		 if (check_ent->deadflag)
-			 continue;
+		check_ent = g_edicts + i;
+		if (!check_ent->inuse)
+			continue;
+		if (!check_ent->client ||
+			!check_ent->client->resp.team_on ||
+			check_ent->health <1)
+			continue;
+		if (check_ent->deadflag)
+			continue;
 		if (check_ent->client->resp.AlreadySpawned == false)
 			continue;
 		if (check_ent->client->limbo_mode == true)
@@ -1820,13 +1823,13 @@ edict_t *SelectNearestSpawnPoint (int team)
 			continue;
 
 
-		 if (check_ent->client->resp.team_on->index == team)
-		 {
-			 playercount++;
-			 mean_origin[0] = mean_origin[0] + check_ent->s.origin [0];
-			 mean_origin[1] = mean_origin[1] + check_ent->s.origin [1];
-			 mean_origin[2] = mean_origin[2] + check_ent->s.origin [2];
-		 }
+		if (check_ent->client->resp.team_on->index == team)
+		{
+			playercount++;
+			mean_origin[0] = mean_origin[0] + check_ent->s.origin [0];
+			mean_origin[1] = mean_origin[1] + check_ent->s.origin [1];
+			mean_origin[2] = mean_origin[2] + check_ent->s.origin [2];
+		}
 
 
 	}
@@ -3418,22 +3421,22 @@ qboolean Setup_Map_Vote (void)
 	changefirstmap = false;
 	for (i = 0; i < 4; i++)
 	{
-		if (i == 0 && level.nextmap[0])
+		if (i == 0 && level.nextmap[0] && !mapvoting_avoid_nextmap->value)
 		{
 			//if nextmap is same as current map or one played recently, list that last instead of 4th
 			if (!strcmp(level.nextmap, level.mapname))
 			{
 				changefirstmap = true;
-				votemaps[0] = level.nextmap;
-				continue;
+				//votemaps[0] = level.nextmap;
+				//continue;
 			}
 			for (k = 0; k<20 && last_maps_played[k]; k++)
 			{
 				if (!strcmp (last_maps_played[k], level.nextmap))
 				{	
 					changefirstmap = true;
-					votemaps[0] = votemaps[3];
-					votemaps[3] = level.nextmap;
+					//votemaps[0] = votemaps[3];
+					//votemaps[3] = level.nextmap;
 				}
 			}
 			if (!changefirstmap)
@@ -3443,10 +3446,10 @@ qboolean Setup_Map_Vote (void)
 			}
 		} 
 
-		if (i==3 && changefirstmap)
+		if (i == 3 && changefirstmap)
 		{
-				votemaps[3] = level.nextmap;
-				continue;
+			votemaps[3] = level.nextmap;
+			continue;
 		}
 
 	
@@ -3588,7 +3591,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}*/
 
 
-
+	// kernel: this blocks starts map voting
 	if (level.intermissiontime)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
@@ -3596,47 +3599,53 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		if (campaign_winner > -1)
 		{
 			if (level.time > level.intermissiontime + 20 && (ucmd->buttons & BUTTON_ANY))
-			level.exitintermission = true;
+				level.exitintermission = true;
 		}
-		else if ( (!mapvoting->value || level.map_vote_time == -1) && 
+		// kernel: obey the DF_SAME_LEVEL flag
+		else if ((disable_mapvoting || (int)dmflags->value & DF_SAME_LEVEL || !mapvoting->value || level.map_vote_time == -1) &&
 			level.time > level.intermissiontime + 8.0 && (constant_play->value || (ucmd->buttons & BUTTON_ANY)))
+		{
 			level.exitintermission = true;
-
-		else if (mapvoting->value && level.time > level.intermissiontime + 3.0
-			&& (constant_play->value || (ucmd->buttons & BUTTON_ANY)) )
-		{
-			if (!level.map_vote_time)
-			{
-				if (Setup_Map_Vote())
-					level.map_vote_time = level.time;
-				else 
-					level.map_vote_time = -1;
-			}
-
-			if (level.map_vote_time != -1 && !ent->client->vote_started)
-			{
-				MapVote(ent);
-				ent->client->vote_started = true;
-			}
-		}
-		if (level.map_vote_time > 0)
-		{
-			int num_clients = HumanPlayerCount();
-
-			if (level.time > level.map_vote_time + 15)
-			{
-                Count_Votes ();
-				level.exitintermission = true;
-			}
-			else if (level.time > level.intermissiontime + 6.0 &&
-				level.last_vote_time < level.time - 1 &&
-				mapvotes[0]+mapvotes[1]+mapvotes[2]+mapvotes[3] >= num_clients)
-			{
-                Count_Votes ();
-				level.exitintermission = true;
-			}
 		}
 
+		// kernel: DF_SAME_LEVEL must disable the voting
+		if (!disable_mapvoting && mapvoting->value && !((int)dmflags->value & DF_SAME_LEVEL))
+		{
+			if (level.time > level.intermissiontime + 3.0
+				&& (constant_play->value || (ucmd->buttons & BUTTON_ANY)) )
+			{
+				if (!level.map_vote_time)
+				{
+					if (Setup_Map_Vote())
+						level.map_vote_time = level.time;
+					else
+						level.map_vote_time = -1;
+				}
+
+				if (level.map_vote_time != -1 && !ent->client->vote_started)
+				{
+					MapVote(ent);
+					ent->client->vote_started = true;
+				}
+			}
+			if (level.map_vote_time > 0)
+			{
+				int num_clients = HumanPlayerCount();
+
+				if (level.time > level.map_vote_time + 15)
+				{
+					Count_Votes ();
+					level.exitintermission = true;
+				}
+				else if (level.time > level.intermissiontime + 6.0 &&
+						 level.last_vote_time < level.time - 1 &&
+						 mapvotes[0]+mapvotes[1]+mapvotes[2]+mapvotes[3] >= num_clients)
+				{
+					Count_Votes ();
+					level.exitintermission = true;
+				}
+			}
+		}
 		return;
 	}
 
@@ -3710,7 +3719,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	//faf			ucmd->sidemove *= .9;
 		
 
-	}
+		}
 
 
 //		if (ent->client->aim && VectorLength(dist) > 25 && ent->velocity[2] != 0)
@@ -4391,20 +4400,20 @@ void ClientBeginServerFrame (edict_t *ent)
 
 
 
-		if (!ent->groundentity)
+	if (!ent->groundentity)
+	{
+		ent->client->in_air = true;
+	}
+	else
+	{
+		if (ent->client->in_air)//landed
 		{
-			ent->client->in_air = true;
+			ent->client->footstep_framenum = level.framenum;
+			if (ent->stanceflags == STANCE_STAND)
+				Play_Footstep_Sound(ent);
+			ent->client->in_air = false;
 		}
-		else
-		{
-			if (ent->client->in_air)//landed
-			{
-				ent->client->footstep_framenum = level.framenum;
-				if (ent->stanceflags == STANCE_STAND)
-					Play_Footstep_Sound(ent);
-				ent->client->in_air = false;
-			}
-		}
+	}
 
 
 

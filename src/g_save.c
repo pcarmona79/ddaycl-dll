@@ -350,6 +350,7 @@ void InitGame (void)
 	no_nades = gi.cvar ("no_nades", "0", 0);
 	airstrikes = gi.cvar ("airstrikes", "1", 0);
 	mapvoting = gi.cvar ("mapvoting", "0", 0);
+	mapvoting_avoid_nextmap = gi.cvar ("mapvoting_avoid_nextmap", "0", 0);// kernel: to skip nextmap when voting
 	constant_play = gi.cvar ("constant_play", "0", 0);
 
 	ctc = gi.cvar ("ctc", "0", 0);

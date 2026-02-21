@@ -1,3 +1,20 @@
+Versión 5.063
+-------------
+
+- Agrega la nueva cvar "mapvoting_avoid_nextmap" para evitar el uso de
+  la propiedad level.nextmap al seleccionar los mapas que se mostrarán
+  en Setup_Map_Vote() de p_client.c. Estará desactivada por defecto.
+
+- Corrige EndDMLevel() de g_main.c y ClientThink() de p_client.c para
+  obedecer el indicador DF_SAME_LEVEL que deshabilita la votación del
+  mapa.
+
+- Agrega el comando de servidor "sv nextmap" para permitir omitir el
+  mapa actual y cambiar al siguiente en la lista de mapas.
+
+- Corrige el comportamiento de Setup_Map_Vote() al usar la propiedad
+  level.nextmap para evitar repetir el mismo mapa en la votación.
+
 Versión 5.062
 -------------
 

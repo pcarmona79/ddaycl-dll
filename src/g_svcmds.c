@@ -42,6 +42,9 @@ extern float gameStartTime;
 extern qboolean freeze_mode;
 extern int freeze_remaining;
 
+// kernel: to disable map voting when forcing to change a map
+extern qboolean disable_mapvoting;
+
 void Svcmd_Teamswitch_f (void)
 {
 	int cl_num, team;
@@ -820,6 +823,13 @@ void Svcmd_FreezeMode_f()
 	}
 }
 
+void Svcmd_NextMap(void)
+{
+	disable_mapvoting = true;
+	EndDMLevel();
+	safe_bprintf(PRINT_HIGH, "Changing to next map.\n");
+}
+
 /*
 =================
 ServerCommand
@@ -869,7 +879,8 @@ void	ServerCommand (void)
 		Svcmd_ResetScore_f();
 	else if (Q_stricmp(cmd, "listplayers") == 0)
 		SVCmd_ListPlayers_f();
-
+	else if (Q_stricmp(cmd, "nextmap") == 0)
+		Svcmd_NextMap();
 	else if (Q_stricmp(cmd, "killplayer") == 0)
 		SVCmd_KillPlayer_f();
 	else if (Q_stricmp(cmd, "freeze") == 0)

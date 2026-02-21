@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.062" // ddaychile
+#define DEVVERSION	"5.063" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -770,6 +770,7 @@ extern cvar_t  *no_nades;
 extern cvar_t  *airstrikes;
 extern cvar_t  *nohud;
 extern cvar_t  *mapvoting;
+extern cvar_t  *mapvoting_avoid_nextmap; // kernel: to skip nextmap check when selecting maps to vote
 extern cvar_t  *constant_play; //for testing
 extern cvar_t  *serverimg; 
 

@@ -137,6 +137,7 @@ cvar_t *sv_maplist;  //faf,  putting this back in from the original quake2 code
 cvar_t	*swords;
 cvar_t	*nohud;
 cvar_t	*mapvoting;
+cvar_t  *mapvoting_avoid_nextmap; // kernel: to skip nextmap check when selecting maps to vote
 cvar_t	*constant_play;
 cvar_t	*serverimg;
 
@@ -201,6 +202,9 @@ qboolean threeSeconds = false;
 // kernel: to freeze them all
 qboolean freeze_mode = false;
 int freeze_remaining = 0;
+
+// kernel: to disable map voting when forcing to change a map
+qboolean disable_mapvoting = false;
 
 void SpawnEntities (char *mapname, char *entities, char *spawnpoint);
 void ClientThink (edict_t *ent, usercmd_t *cmd);
@@ -703,6 +707,8 @@ void EndDMLevel (void)
 		ent->classname = "target_changelevel";
 		ent->map = mapname;
 		safe_bprintf (PRINT_HIGH, "Next map: %s \n", level.mapname);
+		BeginIntermission(ent);
+		return;
 	}
 
 

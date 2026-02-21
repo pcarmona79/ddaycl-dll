@@ -30,6 +30,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "q_shared.h"
 #include <ctype.h> // Faltaba esta libreria para poder utilizar tolower - ZeRo
 
+// kernel: to disable map voting when forcing to change a map
+extern qboolean disable_mapvoting;
+
 // kernel: CTB code
 extern int briefcase_count;
 
@@ -551,6 +554,7 @@ void ED_ParseField (char *key, char *value, edict_t *ent)
 				((float *)(b+f->ofs))[2] = 0;
 				break;
 			case F_IGNORE:
+			default:
 				break;
 			}
 			return;
@@ -1066,7 +1070,7 @@ void LoadCampFile(void)
 				camp_spots[c].team = team;
 				VectorCopy (loc, camp_spots[c].origin);
 				camp_spots[c].stance = stance;
-				camp_spots[c].type = CAMP_NORMAL;
+				camp_spots[c].type = (qboolean) CAMP_NORMAL;
 				c++;
 				total_camp_spots = c;
 
@@ -1592,6 +1596,9 @@ void SP_worldspawn (edict_t *ent)
 	// kernel: must reset countdown settings
 	ResetCountTimer();
 	ResetFreezeMode();
+
+	// kernel: reset disabling map voting
+	disable_mapvoting = false;
 
 	// kernel: CTB code
 	briefcase_count = 0;
