@@ -2343,7 +2343,7 @@ void ClientEndServerFrame (edict_t *ent)
 {
 	float	bobtime;
 	int		i;
-
+	int 	framediff;
 
 	vec3_t	start;
 	vec3_t	end;
@@ -2359,16 +2359,17 @@ void ClientEndServerFrame (edict_t *ent)
 
 	if (ent->client)
 	{
+		framediff = level.framenum - ent->client->resp.enterframe;
 
-		if (level.framenum - ent->client->resp.enterframe == 10)
+		if (framediff >= 10 && framediff <= 90)
 			Cmd_MOTD(ent);
 
 		if (tournament->value && countdownTimeLimit <= 0 && !freeze_mode && !level.intermissiontime
-			&& (level.framenum - ent->client->resp.enterframe) % 100 == 0)
+			&& framediff % 100 == 0)
 			safe_centerprintf(ent, "Server is running in \"Tournament\" mode.\n\n"
 							  "Please wait for the countdown to begin the battle.");
 
-		if (nohud->value && level.framenum - ent->client->resp.enterframe == 100)
+		if (nohud->value && framediff == 100)
 			safe_centerprintf(ent, "Server is running in \"No Hud\" mode.\nRealism!!!");
 
 		//		gi.dprintf ("%i frame\n", (level.framenum - ent->client->resp.enterframe) );
