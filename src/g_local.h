@@ -829,6 +829,9 @@ extern cvar_t *tournament;
 // kernel: maximum knives to drop
 extern cvar_t *knife_maxdrop;
 
+// kernel: time to display the MOTD at beginning of level
+extern cvar_t *motd_time;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])

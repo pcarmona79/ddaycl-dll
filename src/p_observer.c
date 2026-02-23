@@ -1161,6 +1161,10 @@ void MainMenu(edict_t *ent)
 {
 	PMenu_Close(ent);
 
+	// kernel: do not show main menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
+
 	client_menu(ent, 4, "*D-DAY: NORMANDY " /*DEVVERSION*/, PMENU_ALIGN_CENTER, NULL, NULL );
 	client_menu(ent, 5, "*by Vipersoft",	PMENU_ALIGN_CENTER, NULL, NULL );
 //	client_menu(ent, 2,  NULL,				PMENU_ALIGN_CENTER, NULL, NULL ),

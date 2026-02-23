@@ -1,3 +1,11 @@
+Versión 5.064
+-------------
+
+- Se añade la nueva variable "motd_time" para almacenar el tiempo que se
+  debe mostrar el MOTD al inicio de cada nivel. El menú principal se
+  bloqueará antes de este tiempo para que los usuarios puedan leer el
+  mensaje.
+
 Versión 5.063
 -------------
 

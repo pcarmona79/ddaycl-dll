@@ -2361,7 +2361,8 @@ void ClientEndServerFrame (edict_t *ent)
 	{
 		framediff = level.framenum - ent->client->resp.enterframe;
 
-		if (framediff >= 10 && framediff <= 90)
+		// kernel: show MOTD during "motd_time" seconds
+		if (framediff >= 10 && framediff < 10 * (int)(motd_time->value))
 			Cmd_MOTD(ent);
 
 		if (tournament->value && countdownTimeLimit <= 0 && !freeze_mode && !level.intermissiontime

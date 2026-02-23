@@ -417,6 +417,9 @@ void InitGame (void)
 	// kernel: modes for CTB: (0 disabled, 1 one briefcase, 2 many briefcases)
 	ctb_mode = gi.cvar("ctb_mode", "0", CVAR_LATCH);
 
+	// kernel: time to display the MOTD at beginning of level
+	motd_time = gi.cvar("motd_time", "10", 0);
+
 	// items
 	InitItems ();
 

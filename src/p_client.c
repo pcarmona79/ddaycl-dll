@@ -4491,7 +4491,9 @@ void ClientBeginServerFrame (edict_t *ent)
 //faf:  players press fire to bring up class or team menu when they need it
 	else if (ent->client->limbo_mode)
 	{
-		if (client->latched_buttons & BUTTON_ATTACK)
+		// kernel: force to wait motd_time before displaying the menu at the beginning of level
+		if (client->latched_buttons & BUTTON_ATTACK &&
+			level.framenum > (10 * (int)(motd_time->value)))
 		{
 			delay = 0;
 			if (ent->client->resp.team_on)
