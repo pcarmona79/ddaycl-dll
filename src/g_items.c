@@ -854,7 +854,10 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 		return;		// dead people can't pickup
 	if (!ent->item->pickup)
 		return;		// not a grabbable item?
-	if (other->client->resp.autopickup == false && ent->item->classnameb != HGRENADE)
+
+	// kernel: exits if item is not a grenade neither a briefcase
+	if (other->client->resp.autopickup == false &&
+		(ent->item->classnameb != HGRENADE && ent->classnameb != ITEM_BRIEFCASE))
 		return;
 
 /*

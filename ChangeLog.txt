@@ -6,6 +6,9 @@ Versión 5.064
   bloqueará antes de este tiempo para que los usuarios puedan leer el
   mensaje.
 
+- Modifica Touch_Item() de g_items.c para permitir que se pueda recoger
+  el maletín simplemente tocándolo.
+
 Versión 5.063
 -------------
 
