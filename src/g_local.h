@@ -978,6 +978,7 @@ qboolean WeighPlayer(edict_t *ent);
 void reinforcement_think(edict_t *ent);
 
 void centerprintall (char *mesg, ...);
+void centerprintothers(edict_t *skipent, char *mesg, ...);
 
 qboolean IsValidPlayer(edict_t *ent);
 

@@ -785,6 +785,48 @@ void centerprintall (char *mesg, ...)
 	}
 }
 
+// kernel: like centerprintall but excluding the passed entity
+void centerprintothers(edict_t *skipent, char *mesg, ...)
+{
+	int		i,len,size;
+	edict_t *ent;
+	va_list	argptr;
+	char	buffer[0x10000];
+	char	print[0x10000];
+
+	size = sizeof(print);
+
+	va_start(argptr, mesg);
+	len = vsprintf(buffer, mesg, argptr);
+	va_end(argptr);
+
+	// erm this should never happen at all but it's here incase
+	if (len >= size)
+		Com_Printf("centerprintothers: overflow of %i in %i\n", len, size);
+
+	strncpy(print, buffer, size - 1);
+
+	// kernel: print to server console
+	gi.dprintf("*** %s ***\n", print);
+
+	for (i = 1; i <= game.maxclients; i++)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+		if (!ent->client)
+			continue;
+		if (ent == skipent)
+		{
+			// skipped client will receive a normal console message
+			safe_cprintf(ent, PRINT_HIGH, print);
+			continue;
+		}
+
+		safe_centerprintf(ent, print);
+	}
+}
+
 qboolean IsValidPlayer(edict_t *ent) {
 
 	if (ent && 
