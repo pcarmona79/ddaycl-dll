@@ -12,6 +12,11 @@ Versión 5.064
 - Agrega el flag "important" a PlayTeamSound() de g_utils.c para
   permitir enviar sonidos importantes a los clientes que observan.
 
+- Modifica Pickup_Briefcase() y Drop_Briefcase() de g_objectives.c para
+  usar la función centerprintothers() y mostrar mensajes centrados a los
+  otros jugadores. Además, Drop_Briefcase() reproducirá el sonido
+  "ctb/drop.wav" al soltarse el maletín.
+
 Versión 5.063
 -------------
 

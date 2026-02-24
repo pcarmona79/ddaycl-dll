@@ -828,7 +828,7 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	PlayTeamSound(otheridx, "ctb/alert.wav", false);
 
 	safe_centerprintf(other, "You've taken the briefcase!\n\nBring it to the base, soldier, immediately!");
-	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
+	centerprintothers(other, "%s picked up the briefcase for team %s!", other->client->pers.netname,
 			   other->client->resp.team_on->teamname);
 
 	return true;
@@ -846,7 +846,8 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	ent->client->has_briefcase = false;
 	ent->s.modelindex3 = 0;
 
-	gi.bprintf(PRINT_HIGH, "%s lost the briefcase of team %s!\n", ent->client->pers.netname,
+	gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("ctb/drop.wav"), 1, ATTN_NONE, 0);
+	centerprintothers(ent, "%s lost the briefcase of team %s!", ent->client->pers.netname,
 			   ent->client->resp.team_on->teamname);
 }
 

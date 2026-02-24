@@ -819,7 +819,7 @@ void centerprintothers(edict_t *skipent, char *mesg, ...)
 		if (ent == skipent)
 		{
 			// skipped client will receive a normal console message
-			safe_cprintf(ent, PRINT_HIGH, print);
+			safe_cprintf(ent, PRINT_HIGH, "%s\n", print);
 			continue;
 		}
 
