@@ -887,7 +887,7 @@ void MoveToTheirSpawnPoint(edict_t *ent)
 	}
 }
 
-void PlayTeamSound(int teamidx, char* soundfile)
+void PlayTeamSound(int teamidx, char* soundfile, qboolean important)
 {
 	int i;
 	edict_t *ent;
@@ -903,11 +903,19 @@ void PlayTeamSound(int teamidx, char* soundfile)
 			continue;
 		if (!ent->client)
 			continue;
-		if (!ent->client->resp.team_on)
-			continue;
 
-		if (ent->client->resp.team_on->index == teamidx)
-			stuffcmd(ent, cmd);
+		if (important)
+		{
+			if (!ent->client->resp.team_on)
+				stuffcmd(ent, cmd); // observers will heard important sounds
+			else if (ent->client->resp.team_on->index == teamidx)
+				stuffcmd(ent, cmd);
+		}
+		else
+		{
+			if (ent->client->resp.team_on && ent->client->resp.team_on->index == teamidx)
+				stuffcmd(ent, cmd);
+		}
 	}
 }
 

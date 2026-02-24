@@ -9,6 +9,9 @@ Versión 5.064
 - Modifica Touch_Item() de g_items.c para permitir que se pueda recoger
   el maletín simplemente tocándolo.
 
+- Agrega el flag "important" a PlayTeamSound() de g_utils.c para
+  permitir enviar sonidos importantes a los clientes que observan.
+
 Versión 5.063
 -------------
 
