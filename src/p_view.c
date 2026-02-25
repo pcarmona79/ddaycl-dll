@@ -2362,7 +2362,7 @@ void ClientEndServerFrame (edict_t *ent)
 		framediff = level.framenum - ent->client->resp.enterframe;
 
 		// kernel: show MOTD during "motd_time" seconds
-		if (framediff >= 10 && framediff < 10 * (int)(motd_time->value))
+		if (framediff % 10 == 0 && framediff < 10 * (int)(motd_time->value))
 			Cmd_MOTD(ent);
 
 		if (tournament->value && countdownTimeLimit <= 0 && !freeze_mode && !level.intermissiontime
@@ -3175,9 +3175,12 @@ if (ent->client->turret)
 
 	if (afk_time->value && level.framenum % 10 == 0 && ent->client->resp.team_on && !level.intermissiontime)
 	{
-		//gi.dprintf ("checktime: %i   time:%i  lastorg %s \n",  ent->client->pers.afk_check_time, level.framenum, vtos(ent->client->pers.last_angles));
+		//gi.dprintf ("checktime: %i time: %i diff: %i lastorg: %s movement: %s\n", ent->client->pers.afk_check_time,
+		//			level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
+		//			(ent->client->movement) ? "yes" : "no");
 
-		if (!VectorCompare(ent->s.angles, ent->client->pers.last_angles))
+		// kernel: add movement check
+		if (ent->client->movement || !VectorCompare(ent->s.angles, ent->client->pers.last_angles))
 			ent->client->pers.afk_check_time = level.framenum;
 		VectorCopy(ent->s.angles, ent->client->pers.last_angles);
 

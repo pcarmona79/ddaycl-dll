@@ -17,6 +17,9 @@ Versión 5.064
   otros jugadores. Además, Drop_Briefcase() reproducirá el sonido
   "ctb/drop.wav" al soltarse el maletín.
 
+- Agrega detección de movimiento a las comprobaciones de AFK en
+  ClientEndServerFrame() de p_view.c.
+
 Versión 5.063
 -------------
 
