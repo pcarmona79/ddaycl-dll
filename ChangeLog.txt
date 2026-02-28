@@ -1,3 +1,25 @@
+Versión 5.064
+-------------
+
+- Se añade la nueva variable "motd_time" para almacenar el tiempo que se
+  debe mostrar el MOTD al inicio de cada nivel. El menú principal se
+  bloqueará antes de este tiempo para que los usuarios puedan leer el
+  mensaje.
+
+- Modifica Touch_Item() de g_items.c para permitir que se pueda recoger
+  el maletín simplemente tocándolo.
+
+- Agrega el flag "important" a PlayTeamSound() de g_utils.c para
+  permitir enviar sonidos importantes a los clientes que observan.
+
+- Modifica Pickup_Briefcase() y Drop_Briefcase() de g_objectives.c para
+  usar la función centerprintothers() y mostrar mensajes centrados a los
+  otros jugadores. Además, Drop_Briefcase() reproducirá el sonido
+  "ctb/drop.wav" al soltarse el maletín.
+
+- Agrega detección de movimiento a las comprobaciones de AFK en
+  ClientEndServerFrame() de p_view.c.
+
 Versión 5.063
 -------------
 

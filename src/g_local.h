@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.063" // ddaychile
+#define DEVVERSION	"5.064" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -829,6 +829,9 @@ extern cvar_t *tournament;
 // kernel: maximum knives to drop
 extern cvar_t *knife_maxdrop;
 
+// kernel: time to display the MOTD at beginning of level
+extern cvar_t *motd_time;
+
 //extern	cvar_t	*crosshair;
 
 #define world	(&g_edicts[0])
@@ -975,6 +978,7 @@ qboolean WeighPlayer(edict_t *ent);
 void reinforcement_think(edict_t *ent);
 
 void centerprintall (char *mesg, ...);
+void centerprintothers(edict_t *skipent, char *mesg, ...);
 
 qboolean IsValidPlayer(edict_t *ent);
 

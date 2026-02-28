@@ -800,7 +800,7 @@ void Set_Briefcase_Respawn (edict_t *ent)
 }
 
 
-void PlayTeamSound(int teamidx, char* soundfile);
+void PlayTeamSound(int teamidx, char* soundfile, qboolean important);
 
 qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 {
@@ -821,14 +821,14 @@ qboolean Pickup_Briefcase (edict_t *ent, edict_t *other)
 	briefcase_respawn_needed = false;
 
 	// emit a capture sound for team who pickups
-	PlayTeamSound(other->client->resp.team_on->index, "ctb/pickup.wav");
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/pickup.wav", true);
 
 	// the other team will get an alert
 	int otheridx = (other->client->resp.team_on->index + 1) % 2;
-	PlayTeamSound(otheridx, "ctb/alert.wav");
+	PlayTeamSound(otheridx, "ctb/alert.wav", false);
 
 	safe_centerprintf(other, "You've taken the briefcase!\n\nBring it to the base, soldier, immediately!");
-	gi.bprintf(PRINT_HIGH, "%s picked up the briefcase for team %s!\n", other->client->pers.netname,
+	centerprintothers(other, "%s picked up the briefcase for team %s!", other->client->pers.netname,
 			   other->client->resp.team_on->teamname);
 
 	return true;
@@ -846,7 +846,8 @@ void Drop_Briefcase (edict_t *ent, gitem_t *item)
 	ent->client->has_briefcase = false;
 	ent->s.modelindex3 = 0;
 
-	gi.bprintf(PRINT_HIGH, "%s lost the briefcase of team %s!\n", ent->client->pers.netname,
+	gi.sound(&g_edicts[0], CHAN_AUTO, gi.soundindex("ctb/drop.wav"), 1, ATTN_NONE, 0);
+	centerprintothers(ent, "%s lost the briefcase of team %s!", ent->client->pers.netname,
 			   ent->client->resp.team_on->teamname);
 }
 
@@ -925,14 +926,14 @@ void base_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf
 	other->client->resp.points++;
 
 	// scoring team will listen flagcap
-	PlayTeamSound(other->client->resp.team_on->index, "ctb/flagcap.wav");
+	PlayTeamSound(other->client->resp.team_on->index, "ctb/flagcap.wav", true);
 
 	// the other team will get an alert voice
 	int otheridx = (other->client->resp.team_on->index + 1) % 2;
 	if (otheridx == 0)
-		PlayTeamSound(otheridx, "ctb/axisbriefcase.wav");
+		PlayTeamSound(otheridx, "ctb/axisbriefcase.wav", false);
 	else
-		PlayTeamSound(otheridx, "ctb/alliedbriefcase.wav");
+		PlayTeamSound(otheridx, "ctb/alliedbriefcase.wav", false);
 
 	gi.bprintf(PRINT_HIGH, "%s recovered the briefcase for team %s!\n", other->client->pers.netname,
 			   other->client->resp.team_on->teamname);

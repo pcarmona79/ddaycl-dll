@@ -189,6 +189,9 @@ cvar_t *tournament;
 // kernel: maximum knives to drop
 cvar_t *knife_maxdrop;
 
+// kernel: time to display the MOTD at beginning of level
+cvar_t *motd_time;
+
 // evil: global variables for countdown
 int countdownActive = 0;
 int countdownValue = 0;

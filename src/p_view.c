@@ -2343,7 +2343,7 @@ void ClientEndServerFrame (edict_t *ent)
 {
 	float	bobtime;
 	int		i;
-
+	int 	framediff;
 
 	vec3_t	start;
 	vec3_t	end;
@@ -2359,16 +2359,18 @@ void ClientEndServerFrame (edict_t *ent)
 
 	if (ent->client)
 	{
+		framediff = level.framenum - ent->client->resp.enterframe;
 
-		if (level.framenum - ent->client->resp.enterframe == 10)
+		// kernel: show MOTD during "motd_time" seconds
+		if (framediff % 10 == 0 && framediff < 10 * (int)(motd_time->value))
 			Cmd_MOTD(ent);
 
 		if (tournament->value && countdownTimeLimit <= 0 && !freeze_mode && !level.intermissiontime
-			&& (level.framenum - ent->client->resp.enterframe) % 100 == 0)
+			&& framediff % 100 == 0)
 			safe_centerprintf(ent, "Server is running in \"Tournament\" mode.\n\n"
 							  "Please wait for the countdown to begin the battle.");
 
-		if (nohud->value && level.framenum - ent->client->resp.enterframe == 100)
+		if (nohud->value && framediff == 100)
 			safe_centerprintf(ent, "Server is running in \"No Hud\" mode.\nRealism!!!");
 
 		//		gi.dprintf ("%i frame\n", (level.framenum - ent->client->resp.enterframe) );
@@ -3173,9 +3175,12 @@ if (ent->client->turret)
 
 	if (afk_time->value && level.framenum % 10 == 0 && ent->client->resp.team_on && !level.intermissiontime)
 	{
-		//gi.dprintf ("checktime: %i   time:%i  lastorg %s \n",  ent->client->pers.afk_check_time, level.framenum, vtos(ent->client->pers.last_angles));
+		//gi.dprintf ("checktime: %i time: %i diff: %i lastorg: %s movement: %s\n", ent->client->pers.afk_check_time,
+		//			level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
+		//			(ent->client->movement) ? "yes" : "no");
 
-		if (!VectorCompare(ent->s.angles, ent->client->pers.last_angles))
+		// kernel: add movement check
+		if (ent->client->movement || !VectorCompare(ent->s.angles, ent->client->pers.last_angles))
 			ent->client->pers.afk_check_time = level.framenum;
 		VectorCopy(ent->s.angles, ent->client->pers.last_angles);
 
