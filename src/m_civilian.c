@@ -77,11 +77,41 @@ void monster_footstep (edict_t *ent);
 
 mframe_t civilian_frames_stand [] =
 {
-	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,
-	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL,	ai_stand, 0, NULL
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL },
+	{ ai_stand, 0, NULL }
 };
 mmove_t civilian_move_stand = {FRAME_stand1, FRAME_stand35, civilian_frames_stand, civilian_stand};
 
@@ -89,16 +119,16 @@ mmove_t civilian_move_stand = {FRAME_stand1, FRAME_stand35, civilian_frames_stan
 
 mframe_t civilian_frames_walk [] =
 {
-	ai_walk,	5,	monster_footstep,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	monster_footstep,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	NULL,
-	ai_walk,	5,	civilian_think
+	{ ai_walk,	5,	monster_footstep },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	monster_footstep },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	NULL },
+	{ ai_walk,	5,	civilian_think }
 
 };
 mmove_t civilian_move_walk = {FRAME_walk1, FRAME_walk10, civilian_frames_walk, civilian_walk};
@@ -106,24 +136,24 @@ mmove_t civilian_move_walk = {FRAME_walk1, FRAME_walk10, civilian_frames_walk, c
 
 mframe_t civilian_frames_slow_run [] =
 {
-	ai_walk,	20,	NULL,
-	ai_walk,	20,	monster_footstep,
-	ai_walk,	20,	NULL,
-	ai_walk,	20,	NULL,
-	ai_walk,	20,	monster_footstep,
-	ai_walk,	20,	civilian_think
+	{ ai_walk,	20,	NULL },
+	{ ai_walk,	20,	monster_footstep },
+	{ ai_walk,	20,	NULL },
+	{ ai_walk,	20,	NULL },
+	{ ai_walk,	20,	monster_footstep },
+	{ ai_walk,	20,	civilian_think }
 };
 mmove_t civilian_move_slow_run = {FRAME_run1, FRAME_run6, civilian_frames_slow_run, civilian_run};
 
 
 mframe_t civilian_frames_run [] =
 {
-	ai_walk,	28,	NULL,
-	ai_walk,	28,	monster_footstep,
-	ai_walk,	28,	civilian_think,
-	ai_walk,	28,	NULL,
-	ai_walk,	28,	monster_footstep,
-	ai_walk,	28,	civilian_think
+	{ ai_walk,	28,	NULL },
+	{ ai_walk,	28,	monster_footstep },
+	{ ai_walk,	28,	civilian_think },
+	{ ai_walk,	28,	NULL },
+	{ ai_walk,	28,	monster_footstep },
+	{ ai_walk,	28,	civilian_think }
 };
 mmove_t civilian_move_run = {FRAME_run1, FRAME_run6, civilian_frames_run, civilian_run};
 
@@ -131,12 +161,12 @@ mmove_t civilian_move_run = {FRAME_run1, FRAME_run6, civilian_frames_run, civili
 
 mframe_t civilian_frames_death [] =
 {
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL }
 
 };
 mmove_t civilian_move_death = {FRAME_death1, FRAME_death6, civilian_frames_death, civilian_dead};
@@ -144,10 +174,10 @@ mmove_t civilian_move_death = {FRAME_death1, FRAME_death6, civilian_frames_death
 
 mframe_t civilian_frames_pain [] =
 {
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL,
-	ai_move,	0,		NULL
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL },
+	{ ai_move,	0,		NULL }
 
 };
 mmove_t civilian_move_pain = {FRAME_pain1, FRAME_pain4, civilian_frames_pain, civilian_stand};
