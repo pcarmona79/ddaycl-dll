@@ -257,7 +257,7 @@ static int AStar_FillLists ( void )
 	return (currentNode != -1);	//if -1 path is bloqued
 }
 
-static int AStar_ResolvePath ( int n1, int n2, int movetypes )
+int AStar_ResolvePath ( int n1, int n2, int movetypes )
 {
 	ValidLinksMask = movetypes;
 	if ( !ValidLinksMask )
