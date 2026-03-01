@@ -37,8 +37,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "game.h"
 #include "q_shared.h"
 
-static void FireGrenade_Explode (edict_t *ent);
-static void FireGrenade_Touch
+void FireGrenade_Explode (edict_t *ent);
+void FireGrenade_Touch
  (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
 void fire_flamegrenade
  (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed,

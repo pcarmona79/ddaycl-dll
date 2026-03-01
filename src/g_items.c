@@ -624,7 +624,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 {
 	edict_t	*dropped;
 	int		index;
-	int		grennum; //Wheaty: Temp variable
+	//int		grennum; //Wheaty: Temp variable
 
 	index = ITEM_INDEX(item);
 	dropped = Drop_Item (ent, item);
@@ -633,8 +633,8 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	else
 		dropped->count = ent->client->pers.inventory[index];
 
-	if (item->tag == AMMO_TYPE_GRENADES)
-		grennum = ent->client->pers.inventory[index];
+	//if (item->tag == AMMO_TYPE_GRENADES)
+	//	grennum = ent->client->pers.inventory[index];
 
 	//Wheaty: Only drop ONE grenade
 	if (item->tag == AMMO_TYPE_GRENADES)
@@ -2067,7 +2067,7 @@ void Weapon_Sandbag (edict_t *ent)
 {
 	static int      pause_frames[]  = {0};//{19, 32, 0};
     int				fire_frames[] = {7};
-	vec3_t	mins,maxs;
+	//vec3_t	mins,maxs;
 
 	edict_t	*sandbag;
 	trace_t		tr;
@@ -2134,16 +2134,16 @@ void Weapon_Sandbag (edict_t *ent)
 
 
 
-			VectorSet (mins, -20, -20, -10);
-			VectorSet (maxs, 20, 20, 10);
+	//VectorSet (mins, -20, -20, -10);
+	//VectorSet (maxs, 20, 20, 10);
 
-    
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-    VectorSet(offset, 0, 0, ent->viewheight);
-   VectorAdd (ent->s.origin, offset, start);
+	VectorSet(offset, 0, 0, ent->viewheight);
+	VectorAdd (ent->s.origin, offset, start);
 
-    VectorScale (forward, -2, ent->client->kick_origin);
-    ent->client->kick_angles[0] = -1;
+	VectorScale (forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
 
 
 	AngleVectors (ent->client->v_angle, forward, NULL, NULL);

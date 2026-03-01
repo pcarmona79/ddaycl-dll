@@ -1918,10 +1918,9 @@ void misc_deadsoldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker,
 /*-----/ PM /-----/ MODIFIED:  Check for gib. /-----*/
 
     if (self->health > self->gib_health)
+		return;
 
 /*--------------------------------------------------*/
-
-	return;
 
 	gi.sound (self, CHAN_BODY, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
 	for (n= 0; n < 4; n++)
@@ -3268,8 +3267,8 @@ void Medic_Screen (edict_t *ent)
 	vec3_t	a,b;
 	int iconpos;
 
-	qboolean qleft,qforward,qback,qright;
-	qleft = qforward = qback = qright = false;
+	//qboolean qleft,qforward,qback,qright;
+	//qleft = qforward = qback = qright = false;
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse || !ent->client)
@@ -3333,11 +3332,11 @@ void Medic_Screen (edict_t *ent)
 		VectorNormalize (vec);
 	
 		dot = DotProduct (vec, forward);
-		if (dot > 0.9)
+/*		if (dot > 0.9)
 			qforward = true;
 		else if (dot < .1)
 			qback = true;
-/*		else
+		else
 		{
 			dot = DotProduct (vec, right);
 			if (dot >.1)

@@ -834,25 +834,28 @@ skip_anim:
 		//faf:  moving this from cmd_scope to avoid slowdown on mauser
 		// Nick - Hack to allow a bolt action rifle reload animation to play the entirety.
 		if (ent->client->pers.weapon &&
-		(ent->client->pers.weapon->classnameb == WEAPON_MAUSER98K || 
-		ent->client->pers.weapon->classnameb == WEAPON_CARCANO ||
-		ent->client->pers.weapon->classnameb == WEAPON_M9130) &&
-		(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||
-		ent->client->ps.gunframe >=86 && ent->client->ps.gunframe <=97))
+			(ent->client->pers.weapon->classnameb == WEAPON_MAUSER98K ||
+			 ent->client->pers.weapon->classnameb == WEAPON_CARCANO ||
+			 ent->client->pers.weapon->classnameb == WEAPON_M9130) &&
+			((ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15) ||
+			 (ent->client->ps.gunframe >=86 && ent->client->ps.gunframe <=97)))
 		{
 			ent->client->ps.gunframe++;//faf
 		}
 		else if ((ent->client->pers.weapon &&
-		ent->client->pers.weapon->classnameb == WEAPON_ENFIELD) &&
-		(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||
-		ent->client->ps.gunframe >=89 && ent->client->ps.gunframe <=102))
+				  ent->client->pers.weapon->classnameb == WEAPON_ENFIELD) &&
+				 ((ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15) ||
+				  (ent->client->ps.gunframe >=89 && ent->client->ps.gunframe <=102)))
+		{
 			ent->client->ps.gunframe++;//faf
+		}
 		else if ((ent->client->pers.weapon &&
-		ent->client->pers.weapon->classnameb == WEAPON_ARISAKA) &&
-		(ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15 ||
-		ent->client->ps.gunframe >=62 && ent->client->ps.gunframe <=72))
+				  ent->client->pers.weapon->classnameb == WEAPON_ARISAKA) &&
+				 ((ent->client->ps.gunframe >= 4 && ent->client->ps.gunframe <= 15) ||
+				  (ent->client->ps.gunframe >=62 && ent->client->ps.gunframe <=72)))
+		{
 			ent->client->ps.gunframe++;//faf
-
+		}
 
 
 		// End Nick

@@ -813,7 +813,6 @@ qboolean TestFile(char *filename)
 qboolean TestEntFile(char *mapname, char *extension)
 {
 	char entfilename[MAX_QPATH] = "";
-	char *newentities;
 	int	i;
 
 	sprintf(entfilename, "ents/%s.%s", mapname, extension);

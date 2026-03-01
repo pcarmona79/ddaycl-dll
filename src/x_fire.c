@@ -330,9 +330,9 @@ void PBM_BurnDamage
 	int   points;
 	int   die = (int)damage[0];
 	int   base = (int)damage[1];
-	int   chance;
+	//int   chance;
 	
-	chance = (int)damage[2];
+	//chance = (int)damage[2];
 
 	if (PBM_Inflammable(victim))
 		return;

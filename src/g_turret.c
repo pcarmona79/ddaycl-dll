@@ -260,7 +260,7 @@ void fire_shell (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed,
 	shell->touch = shell_touch;
 
 //	shell->s.effects |= EF_GRENADE;
-	shell->nextthink = shell->nextthink = level.time + 8000/speed;
+	shell->nextthink = level.time + 8000.0/speed;
 	shell->think = G_FreeEdict;
 
 
@@ -1026,10 +1026,10 @@ void SP_turret_driver (edict_t *self)
 	self->gib_health = 0;
 	self->mass = 200;
 	self->viewheight = 24;
-/*-----/ PM /-----/ NEW:  Set fireflags. /-----*/
+/ *-----/ PM /-----/ NEW:  Set fireflags. /-----* /
   //  self->fireflags = FIREFLAG_DELTA_BASE | FIREFLAG_IGNITE;
-/*---------------------------------------------*/
-/*
+/ *---------------------------------------------* /
+/ *
 	self->die = turret_driver_die;
 	self->monsterinfo.stand = infantry_stand;
 
