@@ -664,22 +664,22 @@ if (scale <0) scale = 0;
 
 
 
-		if (ent->client->turret)
-		{
-			AngleVectors (ent->client->turret->s.angles, f, r, u);
-			VectorMA (ent->client->turret->s.origin, ent->client->turret->move_origin[0], f, start);
-			VectorMA (start, ent->client->turret->move_origin[1], r, start);
-			VectorMA (start, ent->client->turret->move_origin[2], u, start);
-//			VectorSubtract (start, ent->s.origin, v);
+	if (ent->client->turret)
+	{
+		AngleVectors (ent->client->turret->s.angles, f, r, u);
+		VectorMA (ent->client->turret->s.origin, ent->client->turret->move_origin[0], f, start);
+		VectorMA (start, ent->client->turret->move_origin[1], r, start);
+		VectorMA (start, ent->client->turret->move_origin[2], u, start);
+//		VectorSubtract (start, ent->s.origin, v);
 
-			ent->client->ps.pmove.origin[0] = start[0]*8;
-            ent->client->ps.pmove.origin[1] = start[1]*8;
-            ent->client->ps.pmove.origin[2] = start[2]*8;
+		ent->client->ps.pmove.origin[0] = start[0]*8;
+		ent->client->ps.pmove.origin[1] = start[1]*8;
+		ent->client->ps.pmove.origin[2] = start[2]*8;
 
-			VectorClear (v);
+		VectorClear (v);
 
 
-		}
+	}
 
 	VectorCopy (v, ent->client->ps.viewoffset);
 	
@@ -1275,10 +1275,10 @@ void P_ShowID (edict_t *ent)
 
 		}
 		else if (ent->client->resp.mos == MEDIC ||
-			ent->client->resp.show_id &&
-			(  ent->client->resp.team_on &&    ent->client->resp.mos &&
-			tr.ent->client->resp.team_on && tr.ent->client->resp.mos &&
-			ent->client->resp.team_on->index == tr.ent->client->resp.team_on->index))
+				 (ent->client->resp.show_id &&
+				  ent->client->resp.team_on && ent->client->resp.mos &&
+				  tr.ent->client->resp.team_on && tr.ent->client->resp.mos &&
+				  ent->client->resp.team_on->index == tr.ent->client->resp.team_on->index))
 		{
 			ent->client->ps.stats[STAT_IDENT] = 1;
 			ent->client->ps.stats[STAT_IDENT_PLAYER] = CS_PLAYERSKINS + (tr.ent - g_edicts - 1);	
@@ -1624,7 +1624,7 @@ void Play_Footstep_Sound (edict_t *ent)
 	trace_t tr;
 
 	VectorMA (ent->s.origin, 50, end, end);
-	tr = gi.trace (ent->s.origin, NULL, NULL, end, ent, MASK_ALL);
+//	tr = gi.trace (ent->s.origin, NULL, NULL, end, ent, MASK_ALL);
 
 	if (ent->client)
 	{
@@ -1634,7 +1634,7 @@ void Play_Footstep_Sound (edict_t *ent)
 	//		float volume = (float)(VectorLength(ent->velocity))/200;
 
 		vec3_t end, down = { 0, 0, -1};
-		trace_t tr;
+//		trace_t tr;
 
 
 		if (volume > .8)
@@ -1912,12 +1912,12 @@ void G_SetClientFrame (edict_t *ent)
 	if (run != client->anim_run && client->anim_priority == ANIM_BASIC
 		&& !(run == false && client->sidestep_anim != 0))//faf: let them finish sidestepping
 		goto newanim;
-	if (!ent->deadflag && 
-		(!ent->groundentity
-		&& (client->last_jump_time > level.time - 1//faf:  only do jump anims when jump is pressed
-		&& client->anim_priority <= ANIM_WAVE) ||
+	if ((!ent->deadflag &&
+		 !ent->groundentity &&
+		 client->last_jump_time > level.time - 1 && //faf:  only do jump anims when jump is pressed
+		 client->anim_priority <= ANIM_WAVE) ||
 		ent->client->landed == false ||
-		(ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL)))
+		(ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL))
 		goto newanim;
 	//faf: go to new sidestep animations immediately
 	if (extra_anims->value !=0 && 
@@ -2052,9 +2052,9 @@ newanim:
 	//faf
 	/* kernel: this is slowing down the playability */
 	else if (extra_anims->value == 1 && chile->value == 0 &&
-		((ent->oldstance && ent->stanceflags != ent->oldstance)||
-		(ent->s.frame > FRAME_standtokneel03 && ent->s.frame < FRAME_kneeltoprone06)
-		&& !ent->deadflag))
+			 ((ent->oldstance && ent->stanceflags != ent->oldstance) ||
+			  (ent->s.frame > FRAME_standtokneel03 && ent->s.frame < FRAME_kneeltoprone06
+			   && !ent->deadflag)))
 	{
 
 			if(ent->s.frame < FRAME_standtokneel03  ||
@@ -3140,7 +3140,7 @@ if (ent->client->turret)
 //if (g_edicts[globals.num_edicts].classname)
 //gi.dprintf("%i %s \n", globals.num_edicts, "X");// g_edicts[globals.num_edicts].classname);
 
-/*
+/ *
 	if (1)
 	{
 		int o;
@@ -3166,10 +3166,10 @@ if (ent->client->turret)
 
 
 	//stores player's old position so bots can shoot at (pseudo lag simulator)
-	if (ent->client->last_pos2)
-		VectorCopy (ent->client->last_pos1, ent->client->last_pos3);
-	if (ent->client->last_pos1)
-		VectorCopy (ent->client->last_pos1, ent->client->last_pos2);
+	//if (ent->client->last_pos2)
+	VectorCopy (ent->client->last_pos1, ent->client->last_pos3);
+	//if (ent->client->last_pos1)
+	VectorCopy (ent->client->last_pos1, ent->client->last_pos2);
 
 	VectorCopy (ent->s.origin, ent->client->last_pos1);
 
