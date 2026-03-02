@@ -146,13 +146,13 @@ void Shotgun_Reload (edict_t *ent,
 					 int FRAME_RAISE_LAST,		int FRAME_AFIRE_LAST,	int FRAME_AIDLE_LAST,
 					 int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent))
 {
-	gitem_t *ammo_item;
+	//gitem_t *ammo_item;
 	int		ammo_index,	*ammo_amount;
 	int		FRAME_IDLE_FIRST = (ent->client->aim)?FRAME_AIDLE_FIRST:FRAME_LIDLE_FIRST;
 
-	if(ent->client->pers.weapon->ammo)
+	if (ent->client->pers.weapon->ammo)
 	{
-		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
+		//ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ent->client->ammo_index;
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}
@@ -207,7 +207,7 @@ void Shotgun_Reload (edict_t *ent,
 	if (ent->client->ps.gunframe < FRAME_RELOAD_FIRST 
 		|| ent->client->ps.gunframe > FRAME_RELOAD_LAST)
 		ent->client->ps.gunframe = FRAME_RELOAD_FIRST;
-    else if (ent->client->ps.gunframe == FRAME_RELOAD_LAST -2 
+	else if (ent->client->ps.gunframe == FRAME_RELOAD_LAST - 2
 		&& ent->client->mags[ent->client->pers.weapon->mag_index].shotgun_rnd < 6 
 		&& ent->client->pers.inventory[ammo_index]>0)
 	{
@@ -225,6 +225,7 @@ void Shotgun_Reload (edict_t *ent,
         ent->client->weaponstate = WEAPON_READY;
 	} 
 }
+
 void Weapon_Shotgun (edict_t * ent)
 {
 	static int	pause_frames[]	= {0};

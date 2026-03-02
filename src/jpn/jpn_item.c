@@ -182,9 +182,9 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		"misc/w_pkup.wav",
 		"models/weapons/usa/g_m1carb/tris.md2", 0,
 		"models/weapons/usa/v_m1carb/tris.md2",
-/* icon */	//	"w_m1carb",
-/* pickup *///	"M1 Carbine",
-/*		0,
+/ * icon * /	//	"w_m1carb",
+/ * pickup * ///	"M1 Carbine",
+/ *		0,
 		1,
 		"m1carb_mag",
 		IT_WEAPON|IT_STAY_COOP,
@@ -196,7 +196,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		5000,
 		100,
 		"jpn",
-/* precache */ /*"usa/m1carb/fire.wav usa/m1carb/reload.wav usa/m1carb/unload.wav",
+/ * precache * / / *"usa/m1carb/fire.wav usa/m1carb/reload.wav usa/m1carb/unload.wav",
 		&jpnguninfo[M1CARB_FRAME]
 	},
 */
@@ -546,10 +546,10 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		"misc/am_pkup.wav",
 		"models/items/ammo/m1/tris.md2", 0,
 		NULL,
-/* icon */	//	"a_m1carb",
-/* pickup *///	"m1carb_mag",
-/* width */	//	3,
-/*		M1CARB_MAG,
+/ * icon * /	//	"a_m1carb",
+/ * pickup * ///	"m1carb_mag",
+/ * width * /	//	3,
+/ *		M1CARB_MAG,
 		NULL,
 		IT_AMMO,
 		NULL,
@@ -560,7 +560,7 @@ gitem_t jpnitems[MAX_TEAM_ITEMS]=
 		0,
 		0,
 		"jpn",
-/* precache */ //""
+/ * precache */ //""
 //	},
 
 	{
