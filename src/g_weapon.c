@@ -64,7 +64,7 @@ a non-instant attack weapon.  It checks to see if a
 monster's dodge function should be called.
 =================
 */
-static void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed)
+void check_dodge (edict_t *self, vec3_t start, vec3_t dir, int speed)
 {
 	vec3_t	end;
 	vec3_t	v;
@@ -276,14 +276,14 @@ void Play_Bullet_Whiz (edict_t *self, vec3_t start, vec3_t end, edict_t *hit_ent
 	trace_t		tr;
 	edict_t		*ignore;
 	int			mask;
-	qboolean	water;
+//	qboolean	water;
 
 	vec3_t  whizrangemax = {40,40,40};
 	vec3_t  whizrangemin = {-40,-40,-40};
 
 	VectorCopy (start, from);
 	ignore = self;
-	water = false;
+//	water = false;
 	mask = MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA;
 	while (ignore)
 	{
@@ -292,7 +292,7 @@ void Play_Bullet_Whiz (edict_t *self, vec3_t start, vec3_t end, edict_t *hit_ent
 		if (tr.contents & (CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_MONSTER|CONTENTS_MIST))		
 		{
 			mask &= ~(CONTENTS_SOLID|CONTENTS_SLIME|CONTENTS_LAVA|CONTENTS_MONSTER|CONTENTS_MIST);
-			water = true;
+//			water = true;
 		}
 		else
 		{
@@ -357,17 +357,17 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 	qboolean	water = false;
 	int			content_mask = MASK_SHOT | MASK_WATER;
 
-	edict_t  *hit_ent = NULL;
+//	edict_t  *hit_ent = NULL;
 
 	// rezmoth - start dist trace
-	vec3_t	diststart, dist;
+	vec3_t	diststart; //, dist;
 	vec3_t	distend = {0, 0, -8192};
-	trace_t	disttr;
+//	trace_t	disttr;
 
 
 
 	if(self->client)
-	self->client->resp.accuracy_misses++;
+		self->client->resp.accuracy_misses++;
 
 
 
@@ -375,8 +375,8 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 	//VectorAdd(start, ent->mins, start); // go to the bottom of the player
 	VectorAdd(diststart, distend, distend);			// add distance for end
 
-	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
-	VectorSubtract(self->s.origin, disttr.endpos, dist);
+//	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
+//	VectorSubtract(self->s.origin, disttr.endpos, dist);
 	// rezmoth - end dist trace
 
 	// Extra debugging propaganda
@@ -418,7 +418,7 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 		}
 		else 
 		{
-			r = (crandom() * (hspread)) - ((hspread)/2);//hans era 2
+			r = (crandom() * (hspread)) - ((hspread)/2.0);//hans era 2
 			u = (crandom() * (vspread));
 		}
 
@@ -567,13 +567,13 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 
 				// damage impacted player
 				T_Damage (tr.ent, self, self, aimdir, tr.endpos, tr.plane.normal, damage, kick, DAMAGE_BULLET, mod);
-				hit_ent = tr.ent;
+//				hit_ent = tr.ent;
 	
 				if (self->client && tr.ent->client)
 				{
-					if(!OnSameTeam(tr.ent, self))
+					if (!OnSameTeam(tr.ent, self))
 						self->client->resp.accuracy_hits++;
-                    else
+					else
 						self->client->resp.accuracy_misses++;
 				}
 
@@ -586,7 +586,7 @@ void fire_gun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, 
 					{
 						if (tr.ent->health > 0)
 						{
-							if (tr.ent->classnameb != OBJECTIVE_VIP && !tr.ent->svflags & SVF_DEADMONSTER)
+							if (tr.ent->classnameb != OBJECTIVE_VIP && !(tr.ent->svflags & SVF_DEADMONSTER))
 								ThrowDebris (self, "models/objects/debris2/tris.md2", 1, tr.endpos);
 						}
 					}
@@ -919,7 +919,7 @@ void tracer_effect_delay (edict_t *self)
 void fire_tracer (edict_t *self, vec3_t start, vec3_t dir, int damage, int mod)
 {
 	int speed=2100;//1500;//850;  //bullet speed
-	int effect=EF_HYPERBLASTER;
+//	int effect=EF_HYPERBLASTER;
 	edict_t	*bolt;
 	trace_t	tr;
 
@@ -973,7 +973,7 @@ void fire_tracer (edict_t *self, vec3_t start, vec3_t dir, int damage, int mod)
 void fire_hmg_bullet (edict_t *self, vec3_t start, vec3_t dir, int damage, int mod)
 {
 	int speed=2100;//1500;//850;  //bullet speed
-	int effect=EF_HYPERBLASTER;
+//	int effect=EF_HYPERBLASTER;
 	edict_t	*hmg_bullet;
 	trace_t	tr;
 
@@ -1130,8 +1130,8 @@ void Smoke_Effect (vec3_t origin, float strength)
 			continue;
 		if (!e->client)
 			continue;
-		if (!e->s.origin)
-			continue;
+//		if (!e->s.origin)
+//			continue;
 		if (e->ai)
 			continue;
 		if (e->deadflag)
@@ -1872,7 +1872,7 @@ void panzer_effect(edict_t *rocket)
 
 void BotWarnThink (edict_t *ent)
 {
-	if (!ent->owner || ent->owner && !ent->owner->inuse)
+	if (!ent->owner || (ent->owner && !ent->owner->inuse))
 	{
 		ent->think = G_FreeEdict;
 	}
@@ -1918,7 +1918,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
+		rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 
@@ -2001,7 +2001,7 @@ void fire_rocket_piat (edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
+		rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 	
@@ -2061,7 +2061,7 @@ void fire_rocket_panzerfaust (edict_t *self, vec3_t start, vec3_t dir, int damag
 	else
 	{
 		rocket->s.effects |= EF_GRENADE;
-		rocket->nextthink = rocket->nextthink = level.time + 8000.0/speed;
+		rocket->nextthink = level.time + 8000.0/speed;
 		rocket->think = G_FreeEdict;
 	}
 	
@@ -3221,7 +3221,7 @@ void Weapon_HMG_Fire (edict_t *ent)
 void Weapon_MG42_Fire (edict_t *ent)
 {
 	int			i;
-	int			shots=1;
+//	int			shots=1;
 	vec3_t		start;
 	vec3_t		forward, right, up;
 	vec3_t		offset;
@@ -3536,7 +3536,7 @@ void Weapon_Rocket_Fire (edict_t *ent)
 
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
 	int mag_index=ent->client->pers.weapon->mag_index;
-	int mod=guninfo->MeansOfDeath;
+//	int mod=guninfo->MeansOfDeath;
 	int	radius_damage = guninfo->damage_radius; //The *damage* within the radius
 	int	damage		= guninfo->damage_direct;
 
@@ -3548,9 +3548,9 @@ void Weapon_Rocket_Fire (edict_t *ent)
 	if (ent->stanceflags == STANCE_STAND ||
 		ent->stanceflags == STANCE_CRAWL ||
 //faf		ent->client->movement			 ||
-	    !ent->client->aim				 ||
-	    gi.pointcontents(ent->s.origin) & MASK_WATER && //Wheaty: Don't let them fire in water
-		ent->client->weaponstate == WEAPON_READY) //faf
+		!ent->client->aim				 ||
+		(gi.pointcontents(ent->s.origin) & MASK_WATER && //Wheaty: Don't let them fire in water
+		ent->client->weaponstate == WEAPON_READY)) //faf
 	{
 		if (ent->client->gunwarntime && ent->client->gunwarntime > level.time - 1)
 		{}else{
@@ -4012,8 +4012,8 @@ void TNT_Think (edict_t *ent)
 	if (ent->owner && ent->owner->client)
 	{
 		if (!ent->owner->client->resp.team_on ||
-			ent->owner->client->resp.team_on &&
-			ent->owner->client->resp.team_on->index != ent->obj_owner)
+			(ent->owner->client->resp.team_on &&
+			ent->owner->client->resp.team_on->index != ent->obj_owner))
 		{
 			ent->think = G_FreeEdict;
 			ent->nextthink = level.time + .1;
@@ -4134,7 +4134,7 @@ void fire_tnt (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed
 void Weapon_Vickers_Fire (edict_t *ent)  //faf:  this was taken from the game dll- weapon_ hmg_fire base
 {
 	int			i;
-	int			shots=1;
+//	int			shots=1;
 	vec3_t		start;
 	vec3_t		forward, right, up;
 	vec3_t		offset;
@@ -4401,7 +4401,7 @@ void Weapon_PIAT_Fire (edict_t *ent)
 
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
 	int mag_index=ent->client->pers.weapon->mag_index;
-	int mod=guninfo->MeansOfDeath;
+//	int mod=guninfo->MeansOfDeath;
 	int	radius_damage = guninfo->damage_radius; //The *damage* within the radius
 	int	damage		= guninfo->damage_direct;
 
@@ -4973,15 +4973,15 @@ void fire_shotgun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
 	qboolean	water = false;
 	int			content_mask = MASK_SHOT | MASK_WATER;
 
-	vec3_t	diststart, dist;
+	vec3_t	diststart; //, dist;
 	vec3_t	distend = {0, 0, -8192};
-	trace_t	disttr;
+//	trace_t	disttr;
 
 	VectorCopy(self->s.origin, diststart);
 	VectorAdd(diststart, distend, distend);
 
-	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
-	VectorSubtract(self->s.origin, disttr.endpos, dist);
+//	disttr = gi.trace (diststart, self->mins, self->maxs, distend, self, MASK_SOLID);
+//	VectorSubtract(self->s.origin, disttr.endpos, dist);
 	tr = gi.trace(self->s.origin, NULL, NULL, start, self, MASK_SHOT);
 
 	if (!(tr.fraction < 1.0))
@@ -5132,7 +5132,7 @@ void Weapon_Shotgun_Fire (edict_t *ent)
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;
 	
 	int mag_index=ent->client->pers.weapon->mag_index;
-	int mod=guninfo->MeansOfDeath;
+//	int mod=guninfo->MeansOfDeath;
 	int	damage=guninfo->damage_direct;
 	
 	//ent->client->aim = false;
@@ -5219,17 +5219,18 @@ qboolean fire_katana ( edict_t *self, vec3_t start, vec3_t dir, int damage, int 
 							gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit1.wav") , 1, ATTN_NORM, 0);
 						else
 							gi.sound (self, CHAN_AUTO, gi.soundindex("jpn/katana/hit2.wav") , 1, ATTN_NORM, 0);
-							gi.WriteByte (svc_temp_entity);
-							gi.WriteByte (TE_SPARKS);
-							gi.WritePosition (tr.endpos);
-							gi.WriteDir (tr.endpos);
-							gi.multicast (tr.endpos, MULTICAST_PVS);
+
+						gi.WriteByte (svc_temp_entity);
+						gi.WriteByte (TE_SPARKS);
+						gi.WritePosition (tr.endpos);
+						gi.WriteDir (tr.endpos);
+						gi.multicast (tr.endpos, MULTICAST_PVS);
 					}
 
 					else
 					{
 						T_Damage (tr.ent, self, self, dir, tr.endpos, tr.plane.normal, 100, 50, 0,MOD_KNIFE);//faf
-					  gi.sound (self, CHAN_AUTO, gi.soundindex("brain/melee3.wav") , 1, ATTN_NORM, 0); 
+						gi.sound (self, CHAN_AUTO, gi.soundindex("brain/melee3.wav") , 1, ATTN_NORM, 0);
 					}
 
 			
@@ -5415,8 +5416,8 @@ void Molotov_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *s
 			continue;
 		if (!e->client)
 			continue;
-		if (!e->s.origin)
-			continue;
+//		if (!e->s.origin)
+//			continue;
 		if (e->deadflag)
 			continue;
 		if (OnSameTeam(e,ent))
@@ -5577,7 +5578,7 @@ void Weapon_Molotov_Fire (edict_t *ent)
     vec3_t  offset;
 	vec3_t g_offset;
 
-	int mag_index=ent->client->pers.weapon->mag_index;
+//	int mag_index=ent->client->pers.weapon->mag_index;
 
 
 	ent->client->ps.gunframe++;//faf
@@ -5928,7 +5929,7 @@ void Weapon_Pps43_Fire (edict_t *ent)
 void Weapon_MG34_Fire (edict_t *ent)
 {
 	int			i;
-	int			shots=1;
+//	int			shots=1;
 	vec3_t		start;
 	vec3_t		forward, right, up;
 	vec3_t		offset;
@@ -6063,38 +6064,38 @@ void Weapon_MG34_Fire (edict_t *ent)
 		ent->client->machinegun_shots -= 10;
 
 
-		VectorSet(offset, 0, 0, ent->viewheight - 0);
-		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+	VectorSet(offset, 0, 0, ent->viewheight - 0);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		// rezmoth - tracers moved to here
-		//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, mod, true);
-		++ent->numfired;
+	// rezmoth - tracers moved to here
+	//fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, mod, true);
+	++ent->numfired;
 
 //		if (ent->numfired % TRACERSHOT == 1)
 //			fire_tracer (ent, start, forward, damage, mod);
 //		else
 //			fire_gun(ent, start, forward, damage, kick, 0, 0, mod, false);
-			fire_gun(ent, start, forward, damage, kick, LMG_SPREAD, LMG_SPREAD, mod, false);
+	fire_gun(ent, start, forward, damage, kick, LMG_SPREAD, LMG_SPREAD, mod, false);
 
 		
-		//faf:  fire 2 bullets.  to simulate 900 rpm firing rate ****************
-		if (ent->numfired % 2 == 1)
+	//faf:  fire 2 bullets.  to simulate 900 rpm firing rate ****************
+	if (ent->numfired % 2 == 1)
+	{
+		for (i=0 ; i<3 ; i++)
 		{
-			for (i=0 ; i<3 ; i++)
-			{
-				//rezmoth - changed for new firing system
-				ent->client->kick_origin[i] = crandom() * 0.35;
-				ent->client->kick_angles[i] += crandom() * 0.7;
-			}
-			VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
-			AngleVectors (angles, forward, right, up);
-			
-			VectorSet(offset, 0, 0, ent->viewheight - 0);
-			P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-
-			fire_gun(ent, start, forward, damage, kick, LMG_SPREAD, LMG_SPREAD, mod, false);
+			//rezmoth - changed for new firing system
+			ent->client->kick_origin[i] = crandom() * 0.35;
+			ent->client->kick_angles[i] += crandom() * 0.7;
 		}
-		//**********************************************************************
+		VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
+		AngleVectors (angles, forward, right, up);
+			
+		VectorSet(offset, 0, 0, ent->viewheight - 0);
+		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+
+		fire_gun(ent, start, forward, damage, kick, LMG_SPREAD, LMG_SPREAD, mod, false);
+	}
+	//**********************************************************************
 
 
 
@@ -6437,7 +6438,7 @@ void Weapon_Panzerfaust_Fire (edict_t *ent)
 
 	GunInfo_t *guninfo=ent->client->pers.weapon->guninfo;	
 	int mag_index=ent->client->pers.weapon->mag_index;
-	int mod=guninfo->MeansOfDeath;
+//	int mod=guninfo->MeansOfDeath;
 	int	radius_damage = guninfo->damage_radius; //The *damage* within the radius
 	int	damage		= guninfo->damage_direct;
 
@@ -6453,40 +6454,40 @@ void Weapon_Panzerfaust_Fire (edict_t *ent)
 		return;
 
 
-		// Add the new ones.
-		if (gi.pointcontents(ent->s.origin) & MASK_WATER) {
-			if (ent->client->machinegun_shots == 0)
-				safe_centerprintf(ent, "Get out the water to fire!!\n");
-			firewrong = 1;
-			ent->client->machinegun_shots = 1;
-				}
+	// Add the new ones.
+	if (gi.pointcontents(ent->s.origin) & MASK_WATER) {
+		if (ent->client->machinegun_shots == 0)
+			safe_centerprintf(ent, "Get out the water to fire!!\n");
+		firewrong = 1;
+		ent->client->machinegun_shots = 1;
+	}
 
-		else if (!ent->client->aim) {
+	else if (!ent->client->aim) {
 
 //			if (ent->client->machinegun_shots == 0)
 //				safe_centerprintf(ent, "You have gotta AIM it, Tommy Atkins!!\n");
-			firewrong = 1;
-			ent->client->machinegun_shots = 1;
+		firewrong = 1;
+		ent->client->machinegun_shots = 1;
 
-				}
+	}
 
-		else if ((ent->stanceflags == STANCE_STAND) || (ent->stanceflags == STANCE_CRAWL)) {
+	else if ((ent->stanceflags == STANCE_STAND) || (ent->stanceflags == STANCE_CRAWL)) {
 
-			if (ent->client->machinegun_shots == 0)
-				safe_centerprintf(ent, "You have to kneel to fire!\n");
-			firewrong = 1;
-			ent->client->machinegun_shots = 1;
+		if (ent->client->machinegun_shots == 0)
+			safe_centerprintf(ent, "You have to kneel to fire!\n");
+		firewrong = 1;
+		ent->client->machinegun_shots = 1;
 
-				}
+	}
 
-		//else if (ent->stanceflags == STANCE_CRAWL) {
-		//	if (ent->client->machinegun_shots == 0)
-		//		safe_centerprintf(ent, "Get up on one knee, Tommy Atkins!!\n");
-		//	firewrong = 1;
-		//	ent->client->machinegun_shots = 1;
-		//		}
+	//else if (ent->stanceflags == STANCE_CRAWL) {
+	//	if (ent->client->machinegun_shots == 0)
+	//		safe_centerprintf(ent, "Get up on one knee, Tommy Atkins!!\n");
+	//	firewrong = 1;
+	//	ent->client->machinegun_shots = 1;
+	//		}
 
-		if (firewrong == 1) {
+	if (firewrong == 1) {
 		//gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"),1, ATTN_NORM, 0);
 		//ent->pain_debounce_time = level.time + 1;
 		//ent->client->ps.gunframe= (ent->client->aim)?guninfo->LastAFire + 1:
@@ -6494,13 +6495,13 @@ void Weapon_Panzerfaust_Fire (edict_t *ent)
 
 		// Nick - 25/11/2002 Had to add this to allow the new 'empty' idle frames to work here.
 
-			if (ent->client->mags[mag_index].antitank_rnd == 0) {
+		if (ent->client->mags[mag_index].antitank_rnd == 0) {
 			ent->client->ps.gunframe = 46;
-			} else {
+		} else {
 			// Original code follows.
 			ent->client->ps.gunframe= (ent->client->aim)?72:
-															guninfo->LastFire + 1;
-			}
+				guninfo->LastFire + 1;
+		}
 		// End Nick
 
  		ent->client->weapon_sound = 0;
