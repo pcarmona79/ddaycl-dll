@@ -165,7 +165,7 @@ int LoadMapList(char *filename)
 { 
 	FILE *fp;
 	int  i=0;
-	char szLineIn[80];
+	char szLineIn[MAX_MAPNAME_LEN];
 
 	fp = DDay_OpenFile(filename);
 
@@ -174,7 +174,7 @@ int LoadMapList(char *filename)
 		// scan for [maplist] section
 		do
 		{
-			if (fscanf(fp, "%s", szLineIn) < 0)
+			if (fscanf(fp, "%15s", szLineIn) < 0)
 				break;
 		} while (!feof(fp) && (Q_stricmp(szLineIn, "[maplist]") != 0));
 
@@ -200,7 +200,8 @@ int LoadMapList(char *filename)
 				// TODO: check that maps exist before adding to list
 				//       (might be difficult to search a .pak file for these)
 
-				strncpy(maplist.mapnames[i], szLineIn, MAX_MAPNAME_LEN);
+				strncpy(maplist.mapnames[i], szLineIn, sizeof(szLineIn));
+				maplist.mapnames[i][MAX_MAPNAME_LEN - 1] = '\0';
 				gi.dprintf("...%s\n", maplist.mapnames[i]);
 				i++;
 
