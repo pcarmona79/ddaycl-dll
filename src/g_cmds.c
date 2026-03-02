@@ -1622,7 +1622,7 @@ void Cmd_Objectives (edict_t *ent)
 	char	entryb[1024];
 	int	stringlength;
 	char  *bp;
-	char  *objective_name;
+	char  *objective_name = NULL;
 
 
 	//JABot[start]
@@ -1683,6 +1683,8 @@ void Cmd_Objectives (edict_t *ent)
 			objective_name = "Objective";
 		else if (e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE)
 			objective_name = "Destroyable Objective";
+		else
+			objective_name = "Objective";
 
 		//put ! next to own objectives that can't be recapped
 		if (ent->client->resp.team_on &&
@@ -2134,7 +2136,7 @@ void GetNearbyTeammates(edict_t *self, char *buf)
 			!OnSameTeam(ent, self))
 			continue;
 
-		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
+		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, sizeof(ent->client->pers.netname));
 		nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
 		nearby_teammates_num++;
 		if (nearby_teammates_num >= 10)
@@ -2235,7 +2237,7 @@ void GetNearbyLocation(edict_t *self, char *buf)
 	float nearest_distance = 9999999;
 
 	vec3_t dist, dist2;
-	edict_t	*e, *closest;
+	edict_t	*e, *closest = NULL;
 
 
 	for (i=0 ; i<globals.num_edicts ; i++)
@@ -2280,13 +2282,14 @@ void GetNearbyLocation(edict_t *self, char *buf)
 	}
 	else
 	{
-		if (closest->obj_name)
+		if (!closest)
+			strcpy(buf, "somewhere");
+		else if (closest->obj_name)
 			strcpy(buf, closest->obj_name);
 		else if (closest->message)
 			strcpy(buf, closest->message);
 		else
-			strcpy(buf,"somewhere");
-
+			strcpy(buf, "somewhere");
 	}
 
 	return;
@@ -3002,8 +3005,8 @@ qboolean Cmd_Reload (edict_t *ent)
 	//int rds_left;           //+BD - Variable to handle rounds left
 	int mags_left;
 
-	gitem_t *ammo_item;
-	int		ammo_index, *ammo_amount;
+	gitem_t *ammo_item = NULL;
+	int		ammo_index = 0, *ammo_amount = NULL;
 
 	if (!ent ||
 		!ent->client ||
@@ -3036,6 +3039,8 @@ qboolean Cmd_Reload (edict_t *ent)
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount = &ent->client->pers.inventory[ammo_index];
 	}
+	else
+		return true;
 
     // Grab the current magazine max count...
 	if( ent->client->pers.weapon->topoff)
@@ -3098,7 +3103,7 @@ qboolean Cmd_Reload (edict_t *ent)
 
 			return true;
 		}
-        else
+		else
 		{
 			ent->client->weaponstate = WEAPON_RELOADING;
 //bcass start - truesite speed after reload
@@ -3109,7 +3114,7 @@ qboolean Cmd_Reload (edict_t *ent)
 			return true;
 		}
 	}
-    else
+	else
 	{
 		ent->client->weaponstate = WEAPON_READY;
 		safe_cprintf(ent,PRINT_HIGH,"You're out of ammo!\n");

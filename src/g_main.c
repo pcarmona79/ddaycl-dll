@@ -1009,8 +1009,8 @@ void CheckDMRules (void)
 		vec3_t		w; //faf
 		float		range;//faf
 		edict_t		*check;
-		edict_t		*alliedflag;
-		edict_t     *axisflag;
+		edict_t		*alliedflag = NULL;
+		edict_t     *axisflag = NULL;
 		edict_t     *e;
 
 		if (level.time == level.ctb_time)

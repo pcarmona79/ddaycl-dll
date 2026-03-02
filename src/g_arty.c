@@ -687,6 +687,8 @@ void Spawn_Plane(edict_t *ent)
 
 	edict_t *plane;
 
+	VectorSet(plane_start, 0, 0, 0);
+
 	/* kernel: not checking this because all info is in the airstrike ent
 	if (IsValidPlayer(ent) && 
 		ent->client && ent->client->arty_entry)
@@ -1171,6 +1173,7 @@ void Spawn_Plane_i(edict_t *ent)
 	trace_t	tr;
 	edict_t *plane;
 
+	VectorSet(plane_start, 0, 0, 0);
 	VectorCopy (ent->move_origin, start);
  	VectorClear(longest);
 	VectorSet(left, 1, 0, 0);
