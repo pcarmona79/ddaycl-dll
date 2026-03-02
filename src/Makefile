@@ -29,8 +29,8 @@ ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/ar
 
 #ARCH=i386
 #ARCH=x86_64
-CC=gcc -fcommon
-BASE_CFLAGS=-Dstricmp=strcasecmp
+CC=gcc
+BASE_CFLAGS=-Wall -fcommon -Dstricmp=strcasecmp
 
 #CFLAGS_RELEASE=$(BASE_CFLAGS) -S
 
@@ -45,7 +45,7 @@ CFLAGS_DEBUG=$(BASE_CFLAGS) -DDEBUG -g
 
 # uncomment for ARM64 cross-compilation
 #ARCH=aarch64
-#CC=aarch64-linux-gnu-gcc -fcommon
+#CC=aarch64-linux-gnu-gcc
 
 # Always uncommented
 LDFLAGS=-ldl -lm

@@ -1,3 +1,9 @@
+Versión 5.065
+-------------
+
+- Corrige varios archivos para remover todas las alertas generadas por
+  el compilador al usar -Wall.
+
 Versión 5.064
 -------------
 
