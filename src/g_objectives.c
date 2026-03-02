@@ -58,7 +58,7 @@ void objective_area_think (edict_t *self) {
 	edict_t *ent  = NULL;
 	int count = 0;
 	//int i=0;
-	int newteam;
+	int newteam = -1;
 	int delay;
 
 	self->nextthink = level.time + FRAMETIME;
@@ -81,6 +81,10 @@ void objective_area_think (edict_t *self) {
 
 		//gi.dprintf("Found %d players\n", count);		
 	}
+
+	// kernel: newteam should had a positive value
+	if (newteam < 0)
+		return;
 
 	if (count >= self->obj_count)
 	{
