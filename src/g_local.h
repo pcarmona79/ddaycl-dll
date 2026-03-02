@@ -1986,15 +1986,15 @@ extern int jpn_index;
 
 
 //JABot[start]
-#define WEAP_BLASTER			1 
-#define WEAP_SHOTGUN			2 
-#define WEAP_MACHINEGUN			3 
-#define WEAP_CHAINGUN			4 
-#define WEAP_GRENADES			5
-#define WEAP_ROCKETLAUNCHER		6 
-#define WEAP_RIFLE				7 
-#define WEAP_FLAMER				8
-#define WEAP_MELEE				9
+#define WEAP_BLASTER			0
+#define WEAP_SHOTGUN			1
+#define WEAP_MACHINEGUN			2
+#define WEAP_CHAINGUN			3
+#define WEAP_GRENADES			4
+#define WEAP_ROCKETLAUNCHER		5
+#define WEAP_RIFLE				6
+#define WEAP_FLAMER				7
+#define WEAP_MELEE				8
 
 #define WEAP_NONE			0
 #define WEAP_TOTAL			9
