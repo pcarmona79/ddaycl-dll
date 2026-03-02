@@ -1674,16 +1674,16 @@ specify ent, go to a random point // faf, not this:, but NOT the two points clos
 */
 edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 {
-	edict_t	*spot, *spotb, *spot1, *spot2;
+	edict_t	*spot, *spotb; // *spot1, *spot2;
 	int		count = 0;
 	int		selection;
-	float	range1, range2;
+//	float	range1, range2;
 	edict_t *e;
 	int i,otherteam;
 
 	spot = NULL;
-	range1 = range2 = 99999;
-	spot1 = spot2 = NULL;
+	//range1 = range2 = 99999.0;
+	//spot1 = spot2 = NULL;
 
 	while ((spot = G_Find_Team (spot, FOFS(classname), spawn_point, team)) != NULL)
 	{
@@ -1758,8 +1758,8 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 
 
 	spotb = NULL;
-	range1 = range2 = 99999;
-	spot1 = spot2 = NULL;
+	//range1 = range2 = 99999.0;
+	//spot1 = spot2 = NULL;
 	count = 0;
 
 	while ((spotb = G_Find_Team (spotb, FOFS(classname), spawn_point, otherteam)) != NULL)	{
@@ -1790,7 +1790,7 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 edict_t *SelectNearestSpawnPoint (int team)
 {
 	edict_t	*bestspot;
-	float	bestdistance;
+//	float	bestdistance;
 	edict_t	*spot;
 	vec3_t mean_origin;
 	int i;
@@ -1798,7 +1798,7 @@ edict_t *SelectNearestSpawnPoint (int team)
 	float temp_distance, nearest_distance = 9999999;
 	vec3_t dist;
 	int playercount = 0;
-	bestdistance = 0;
+//	bestdistance = 0;
 
 	VectorClear (mean_origin);
 	spot = NULL;
@@ -3506,16 +3506,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	int			 nWoundFrame;
 
 	// dday
-	qboolean oob_pitch=false;
-	qboolean found = false;
-	int CT_DUCKED=0;
+//	qboolean oob_pitch=false;
+//	qboolean found = false;
+//	int CT_DUCKED=0;
 	int pronedist=12;//8 causes getting stuck in doors;//faf 12;
 	char cmd[MAX_CMD_BUFFER];
 
 	// pbowens: more trace stuff
-	vec3_t	start, dist;
+	vec3_t	start; //, dist;
 	vec3_t	end = {0, 0, -8192};
-	trace_t	tr;
+//	trace_t	tr;
 
 	float time;
 	vec3_t diff; // kernel: to check for movement
@@ -3527,25 +3527,23 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	VectorCopy(ent->s.origin, start);	// initial value
 	VectorAdd(start, end, end);			// add distance for end
 
-	tr = gi.trace (start, ent->mins, ent->maxs, end, ent, MASK_SOLID);
+//	tr = gi.trace (start, ent->mins, ent->maxs, end, ent, MASK_SOLID);
 	//tr = gi.trace (start, NULL, NULL, end, ent, MASK_SOLID);
-	VectorSubtract(ent->s.origin, tr.endpos, dist);
+//	VectorSubtract(ent->s.origin, tr.endpos, dist);
 
 //	gi.dprintf("%i %s\n", ent->waterlevel, vtos(ent->client->v_angle));
 
 
 	if (!chile->value && ent->client && ent->client->pers.weapon)
-	{ 
+	{
 		time = 1 * (level.time - ent->client->last_fire_time);
 
-		/*if (time < 30)
+		if (time < 30)
 		{
 			if (ent->client->pers.weapon->position == LOC_SNIPER)
-			
 			{
 				if ((time < 20) && time != 0)
 					ent->client->kick_angles[0] = ((5 * cos((time/4) -4)) * ((20 -time)/20));
-
 			}
 			else if (ent->client->pers.weapon->position == LOC_RIFLE)
 			{
@@ -3568,7 +3566,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					ent->client->kick_angles[0] = ((3 * cos((time) -4)) * ((20 -time)/20));
 			}
 		}
-		*/
 	}
 
 
@@ -3871,9 +3868,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				SwitchToObserver(ent);
 		}
 
-		if (ent->client->aim &&  (
-			(ent->stanceflags == STANCE_CRAWL && ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_GRENADES) ||
-			ent->client->pers.weapon && ent->client->pers.weapon->classnameb == WEAPON_MORPHINE) )			
+		if ((ent->client->aim && ent->stanceflags == STANCE_CRAWL &&
+			 ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_GRENADES) ||
+			 (ent->client->pers.weapon && ent->client->pers.weapon->classnameb == WEAPON_MORPHINE))
 		{
 			// pbowens: this directly undermines the purpose of ClientSetMaxSpeed :(
 			for (i = 0; i < 3; i++) {
@@ -4034,10 +4031,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	//DDAY
 	if (!ent->deadflag)
 	{
-
-		if (ent->s.frame > 197 &&
-		ent->s.frame < 235 ||
-		ent->s.frame > 290)
+		if ((ent->s.frame > 197 &&
+			 ent->s.frame < 235) ||
+			ent->s.frame > 290)
 			pronedist = 24;
 		else
 			pronedist = 16;
@@ -4598,16 +4594,16 @@ void Write_Player_Stats (edict_t *ent)
 {
 	char	statsfilename[MAX_QPATH] = "";
 	char	*ip;
-	int		c;
+//	int		c;
 
 	
 	char *s, *f;
 
 	char *statsc;
 
-	char *name;
+//	char *name;
 	int games = 0;
-	int ping = 0;
+//	int ping = 0;
 	int human_kills = 0;
 	int human_deaths = 0;
 	int bot_kills = 0;
@@ -4654,12 +4650,12 @@ void Write_Player_Stats (edict_t *ent)
 
 	if (statsc)
 	{
-		c = 0;
+//		c = 0;
 		f = strdup (statsc);
 		s = strtok(f, "\n");
 
 		if (s != NULL) {
-			name = s;
+//			name = s;
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
@@ -4667,7 +4663,7 @@ void Write_Player_Stats (edict_t *ent)
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			ping = atoi (s);
+//			ping = atoi (s);
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
@@ -4846,16 +4842,16 @@ void Write_Player_Stats (edict_t *ent)
 void SetPlayerRating(edict_t *ent)
 {
 	char	statsfilename[MAX_QPATH] = "";
-	int		c;
+//	int		c;
 	
 	char *s, *f;
 
 	char *statsc;
 
-	char *name;
-	float ratio = 0.0;
-	int games = 0;
-	int ping = 0;
+//	char *name;
+//	float ratio = 0.0;
+//	int games = 0;
+//	int ping = 0;
 	int	human_kills = 0;
 	int human_deaths = 0;
 	int	bot_kills = 0;
@@ -4880,22 +4876,22 @@ void SetPlayerRating(edict_t *ent)
 
 	if (stats->value)
 	{
-		c = 0;
+//		c = 0;
 		f = strdup (statsc);
 		s = strtok(f, "\n");
 
 
 		if (s != NULL) {
-			name = s;
+//			name = s;
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			games = atoi (s);
+//			games = atoi (s);
 			//gi.dprintf ("s: %i\n",games);
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			ping = atoi (s);
+//			ping = atoi (s);
 			//gi.dprintf ("s: %i\n",games);
 			s = strtok (NULL, "\n");
 		}
