@@ -1342,7 +1342,7 @@ Draw help computer.
 void ShowCampaign (edict_t *ent)
 {
 	char	string[1024], temp[1024];
-	int i, curx, cury;
+	int i, curx = 0, cury = 0;
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)

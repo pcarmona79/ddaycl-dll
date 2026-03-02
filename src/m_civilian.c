@@ -408,10 +408,10 @@ void civilian_think (edict_t *self)
 		(self->monsterinfo.currentmove == &civilian_move_run ||
 		self->monsterinfo.currentmove == &civilian_move_slow_run)*/)
 	{
-		edict_t *e,*nearest;
-		float temp_distance,nearest_distance;
+		edict_t *e, *nearest = NULL;
+		float temp_distance, nearest_distance;
 
-		nearest_distance = 9999999999;
+		nearest_distance = 9999999999.0;
         for (e = g_edicts; e < &g_edicts[globals.num_edicts]; e++)
         {
 			if (!e->inuse)

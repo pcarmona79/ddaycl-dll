@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
+#include "game.h"
 #include "m_player.h"
 #include "g_cmds.h"
 #include "q_shared.h"
@@ -72,9 +73,11 @@ Cuando el jugador en racha es eliminado, el jugador que lo elimino tambien es an
 Si el jugador se suicida, comete un team kill o se cambia de equipo, la racha termina y el fin se anuncia.
 */
 
-void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para generar los mensajes.
+void AnnounceStreak(char *streakmsg) // Funcion secundaria para generar los mensajes.
 {
+	edict_t *Tent;
 	int i;
+
 	for (i = 1; i <= game.maxclients; i++)
 	{
 		Tent = &g_edicts[i];
@@ -87,7 +90,7 @@ void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para g
 		safe_cprintf(NULL, PRINT_MEDIUM, "%s\n", streakmsg);
 }
 
-void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion principal
+void KillingSpree(edict_t *attacker, edict_t *self) // Funcion principal
 {
 	char streakmsg[128];
 	
@@ -96,7 +99,7 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
 		if (attacker->client->resp.streak >= exbattleinfo->value)
 		{
 			Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has LOST his streak due to FRIENDLY FIRE. **", attacker->client->pers.netname);
-			AnnounceStreak (streakmsg, Tent);
+			AnnounceStreak(streakmsg);
 		}
 		attacker->client->resp.streak = 0;
 	}
@@ -111,33 +114,33 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
         		case 0:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/killingspree.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is on a KILLING SPREE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
             		break;
 	        	case 3:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/rampage.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is on a RAMPAGE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
         	    	break;
         		case 6:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/dominating.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is DOMINATING!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
     	        	break;
         		case 9:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/unstopable.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is UNSTOPABLE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
 	            	break;
 				case 12:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/godlike.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is GODLIKE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
 	            	break;
     	    	default:
 					if ((int)attacker->client->resp.streak - (int)exbattleinfo->value >= 13)
 					{
 						Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is GODLIKE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-						AnnounceStreak (streakmsg, Tent);
+						AnnounceStreak(streakmsg);
 					}
 					break;
     		}
@@ -146,13 +149,13 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
 	if (self->client->resp.streak >= exbattleinfo->value && attacker->client && attacker != self) // Si el jugador está en racha y es asesinado, quien corta la racha es anunciado.
 	{
 		Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has ENDED %s streak. Total frags: %d **", attacker->client->pers.netname, self->client->pers.netname, self->client->resp.streak);
-		AnnounceStreak (streakmsg, Tent);
+		AnnounceStreak(streakmsg);
 	}
 
 	if (self->client->resp.streak >= exbattleinfo->value && (!attacker || !attacker->client || attacker == self)) // Si el jugador está en racha y cambia de equipo 0 se suicida se anuncia su error :P
 	{
 		Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has made a mistake and LOST his streak. **", self->client->pers.netname);
-		AnnounceStreak (streakmsg, Tent);
+		AnnounceStreak(streakmsg);
 	}
 	
 	self->client->resp.streak = 0; // La racha se reinicia si el jugador muere.
@@ -684,7 +687,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			if (!self->ai)
 				self->enemy = NULL;
 			if (exbattleinfo->value > 2)
-				KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+				KillingSpree(attacker, self); // ZeRo - Llamada a la función de racha
 			return;
 		}
 
@@ -894,7 +897,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 						attacker->client->resp.score++;
 				}
 				if (exbattleinfo->value > 2)
-					KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+					KillingSpree(attacker, self); // ZeRo - Llamada a la función de racha
 				return;
 			}
 		}

@@ -147,7 +147,7 @@ void Shotgun_Reload (edict_t *ent,
 					 int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent))
 {
 	//gitem_t *ammo_item;
-	int		ammo_index,	*ammo_amount;
+	int		ammo_index = 0,	*ammo_amount = NULL;
 	int		FRAME_IDLE_FIRST = (ent->client->aim)?FRAME_AIDLE_FIRST:FRAME_LIDLE_FIRST;
 
 	if (ent->client->pers.weapon->ammo)
@@ -156,6 +156,8 @@ void Shotgun_Reload (edict_t *ent,
 		ammo_index = ent->client->ammo_index;
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}
+	else
+		return;
 
 	ent->client->ps.fov=STANDARD_FOV;
 

@@ -58,9 +58,8 @@ void Weapon_Generic (edict_t *ent,
 					 int *pause_frames,			int *fire_frames,		void (*fire)(edict_t *ent))
 {
 	int		i, n;
-	gitem_t *ammo_item;
-
-	int		ammo_index,	*ammo_amount;
+	gitem_t *ammo_item = NULL;
+	int		ammo_index = 0, *ammo_amount = NULL;
 	int		FRAME_FIRE_FIRST,FRAME_IDLE_FIRST,FRAME_IDLE_LAST;
 
 //	vec3_t	vieworg;
@@ -91,12 +90,14 @@ void Weapon_Generic (edict_t *ent,
 		frame_output)
 		gi.dprintf("%i / %i - %s\n", ent->client->weaponstate, ent->client->ps.gunframe, ent->client->pers.weapon->pickup_name);
 
-	if(ent->client->pers.weapon->ammo)
+	if (ent->client->pers.weapon->ammo)
 	{
 		ammo_item = FindItemInTeam(ent->client->pers.weapon->ammo, ent->client->pers.weapon->dllname);
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount=&ent->client->pers.inventory[ammo_index];
 	}
+	else
+		return;
 
 //	gi.dprintf(" %i < %i < %i\n",FRAME_RAISE_FIRST, ent->client->ps.gunframe, FRAME_RAISE_LAST);
 
@@ -110,12 +111,12 @@ void Weapon_Generic (edict_t *ent,
 
 //	else if (!ent->client->aim && ent->client->pers.weapon->position != LOC_SNIPER)		
 //faf			ent->client->ps.fov = STANDARD_FOV;
-		else if (!ent->client->aim && ent->client->pers.weapon->position != LOC_SNIPER)		
-		{
-			check_unscope(ent);//faf
+	else if (!ent->client->aim && ent->client->pers.weapon->position != LOC_SNIPER)
+	{
+		check_unscope(ent);//faf
 
-			ent->client->ps.fov = STANDARD_FOV;
-		}
+		ent->client->ps.fov = STANDARD_FOV;
+	}
 
 
 
@@ -132,12 +133,12 @@ void Weapon_Generic (edict_t *ent,
             ent->s.frame = FRAME_pain304+1;
             ent->client->anim_end = FRAME_pain301;            
         }
-        else if (ent->stanceflags == STANCE_DUCK)
+		else if (ent->stanceflags == STANCE_DUCK)
         {
             ent->s.frame = FRAME_crpain4+1;
             ent->client->anim_end = FRAME_crpain1;
         }
-        else if (ent->stanceflags == STANCE_CRAWL)
+		else if (ent->stanceflags == STANCE_CRAWL)
         {
             ent->s.frame = FRAME_crawlpain04+1;
             ent->client->anim_end = FRAME_crawlpain01;
@@ -270,7 +271,7 @@ void Weapon_Generic (edict_t *ent,
 				}
 			}
 		}
-        else
+		else
 		{
 			ent->client->ps.gunframe = FRAME_IDLE_FIRST;
             ent->client->weaponstate = WEAPON_READY;
@@ -358,7 +359,7 @@ void Weapon_Generic (edict_t *ent,
 		return;
 	}
  
-	if(ent->s.modelindex != 255) //pbowens: v_wep
+	if (ent->s.modelindex != 255) //pbowens: v_wep
         return; // not on client, so VWep animations could do wacky things
 	
 
@@ -371,7 +372,7 @@ void Weapon_Generic (edict_t *ent,
 			ChangeWeapon (ent);
 			return;
 		}		
-        else if ((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
+		else if ((FRAME_DEACTIVATE_LAST - ent->client->ps.gunframe) == 4 //pbowens: v_wep
 				&& ent->oldstance == ent->stanceflags) //faf:  not changing stances
         {
             ent->client->anim_priority = ANIM_REVERSE;

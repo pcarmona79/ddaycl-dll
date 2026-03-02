@@ -1775,7 +1775,7 @@ G_SetClientSound
 */
 void G_SetClientSound (edict_t *ent)
 {
-	int weap;
+	int weap = 0;
 
 	if (ent->client->resp.game_helpchanged != game.helpchanged)
 	{

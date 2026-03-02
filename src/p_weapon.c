@@ -636,7 +636,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 {
 	int			ammo_index;
 	gitem_t		*ammo_item;
-	int			item_rounds;
+	int			item_rounds = 0;
 
 	// see if we're already using it
 	if (item == ent->client->pers.weapon)
