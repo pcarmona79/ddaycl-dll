@@ -57,7 +57,7 @@ void objective_area_think (edict_t *self) {
 
 	edict_t *ent  = NULL;
 	int count = 0;
-	int i=0;
+	//int i=0;
 	int newteam;
 	int delay;
 
@@ -302,7 +302,8 @@ void SP_objective_touch(edict_t *self)
 		}
 
 	}
-	else if (self->move_origin && self->move_angles)
+	else if (!VectorCompare(self->move_origin, vec3_origin) &&
+			 !VectorCompare(self->move_angles, vec3_origin))
 	{ 
 		VectorCopy (self->move_origin, min);
 		VectorCopy (self->move_angles, max);
@@ -411,11 +412,13 @@ void timed_objective_touch (edict_t *self, edict_t *other, cplane_t *plane, csur
 		self->obj_owner = other->client->resp.team_on->index;
 //		team_list[self->obj_owner]->score += self->health;
 
-		otherteam = (self->obj_owner+1)%2;
-		if (!team_list[otherteam]->kills_and_points && team_list[otherteam]->score < team_list[otherteam]->need_points ||
+		otherteam = (self->obj_owner + 1) % 2;
+		if ((!team_list[otherteam]->kills_and_points &&
+			 team_list[otherteam]->score < team_list[otherteam]->need_points) ||
 			(team_list[otherteam]->kills_and_points && 
-				team_list[otherteam]->kills < team_list[otherteam]->need_kills))
-		gi.sound(self, CHAN_NO_PHS_ADD, gi.soundindex(va("%s/objectives/touch_cap.wav", team_list[self->obj_owner]->teamid)), 1, 0, 0);
+			 team_list[otherteam]->kills < team_list[otherteam]->need_kills))
+			gi.sound(self, CHAN_NO_PHS_ADD,
+					 gi.soundindex(va("%s/objectives/touch_cap.wav", team_list[self->obj_owner]->teamid)), 1, 0, 0);
 		
 
 		if (dedicated->value)
@@ -497,7 +500,8 @@ void SP_timed_objective_touch(edict_t *self)
 
 	if (self->model)
 		gi.setmodel (self, self->model);
-	else if (self->move_origin && self->move_angles)
+	else if (!VectorCompare(self->move_origin, vec3_origin) &&
+			 !VectorCompare(self->move_angles, vec3_origin))
 	{ 
 		VectorCopy (self->move_origin, min);
 		VectorCopy (self->move_angles, max);
@@ -643,11 +647,13 @@ void func_explosive_objective_explode (edict_t *self, edict_t *inflictor, edict_
 		team_list[attacker->client->resp.team_on->index]->teamname);
 
 
-	otherteam = (self->obj_owner+1)%2;
-		if (!team_list[otherteam]->kills_and_points && team_list[otherteam]->score < team_list[otherteam]->need_points ||
-			(team_list[otherteam]->kills_and_points && 
-				team_list[otherteam]->kills < team_list[otherteam]->need_kills))
-			gi.sound(self, CHAN_NO_PHS_ADD, gi.soundindex(va("%s/objectives/touch_cap.wav", team_list[otherteam]->teamid)), 1, 0, 0);
+	otherteam = (self->obj_owner + 1) % 2;
+	if ((!team_list[otherteam]->kills_and_points &&
+		 team_list[otherteam]->score < team_list[otherteam]->need_points) ||
+		(team_list[otherteam]->kills_and_points &&
+		 team_list[otherteam]->kills < team_list[otherteam]->need_kills))
+		gi.sound(self, CHAN_NO_PHS_ADD,
+				 gi.soundindex(va("%s/objectives/touch_cap.wav", team_list[otherteam]->teamid)), 1, 0, 0);
 
 //		gi.dprintf ("pts:%i  ndpts:%i  kills:%i  ndkills:%i\n",team_list[(self->obj_owner+1)%2]->score,team_list[(self->obj_owner+1)%2]->need_points,
 //team_list[(self->obj_owner+1)%2]->kills,team_list[(self->obj_owner+1)%2]->need_kills);
@@ -741,6 +747,7 @@ void SP_func_explosive_objective (edict_t *self)
 	gi.linkentity (self);
 }
 
+/* kernel: this is no longer needed
 void GetMapObjective(void)
 {
 	char filename[100];
@@ -753,6 +760,7 @@ void GetMapObjective(void)
 	gi.dprintf("Map objective pic is %s\n", filename);
 	level.objectivepic = filename;
 }
+*/
 
 //faf:  ctb code
 int briefcase_count = 0;

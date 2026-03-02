@@ -1481,7 +1481,7 @@ char *dday_statusbar =
 ;
 
 
-void GetMapObjective (void);
+//void GetMapObjective (void);
 
 /*QUAKED worldspawn (0 0 0) ?
 
@@ -1854,7 +1854,5 @@ void SP_worldspawn (edict_t *ent)
 	// 63 testing
 	gi.configstring(CS_LIGHTS+63, "a");
 
-	GetMapObjective();
-
+	//GetMapObjective();
 }
-

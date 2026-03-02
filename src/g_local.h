@@ -408,7 +408,7 @@ typedef struct
 
 	//char		objective[1024];		// for objective printing
 
-	char		*objectivepic;		// for objectives pictures
+	qboolean	objectivepic;		// for objectives pictures
 
 
 	// intermission state
