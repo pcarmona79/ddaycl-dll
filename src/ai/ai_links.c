@@ -64,6 +64,8 @@ char *AI_LinkString( int linktype )
 		s = "LINK_JUMP";
 	else if( linktype )
 		s = "UNKNOWN";
+	else
+		s = "UNKNOWN";
 
 	return s;
 }

@@ -904,7 +904,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 	//float	dist;
 	vec3_t	fireorig;
 	vec3_t	enemyorig;
-	int		enemystance;
+	int		enemystance = 0;
 
 	int randnum;
 
@@ -912,7 +912,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 	float  skilldelay;
 
 	vec3_t vdist;
-	float dist;
+	float dist = 0.0;
 
 
 	if (self->ai->state != BOT_STATE_CAMP && 
@@ -930,7 +930,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 
 	if (self->client->pers.weapon)
 	{
-        if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
+		if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
 			self->client->pers.weapon->position == LOC_SUBMACHINEGUN2 ||
 			self->client->pers.weapon->position == LOC_L_MACHINEGUN ||
 			self->client->pers.weapon->position == LOC_H_MACHINEGUN)
@@ -948,7 +948,8 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 			weapon = WEAP_MELEE;
 		else
 			weapon = WEAP_MACHINEGUN;
-	}else
+	}
+	else
 		return;
 
 
