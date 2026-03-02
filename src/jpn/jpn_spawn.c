@@ -36,24 +36,23 @@ gitem_t	*FindItem (char *pickup_name);
 //no fancy spawning stuff here, just nice and easy
 
 void SP_item_weapon_nambu(edict_t *self)
-
 {
-    SpawnItem(self,FindItem("weapon_nambu"));
+	SpawnItem(self,FindItem("weapon_nambu"));
 }
 
 void SP_item_weapon_arisaka(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_arisaka"));
+	SpawnItem(self,FindItemByClassname("weapon_arisaka"));
 }
 
 void SP_item_weapon_type_100(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_type_100"));
+	SpawnItem(self,FindItemByClassname("weapon_type_100"));
 }
 
 void SP_item_weapon_type_99(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_type_99"));
+	SpawnItem(self,FindItemByClassname("weapon_type_99"));
 }
 
 //void SP_item_weapon_m1carb(edict_t *self)
@@ -64,11 +63,11 @@ void SP_item_weapon_type_99(edict_t *self)
 
 void SP_item_weapon_arisakas(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_arisakas"));
+	SpawnItem(self,FindItemByClassname("weapon_arisakas"));
 }
 void SP_item_weapon_katana(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_katana"));
+	SpawnItem(self,FindItemByClassname("weapon_katana"));
 }
 
 //ammo
@@ -76,30 +75,30 @@ void SP_item_molotov(edict_t *self);
 
 void SP_item_ammo_grenades_jpn(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_jpn"));
+	SpawnItem(self,FindItemByClassname("ammo_grenades_jpn"));
 }
 void SP_item_ammo_nambu(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_nambu"));
+	SpawnItem(self,FindItemByClassname("ammo_nambu"));
 }
 
 void SP_item_ammo_arisaka(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_arisaka"));
+	SpawnItem(self,FindItemByClassname("ammo_arisaka"));
 }
 void SP_item_ammo_arisakas(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_arisakas"));
+	SpawnItem(self,FindItemByClassname("ammo_arisakas"));
 }
 
 void SP_item_ammo_type_100(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_type_100"));
+	SpawnItem(self,FindItemByClassname("ammo_type_100"));
 }
 
 void SP_item_ammo_type_99(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_type_99"));
+	SpawnItem(self,FindItemByClassname("ammo_type_99"));
 }
 void SP_item_weapon_mg42(edict_t *self);
 
@@ -113,26 +112,22 @@ void SP_item_ammo_mg42(edict_t *self);
 
 
 spawn_t sp_jpn[MAX_TEAM_ITEMS] =
-
 {
-    "weapon_nambu", SP_item_weapon_nambu,
-	"weapon_arisaka",SP_item_weapon_arisaka,
-	"weapon_type_100", SP_item_weapon_type_100,
-	"weapon_type_99", SP_item_weapon_type_99,
+	{ "weapon_nambu", SP_item_weapon_nambu },
+	{ "weapon_arisaka", SP_item_weapon_arisaka },
+	{ "weapon_type_100", SP_item_weapon_type_100 },
+	{ "weapon_type_99", SP_item_weapon_type_99 },
 //	"weapon_m1carb", SP_item_weapon_m1carb,
-	"weapon_arisakas",SP_item_weapon_arisakas,
-    "weapon_katana", SP_item_weapon_katana,
-	"weapon_molotov", SP_item_molotov,
-	"weapon_mg42", SP_item_weapon_mg42,
-	"ammo_nambu",SP_item_ammo_nambu,
-	"ammo_arisaka",SP_item_ammo_arisaka,
-	"ammo_arisakas",SP_item_ammo_arisakas,
-	"ammo_type_100",SP_item_ammo_type_100,
-	"ammo_type_99",SP_item_ammo_type_99,
-//	"ammo_m1carb",SP_item_ammo_m1carb,
-	"ammo_grenades_jpn", SP_item_ammo_grenades_jpn,
-	"ammo_mg42",SP_item_ammo_mg42
-
+	{ "weapon_arisakas", SP_item_weapon_arisakas },
+	{ "weapon_katana", SP_item_weapon_katana },
+	{ "weapon_molotov", SP_item_molotov },
+	{ "weapon_mg42", SP_item_weapon_mg42 },
+	{ "ammo_nambu", SP_item_ammo_nambu },
+	{ "ammo_arisaka", SP_item_ammo_arisaka },
+	{ "ammo_arisakas", SP_item_ammo_arisakas },
+	{ "ammo_type_100", SP_item_ammo_type_100 },
+	{ "ammo_type_99", SP_item_ammo_type_99 },
+//	"ammo_m1carb", SP_item_ammo_m1carb,
+	{ "ammo_grenades_jpn", SP_item_ammo_grenades_jpn },
+	{ "ammo_mg42", SP_item_ammo_mg42 }
 };
-
-
