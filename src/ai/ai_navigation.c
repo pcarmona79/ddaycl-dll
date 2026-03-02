@@ -317,25 +317,25 @@ int AI_ClosestNodeToSpot( vec3_t origin, edict_t *passent, qboolean visible)
 int AI_ClosestNodeToReachableSpot(edict_t *self, vec3_t origin)
 {
 	int			i;
-	float		closest = 999999999;
+	float		closest = 999999999.0;
 	float		dist;
 	int			node=-1;
 	vec3_t		v;
 
-	int			check[3];
+//	int			check[3];
 	int			c;
 
 
 	//gi.dprintf("%s\n",vtos(origin));
-	check[0]=-1;
-	check[1]=-1;
-	check[2]=-1;
-	check[3]=-1;
+//	check[0]=-1;
+//	check[1]=-1;
+//	check[2]=-1;
+//	check[3]=-1;
 
 	c = 0;
 	while (c < 4)
 	{
-		closest = 999999999;
+		closest = 999999999.0;
 		node=-1;
 		
 		for(i=0;i<nav.num_nodes;i++)
@@ -360,7 +360,7 @@ int AI_ClosestNodeToReachableSpot(edict_t *self, vec3_t origin)
 		if( AStar_GetPath( self->ai->current_node, node, self->ai->pers.moveTypesMask, &self->ai->path ) )
 			return node;
 
-		check [c] = node;
+		//check [c] = node;
 
 		//gi.dprintf("%s\n", vtos(nodes[node].origin));
 

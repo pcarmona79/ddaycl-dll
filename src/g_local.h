@@ -2014,7 +2014,7 @@ typedef struct
 	vec3_t		origin;
 	int			angle;
 	int			stance;
-	qboolean	type;
+	camp_t		type;
 	edict_t		*owner;
 } camp_spots_t;
 

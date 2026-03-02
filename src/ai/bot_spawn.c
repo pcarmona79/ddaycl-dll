@@ -78,13 +78,13 @@ void Assign_Bot_Class (edict_t *self)
 		
 //			if (cl_ent == ent && ent->client->resp.mos == INFANTRY)
 		if (cl_ent == self)// && (!self->client->resp.AlreadySpawned || self->client->resp.changeteam))
-		continue;
+			continue;
 
 		if (!self->client->resp.mos || 
 			cl_ent->client->resp.mos != self->client->resp.mos)
 			continue;
 
-			taken++;
+		taken++;
 	}
 
 	// Now set the available for this class
@@ -311,20 +311,20 @@ void BOT_SetName(edict_t *bot, char *name, char *skin, int team)
 
 		randname = (int)rand()%14;
 
-	if (!strcmp (team_list[team]->teamid, "grm"))
-		sprintf(bot_name,"%s",grmnames[randname]);
-	else if (!strcmp (team_list[team]->teamid, "rus"))
-		sprintf(bot_name,"%s",rusnames[randname]);
-	else if (!strcmp (team_list[team]->teamid, "gbr"))
-		sprintf(bot_name,"%s",gbrnames[randname]);
-	else if (!strcmp (team_list[team]->teamid, "pol"))
-		sprintf(bot_name,"%s",polnames[randname]);
-	else if (!strcmp (team_list[team]->teamid, "ita"))
-		sprintf(bot_name,"%s",itanames[randname]);
-	else if (!strcmp (team_list[team]->teamid, "jpn"))
-		sprintf(bot_name,"%s",jpnnames[randname]);
-	else 
-		sprintf(bot_name,"%s",usanames[randname]);
+		if (!strcmp (team_list[team]->teamid, "grm"))
+			sprintf(bot_name,"%s",grmnames[randname]);
+		else if (!strcmp (team_list[team]->teamid, "rus"))
+			sprintf(bot_name,"%s",rusnames[randname]);
+		else if (!strcmp (team_list[team]->teamid, "gbr"))
+			sprintf(bot_name,"%s",gbrnames[randname]);
+		else if (!strcmp (team_list[team]->teamid, "pol"))
+			sprintf(bot_name,"%s",polnames[randname]);
+		else if (!strcmp (team_list[team]->teamid, "ita"))
+			sprintf(bot_name,"%s",itanames[randname]);
+		else if (!strcmp (team_list[team]->teamid, "jpn"))
+			sprintf(bot_name,"%s",jpnnames[randname]);
+		else
+			sprintf(bot_name,"%s",usanames[randname]);
 
 		gotname = true;
 
@@ -569,7 +569,7 @@ void BOT_DMClass_JoinGame (edict_t *ent, char *team_name)
 {
 
 	vec3_t	spawn_origin, spawn_angles;
-	int randnum = rand()%5;
+	//int randnum = rand()%5;
 
 	if ( !BOT_JoinCTFTeam(ent, team_name) )
 		Com_Printf ( "%s joined the game.\n",
@@ -819,7 +819,7 @@ void BOT_SpawnBot (int team, char *name, char *skin, char *userinfo)
 void BOT_RemoveBot(char *name, edict_t *botremove)
 {
 	int i;
-	qboolean freed=false;
+	//qboolean freed=false;
 	edict_t *bot;
 
 	for(i=0;i<maxclients->value;i++)
@@ -839,7 +839,7 @@ void BOT_RemoveBot(char *name, edict_t *botremove)
 			//bot->s.frame=197;
 			bot->s.modelindex = 0;
 			bot->inuse = false;
-			freed = true;
+			//freed = true;
 			AI_EnemyRemoved (bot);
 			G_FreeAI( bot ); //jabot092(2)
 			//safe_bprintf (PRINT_MEDIUM, "%s removed\n", bot->client->pers.netname);

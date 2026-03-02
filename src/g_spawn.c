@@ -1069,7 +1069,7 @@ void LoadCampFile(void)
 				camp_spots[c].team = team;
 				VectorCopy (loc, camp_spots[c].origin);
 				camp_spots[c].stance = stance;
-				camp_spots[c].type = (qboolean) CAMP_NORMAL;
+				camp_spots[c].type = CAMP_NORMAL;
 				c++;
 				total_camp_spots = c;
 

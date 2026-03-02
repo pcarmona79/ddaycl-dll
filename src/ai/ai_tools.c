@@ -120,7 +120,7 @@ void AITools_DrawLine(vec3_t origin, vec3_t dest)
 // AITools_DrawPath
 // Draws the current path (floods as hell also)
 //==========================================
-static int	drawnpath_timeout;
+//static int	drawnpath_timeout;
 void AITools_DrawPath(edict_t *self, int node_from, int node_to)
 {
 /*
@@ -161,7 +161,7 @@ void AITools_DrawPath(edict_t *self, int node_from, int node_to)
 // AITools_ShowPlinks
 // Draws lines from the current node to it's plinks nodes
 //==========================================
-static int	debugdrawplinks_timeout;
+//static int	debugdrawplinks_timeout;
 void AITools_ShowPlinks( void )
 {
 /*	int		current_node;
@@ -284,7 +284,7 @@ void SV_Remove_Node (edict_t *ent)
 
 void Show_Nodes_Think (edict_t *ent)
 {
-	vec3_t	last_movedir;
+	//vec3_t	last_movedir;
 
 	vec3_t	start,end;
 	float	dist;
@@ -381,7 +381,7 @@ void Show_Nodes_Think (edict_t *ent)
 
 	VectorCopy (start, ent->s.origin);
 
-	VectorCopy (ent->movedir, last_movedir);
+//	VectorCopy (ent->movedir, last_movedir);
 //	VectorMA (ent->mins, 0.5, ent->size, point);
 	VectorSubtract (start, end, ent->movedir);
 	VectorNormalize (ent->movedir);
@@ -406,7 +406,7 @@ void Show_Nodes_Think (edict_t *ent)
 
 void Bot_Laser_Think (edict_t *ent)
 {
-	vec3_t	last_movedir;
+//	vec3_t	last_movedir;
 	vec3_t	start,end;
 
 
@@ -424,7 +424,7 @@ void Bot_Laser_Think (edict_t *ent)
 
 	VectorCopy (start, ent->s.origin);
 
-	VectorCopy (ent->movedir, last_movedir);
+//	VectorCopy (ent->movedir, last_movedir);
 	VectorSubtract (start, end, ent->movedir);
 	VectorNormalize (ent->movedir);
 
