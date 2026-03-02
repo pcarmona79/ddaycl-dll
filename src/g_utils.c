@@ -769,6 +769,7 @@ void centerprintall (char *mesg, ...)
 		Com_Printf ("centerprintall: overflow of %i in %i\n", len, size);
 
 	strncpy (print, buffer, size-1);
+	print[size - 1] = '\0';
 
 	// kernel: print to server console
 	gi.dprintf("*** %s ***\n", print);
@@ -805,6 +806,7 @@ void centerprintothers(edict_t *skipent, char *mesg, ...)
 		Com_Printf("centerprintothers: overflow of %i in %i\n", len, size);
 
 	strncpy(print, buffer, size - 1);
+	print[size - 1] = '\0';
 
 	// kernel: print to server console
 	gi.dprintf("*** %s ***\n", print);
