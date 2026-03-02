@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
 #include "p_menus.h"
@@ -81,7 +82,7 @@ void SwitchToObserver(edict_t *ent)
 	gi.linkentity (ent); 
 	ent->client->limbo_mode=true;
 //	ent->client->deathfade = 0;
-
+	ent->client->ps.fov = STANDARD_FOV;
 
 	if (!ent->client->display_info && ent->client->layout_type != SHOW_CAMPAIGN)
 	{
