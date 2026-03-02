@@ -122,9 +122,9 @@ void Chute_Think(edict_t *ent)
 //	gi.dprintf("%f\n",ent->owner->client->jump_stamina);
 	//we've touched the ground
 	if (ent->owner->client && 
-		ent->owner->groundentity || ent->owner->velocity[2] > 0 ||
+		(ent->owner->groundentity || ent->owner->velocity[2] > 0 ||
 		ent->owner->client->jump_stamina < 80 ||
-		ent->s.frame > 5)
+		ent->s.frame > 5))
 //		ent->owner->client->ps.pmove.gravity == sv_gravity->value)//landed
 	{
 		if (ent->s.frame < 10)  //start parachute falling
@@ -882,8 +882,7 @@ continue;
 
 void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 {
-
-	qboolean foundspot=false;
+	//qboolean foundspot=false;
 	int i,j,k;
 
 	if (ent->client->menu)
@@ -1448,7 +1447,7 @@ void MapVote(edict_t *ent)
 	int i;
 	char filename[100];
 	FILE	*f;
-	qboolean botmap = false;
+	//qboolean botmap = false;
 	char* theText = NULL;
 	char mapname[18];
 	char *add;
@@ -1480,7 +1479,7 @@ void MapVote(edict_t *ent)
 			if (f){
 				fclose (f);
 				add = "*";
-				botmap = true;
+				//botmap = true;
 			}
 			else
 				add = " ";
