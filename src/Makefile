@@ -211,6 +211,7 @@ p_view.o: p_view.c g_local.h g_defines.h q_shared.h game.h p_menu.h \
 p_weapon.o: p_weapon.c g_local.h g_defines.h q_shared.h game.h \
  p_menu.h g_maps.h m_player.h x_fbomb.h x_fire.h
 q_shared.o: q_shared.c q_shared.h
+	$(CC) $(CFLAGS) -fno-strict-aliasing $(SHLIBCFLAGS) -o $@ -c $<
 u_entmgr.o: u_entmgr.c g_local.h g_defines.h q_shared.h game.h \
  p_menu.h g_maps.h 
 x_fbomb.o: x_fbomb.c g_local.h g_defines.h q_shared.h game.h p_menu.h \
