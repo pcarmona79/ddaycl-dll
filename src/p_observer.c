@@ -709,6 +709,10 @@ void M_ChooseMOS(edict_t *ent)
 //	int index;
 	edict_t *cl_ent;
 
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
+
 	memset(mosname, 0, sizeof(mosname));
 
 	//pmenu = (ent->client->resp.team_on->index) ? menu_classes_grm : menu_classes_usa;
@@ -754,8 +758,8 @@ void M_ChooseMOS(edict_t *ent)
 				continue; 
 			
 //			if (cl_ent == ent && ent->client->resp.mos == INFANTRY)
-if (cl_ent == ent && (!ent->client->resp.AlreadySpawned || ent->client->resp.changeteam))
-continue;
+			if (cl_ent == ent && (!ent->client->resp.AlreadySpawned || ent->client->resp.changeteam))
+				continue;
 
 
 			if (ent->client->resp.team_on->mos[i]->mos ==
@@ -885,6 +889,10 @@ void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 {
 	//qboolean foundspot=false;
 	int i,j,k;
+
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
 
 	if (ent->client->menu)
 		PMenu_Close(ent);
@@ -1025,6 +1033,10 @@ void ChooseTeam(edict_t *ent) {
 	char* theText = NULL;
 	char teamname[17];
 	int max_clients;
+
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
 
 	memset(teamname, 0, sizeof(teamname));
 
