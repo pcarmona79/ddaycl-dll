@@ -259,7 +259,7 @@ qboolean AI_BotRoamForLRGoal(edict_t *self, int current_node)
 	float	cost;
 	float	weight, best_weight = 0.0;
 	int		goal_node = INVALID;
-	int		best_broam = INVALID;
+//	int		best_broam = INVALID;
 	float	dist;
 
 	if (!nav.num_broams)
@@ -287,7 +287,7 @@ qboolean AI_BotRoamForLRGoal(edict_t *self, int current_node)
 		{
 			best_weight = weight;
 			goal_node = nav.broams[i].node;
-			best_broam = i;
+//			best_broam = i;
 		}
 	}
 
@@ -381,15 +381,15 @@ void AI_PickLongRangeGoal(edict_t *self)
 	int		node;
 	float	weight,best_weight=0.0;
 	int		current_node, goal_node = INVALID;
-	edict_t *goal_ent = NULL;
+//	edict_t *goal_ent = NULL;
 	float	cost;
 	int nearest = -1;
-	float temp_distance, nearest_distance = 9999999,nearest_distanceb = 9999999;
+	float temp_distance, nearest_distance = 9999999.0; //,nearest_distanceb = 9999999.0;
 	vec3_t distb;
 
 	int j,randseed,k;
 
-	edict_t *closest = NULL;
+//	edict_t *closest = NULL;
 	edict_t *e = NULL;
 
 
@@ -460,7 +460,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 		{		
 			best_weight = weight;
 			goal_node = node;
-			goal_ent = AIEnemies[i];
+//			goal_ent = AIEnemies[i];
 		}
 	}
 
@@ -504,7 +504,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 
 			rand_obj_num = 1 + rand()%obj_count;
 
-			nearest_distance = 999999999;
+			nearest_distance = 999999999.0;
 			
 			obj_count = 1;
 			for (i=0 ; i<game.maxentities ; i++)
@@ -570,7 +570,7 @@ void AI_PickLongRangeGoal(edict_t *self)
 	// select camping spot
 	if (!self->ai->objective)
 	{
-		nearest_distance = 99999999999;
+		nearest_distance = 999999999.0;
 		randseed = (int)rand()%total_camp_spots;
 
 		//hacky stuff: if ai->camp_targ == -2, that means they want to find another camp spot,
@@ -917,7 +917,7 @@ void AI_CategorizePosition (edict_t *ent)
 	ent->is_ladder = AI_IsLadder( ent->s.origin, ent->s.angles, ent->mins, ent->maxs, ent );
 
 	M_CatagorizePosition(ent);
-	if (ent->waterlevel > 2 || ent->waterlevel && !stepping) {
+	if (ent->waterlevel > 2 || (ent->waterlevel && !stepping)) {
 		ent->is_swim = true;
 		ent->is_step = false;
 		return;
@@ -1095,8 +1095,8 @@ void AI_Think (edict_t *self)
 				continue;
 			if (e->client->resp.team_on != self->client->resp.team_on)
 				continue;
-			if (!e->s.origin)
-				continue;
+//			if (!e->s.origin)
+//				continue;
 		//	if (e->ai &&
 		//		e->ai->state == BOT_STATE_CAMP)
 		//		continue;
@@ -1621,14 +1621,14 @@ void AI_Think (edict_t *self)
 */
 
 
-if (self->client->limbo_mode)
-	self->ai->bloqued_timeout = level.time + 10.0;
+	if (self->client->limbo_mode)
+		self->ai->bloqued_timeout = level.time + 10.0;
 
 
-	if (self->client->resp.AlreadySpawned && 
+	if ((self->client->resp.AlreadySpawned &&
 		!level.intermissiontime &&
 		(self->ai->state != BOT_STATE_CAMP &&
-		!(self->client->resp.mos == H_GUNNER &&	self->stanceflags != STANCE_STAND))  ||
+		!(self->client->resp.mos == H_GUNNER &&	self->stanceflags != STANCE_STAND))) ||
 		(self->client->respawn_time < level.time - 60 &&
 		self->client->last_fire_time < level.time - 60 &&
 		self->ai->actual_camp_start < level.time - 60)

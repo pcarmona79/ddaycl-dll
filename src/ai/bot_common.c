@@ -207,8 +207,10 @@ void debug_printf(char *fmt, ...)
 	edict_t	*cl_ent;
 	
 	va_start (argptr,fmt);
-	len = vsprintf (bigbuffer,fmt,argptr);
+	len = vsnprintf(bigbuffer, 0x10000, fmt, argptr);
 	va_end (argptr);
+	if (len >= 0x10000)
+		gi.dprintf("debug_printf: Truncated bigbuffer\n");
 
 	if (dedicated->value)
 		gi.cprintf(NULL, PRINT_MEDIUM, bigbuffer);
@@ -237,8 +239,10 @@ void safe_cprintf (edict_t *ent, int printlevel, char *fmt, ...)
 		return;
 
 	va_start (argptr,fmt);
-	len = vsprintf (bigbuffer,fmt,argptr);
+	len = vsnprintf(bigbuffer, 0x10000, fmt, argptr);
 	va_end (argptr);
+	if (len >= 0x10000)
+		gi.dprintf("safe_cprintf: Truncated bigbuffer\n");
 
 	gi.cprintf(ent, printlevel, bigbuffer);
 	
@@ -257,8 +261,10 @@ void safe_centerprintf (edict_t *ent, char *fmt, ...)
 		return;
 	
 	va_start (argptr,fmt);
-	len = vsprintf (bigbuffer,fmt,argptr);
+	len = vsnprintf(bigbuffer, 0x10000, fmt, argptr);
 	va_end (argptr);
+	if (len >= 0x10000)
+		gi.dprintf("safe_centerprintf: Truncated bigbuffer\n");
 	
 	gi.centerprintf(ent, bigbuffer);
 	
@@ -276,8 +282,10 @@ void safe_bprintf (int printlevel, char *fmt, ...)
 	edict_t	*cl_ent;
 
 	va_start (argptr,fmt);
-	len = vsprintf (bigbuffer,fmt,argptr);
+	len = vsnprintf(bigbuffer, 0x10000, fmt, argptr);
 	va_end (argptr);
+	if (len >= 0x10000)
+		gi.dprintf("safe_bprintf: Truncated bigbuffer\n");
 
 	if (dedicated->value)
 		gi.cprintf(NULL, printlevel, bigbuffer);
@@ -305,7 +313,8 @@ qboolean objective_hittable (edict_t *self, edict_t *objective, vec3_t orig)
 	spot1[2] += self->viewheight;
 
 	//move spot to kneeling position if hmger is standing:
-	if ((self->client && self->client->resp.mos == H_GUNNER || self->client && self->client->resp.mos == ENGINEER) && self->stanceflags == STANCE_STAND)
+	if (((self->client && self->client->resp.mos == H_GUNNER) || (self->client && self->client->resp.mos == ENGINEER)) &&
+		self->stanceflags == STANCE_STAND)
 	{
 		spot1[2] -=16;
 	}

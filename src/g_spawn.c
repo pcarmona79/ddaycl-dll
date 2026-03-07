@@ -813,7 +813,6 @@ qboolean TestFile(char *filename)
 qboolean TestEntFile(char *mapname, char *extension)
 {
 	char entfilename[MAX_QPATH] = "";
-	char *newentities;
 	int	i;
 
 	sprintf(entfilename, "ents/%s.%s", mapname, extension);
@@ -1070,7 +1069,7 @@ void LoadCampFile(void)
 				camp_spots[c].team = team;
 				VectorCopy (loc, camp_spots[c].origin);
 				camp_spots[c].stance = stance;
-				camp_spots[c].type = (qboolean) CAMP_NORMAL;
+				camp_spots[c].type = CAMP_NORMAL;
 				c++;
 				total_camp_spots = c;
 
@@ -1482,7 +1481,7 @@ char *dday_statusbar =
 ;
 
 
-void GetMapObjective (void);
+//void GetMapObjective (void);
 
 /*QUAKED worldspawn (0 0 0) ?
 
@@ -1525,10 +1524,11 @@ void SP_worldspawn (edict_t *ent)
 	if (ent->message && ent->message[0])
 	{
 		gi.configstring (CS_NAME, ent->message);
-		strncpy (level.level_name, ent->message, sizeof(level.level_name));
+		strncpy (level.level_name, ent->message, sizeof(level.level_name) - 1);
 	}
 	else
-		strncpy (level.level_name, level.mapname, sizeof(level.level_name));
+		strncpy (level.level_name, level.mapname, sizeof(level.level_name) - 1);
+	level.level_name[sizeof(level.level_name) - 1] = '\n';
 
 	if (st.sky && st.sky[0])
 		gi.configstring (CS_SKY, st.sky);
@@ -1855,7 +1855,5 @@ void SP_worldspawn (edict_t *ent)
 	// 63 testing
 	gi.configstring(CS_LIGHTS+63, "a");
 
-	GetMapObjective();
-
+	//GetMapObjective();
 }
-

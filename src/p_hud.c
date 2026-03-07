@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include <stdio.h>
+#include <string.h>
 
 // evil: global variables for countdown
 extern float gameStartTime;
@@ -589,13 +590,13 @@ void TeamStats (edict_t *ent)
 
 void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 {
-	char scoreleftpic[256];   //faf:  for team dll support
-	char scorerightpic[256];  //      loads background pic according to team
-	char scoretopleftpic[256];
-	char scoretoprightpic[256];  //faf: end
+//	char scoreleftpic[256];   //faf:  for team dll support
+//	char scorerightpic[256];  //      loads background pic according to team
+//	char scoretopleftpic[256];
+//	char scoretoprightpic[256];  //faf: end
 
 	char        string2[1400], string[1400];//, damage[50];
-	gclient_t   *cl;
+//	gclient_t   *cl;
 	edict_t     *cl_ent;
 	int         maxsize = 1300, i, j, k;
 
@@ -760,7 +761,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
 		{
-			cl = &game.clients[sorted[TEAM1][i]];
+//			cl = &game.clients[sorted[TEAM1][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
 			if (cl_ent->solid != SOLID_NOT &&
 				cl_ent->deadflag != DEAD_DEAD)
@@ -800,7 +801,7 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 
 		if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
 		{
-			cl = &game.clients[sorted[TEAM2][i]];
+//			cl = &game.clients[sorted[TEAM2][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
 			if (cl_ent->solid != SOLID_NOT &&
 				cl_ent->deadflag != DEAD_DEAD)
@@ -890,13 +891,13 @@ void A_ScoreboardMessage (edict_t *ent)//, edict_t *killer)
 void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 {
 	float accuracy;
-	char scoreleftpic[256];   //faf:  for team dll support
-	char scorerightpic[256];  //      loads background pic according to team
-	char scoretopleftpic[256];
-	char scoretoprightpic[256];  //faf: end
+//	char scoreleftpic[256];   //faf:  for team dll support
+//	char scorerightpic[256];  //      loads background pic according to team
+//	char scoretopleftpic[256];
+//	char scoretoprightpic[256];  //faf: end
 
 	char        string2[1400], string[1400];//, damage[50];
-	gclient_t   *cl;
+//	gclient_t   *cl;
 	edict_t     *cl_ent;
 	int         maxsize = 1300, i, j, k;
 
@@ -1044,7 +1045,7 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1)  // print next team 1 member...
 		{
-			cl = &game.clients[sorted[TEAM1][i]];
+//			cl = &game.clients[sorted[TEAM1][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
 			if (cl_ent->solid != SOLID_NOT &&
 				cl_ent->deadflag != DEAD_DEAD)
@@ -1095,7 +1096,7 @@ void A_ScoreboardMessage2 (edict_t *ent)//, edict_t *killer)
 
 		if (i < total[TEAM2] && stoppedat[TEAM2] == -1)  // print next team 2 member...
 		{
-			cl = &game.clients[sorted[TEAM2][i]];
+//			cl = &game.clients[sorted[TEAM2][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
 			if (cl_ent->solid != SOLID_NOT &&
 				cl_ent->deadflag != DEAD_DEAD)
@@ -1340,8 +1341,8 @@ Draw help computer.
 */
 void ShowCampaign (edict_t *ent)
 {
-	char	string[1024];
-	int i, curx, cury;
+	char	string[1024], temp[1024];
+	int i, curx = 0, cury = 0;
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse)
@@ -1363,31 +1364,40 @@ void ShowCampaign (edict_t *ent)
 	}
 
 	// send the layout
-	Com_sprintf (string, sizeof(string), "");
+	memset(string, 0, sizeof(string));
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, level.campaign) > 1023)
+	if (snprintf(string, 1024, "xv 7 yv 7 picn %s ", level.campaign) > 1023)
 		gi.dprintf("ShowCampaign: truncated string\n");
+	string[sizeof(string) - 1] = '\0';
 
 	if (curx && cury)
 	{
-		if (snprintf(string, 1024, "%sxv %i yv %i picn o ", string, curx, cury) > 1023)
+		if (snprintf(temp, 1024, "%sxv %i yv %i picn o ", string, curx, cury) > 1023)
 			gi.dprintf("ShowCampaign: truncated string\n");
+		strncpy(string, temp, sizeof(string));
+		string[sizeof(string) - 1] = '\0';
 	}
 
 	for (i = 0; campaign_spots[i].bspname; i++)
 	{
-		if (snprintf(string, 1024, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos) > 1023)
+		if (snprintf(temp, 1024, "%sxv %i yv %i picn ", string, campaign_spots[i].xpos, campaign_spots[i].ypos) > 1023)
 			gi.dprintf("ShowCampaign: truncated string\n");
+		strncpy(string, temp, sizeof(string));
+		string[sizeof(string) - 1] = '\0';
 
 		if (campaign_spots[i].owner == 0)
 		{
-			if (snprintf(string, 1024, "%su ", string) > 1023)
+			if (snprintf(temp, 1024, "%su ", string) > 1023)
 				gi.dprintf("ShowCampaign: truncated string\n");
+			strncpy(string, temp, sizeof(string));
+			string[sizeof(string) - 1] = '\0';
 		}
 		else if (campaign_spots[i].owner == 1)
 		{
-			if (snprintf(string, 1024, "%sg ", string) > 1023)
+			if (snprintf(temp, 1024, "%sg ", string) > 1023)
 				gi.dprintf("ShowCampaign: truncated string\n");
+			strncpy(string, temp, sizeof(string));
+			string[sizeof(string) - 1] = '\0';
 		}
 		else
 			strcat (string, "q ");
@@ -1396,15 +1406,19 @@ void ShowCampaign (edict_t *ent)
 	strcat (string, "xv 22 yv 36 picn u ");
 	strcat (string, "xv 37 yv 38 string \"");
 
-	if (snprintf(string, 1024, "%s%i", string, alliedplatoons) > 1023)
+	if (snprintf(temp, 1024, "%s%i", string, alliedplatoons) > 1023)
 		gi.dprintf("ShowCampaign: truncated string\n");
+	strncpy(string, temp, sizeof(string));
+	string[sizeof(string) - 1] = '\0';
 
 	strcat (string, "\" ");
 	strcat (string, "xv 22 yv 56 picn g ");
 	strcat (string, "xv 37 yv 58 string \"");
 
-	if (snprintf(string, 1024, "%s%i", string, axisplatoons) > 1023)
+	if (snprintf(temp, 1024, "%s%i", string, axisplatoons) > 1023)
 		gi.dprintf("ShowCampaign: truncated string\n");
+	strncpy(string, temp, sizeof(string));
+	string[sizeof(string) - 1] = '\0';
 
 	strcat (string, "\" ");
 
@@ -1430,9 +1444,9 @@ void ShowServerImg (edict_t *ent)
 
 
 	// send the layout
-	Com_sprintf (string, sizeof(string), "");
+	memset(string, 0, sizeof(string));
 //	sprintf (string, "%sxv -16 yv 10 picn %s ", string, campaign->string);
-	if (snprintf(string, 1024, "%sxv 7 yv 7 picn %s ", string, serverimg->string) > 1023)
+	if (snprintf(string, 1024, "xv 7 yv 7 picn %s ", serverimg->string) > 1023)
 		gi.dprintf("ShowServerImg: truncated string\n");
 
 	gi.WriteByte (svc_layout);
@@ -1817,13 +1831,13 @@ void G_SetStats (edict_t *ent)
 */
 void SplittedScoreboardMessage (edict_t *ent)
 {
-	char scoreleftpic[256];	 // faf:  for team dll support
-	char scorerightpic[256]; //      loads background pic according to team
-	char scoretopleftpic[256];
-	char scoretoprightpic[256]; // faf: end
+//	char scoreleftpic[256];	 // faf:  for team dll support
+//	char scorerightpic[256]; //      loads background pic according to team
+//	char scoretopleftpic[256];
+//	char scoretoprightpic[256]; // faf: end
 
 	char string2[1400], string[1400];
-	gclient_t *cl;
+//	gclient_t *cl;
 	edict_t *cl_ent;
 	int maxsize = 1300, i, j, k;
 
@@ -2012,7 +2026,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
 		{
-			cl = &game.clients[sorted[TEAM1][i]];
+//			cl = &game.clients[sorted[TEAM1][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
 			if (cl_ent->solid != SOLID_NOT &&
 					cl_ent->deadflag != DEAD_DEAD)
@@ -2051,7 +2065,7 @@ void SplittedScoreboardMessage (edict_t *ent)
 
 		if (i < total[TEAM2] && stoppedat[TEAM2] == -1) // print next team 2 member...
 		{
-			cl = &game.clients[sorted[TEAM2][i]];
+//			cl = &game.clients[sorted[TEAM2][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
 			if (cl_ent->solid != SOLID_NOT &&
 					cl_ent->deadflag != DEAD_DEAD)
@@ -2115,13 +2129,13 @@ void SplittedScoreboardMessage (edict_t *ent)
 void SplittedScoreboardMessage2 (edict_t *ent)
 {
 	float accuracy;
-	char scoreleftpic[256];	 // faf:  for team dll support
-	char scorerightpic[256]; //      loads background pic according to team
-	char scoretopleftpic[256];
-	char scoretoprightpic[256]; // faf: end
+//	char scoreleftpic[256];	 // faf:  for team dll support
+//	char scorerightpic[256]; //      loads background pic according to team
+//	char scoretopleftpic[256];
+//	char scoretoprightpic[256]; // faf: end
 
 	char string2[1400], string[1400];
-	gclient_t *cl;
+//	gclient_t *cl;
 	edict_t *cl_ent;
 	int maxsize = 1300, i, j, k;
 
@@ -2300,7 +2314,7 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 
 		if (i < total[TEAM1] && stoppedat[TEAM1] == -1) // print next team 1 member...
 		{
-			cl = &game.clients[sorted[TEAM1][i]];
+//			cl = &game.clients[sorted[TEAM1][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM1][i];
 			if (cl_ent->solid != SOLID_NOT &&
 					cl_ent->deadflag != DEAD_DEAD)
@@ -2351,7 +2365,7 @@ void SplittedScoreboardMessage2 (edict_t *ent)
 
 		if (i < total[TEAM2] && stoppedat[TEAM2] == -1) // print next team 2 member...
 		{
-			cl = &game.clients[sorted[TEAM2][i]];
+//			cl = &game.clients[sorted[TEAM2][i]];
 			cl_ent = g_edicts + 1 + sorted[TEAM2][i];
 			if (cl_ent->solid != SOLID_NOT &&
 					cl_ent->deadflag != DEAD_DEAD)

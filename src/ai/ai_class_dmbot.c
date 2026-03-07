@@ -29,8 +29,8 @@ void AI_MoveToCampSpot(edict_t *self, usercmd_t *ucmd);
 //==========================================
 // Some CTF stuff
 //==========================================
-static gitem_t *redflag;
-static gitem_t *blueflag;
+//static gitem_t *redflag;
+//static gitem_t *blueflag;
 
 
 //==========================================
@@ -39,12 +39,12 @@ static gitem_t *blueflag;
 //==========================================
 void BOT_DMclass_Move(edict_t *self, usercmd_t *ucmd)
 {
-	int current_node_flags = 0;
+	//int current_node_flags = 0;
 	int next_node_flags = 0;
 	int	current_link_type = 0;
 	int i;
 
-	current_node_flags = nodes[self->ai->current_node].flags;
+	//current_node_flags = nodes[self->ai->current_node].flags;
 	next_node_flags = nodes[self->ai->next_node].flags;
 	if( AI_PlinkExists( self->ai->current_node, self->ai->next_node ))
 	{
@@ -708,9 +708,9 @@ void BOT_DMclass_ChooseWeapon(edict_t *self)
 	float	dist;
 	vec3_t	v;
 //	int		i;
-	float	best_weight = 0.0;
-	gitem_t	*best_weapon = NULL;
-	int		weapon_range = 0;
+//	float	best_weight = 0.0;
+//	gitem_t	*best_weapon = NULL;
+//	int		weapon_range = 0;
 
 	gitem_t	*it;
 	int index;
@@ -757,7 +757,7 @@ void BOT_DMclass_ChooseWeapon(edict_t *self)
 	// Base weapon selection on distance: 
 	VectorSubtract (self->s.origin, self->enemy->s.origin, v);
 	dist = VectorLength(v);
-
+/* kernel: weapon_range is unused
 	if(dist < 150)
 		weapon_range = AIWEAP_MELEE_RANGE;
 
@@ -769,7 +769,7 @@ void BOT_DMclass_ChooseWeapon(edict_t *self)
 
 	else 
 		weapon_range = AIWEAP_LONG_RANGE;
-
+*/
 
 	//if we've just fired sniper and an enemy is close by.  switch to pistol
 	if (dist < 500 && self->client->pers.weapon && self->client->pers.weapon->position == LOC_SNIPER &&
@@ -904,7 +904,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 	//float	dist;
 	vec3_t	fireorig;
 	vec3_t	enemyorig;
-	int		enemystance;
+	int		enemystance = 0;
 
 	int randnum;
 
@@ -912,7 +912,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 	float  skilldelay;
 
 	vec3_t vdist;
-	float dist;
+	float dist = 0.0;
 
 
 	if (self->ai->state != BOT_STATE_CAMP && 
@@ -930,7 +930,7 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 
 	if (self->client->pers.weapon)
 	{
-        if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
+		if (self->client->pers.weapon->position == LOC_SUBMACHINEGUN ||
 			self->client->pers.weapon->position == LOC_SUBMACHINEGUN2 ||
 			self->client->pers.weapon->position == LOC_L_MACHINEGUN ||
 			self->client->pers.weapon->position == LOC_H_MACHINEGUN)
@@ -948,7 +948,8 @@ void BOT_CheckFireWeapon (edict_t *self, usercmd_t *ucmd)
 			weapon = WEAP_MELEE;
 		else
 			weapon = WEAP_MACHINEGUN;
-	}else
+	}
+	else
 		return;
 
 
@@ -1874,7 +1875,7 @@ void BOT_DMclass_InitPersistant(edict_t *self)
 	self->classname = "dmbot";
 
 	//copy name
-	if (self->client->pers.netname)
+	if (self->client->pers.netname[0])
 		self->ai->pers.netname = self->client->pers.netname;
 	else
 		self->ai->pers.netname = "dmBot";

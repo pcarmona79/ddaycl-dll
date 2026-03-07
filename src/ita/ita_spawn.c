@@ -36,105 +36,103 @@ void SpawnItem (edict_t *ent, gitem_t *item);
 gitem_t	*FindItem (char *pickup_name);
 
 void SP_item_weapon_b34(edict_t *self)
-
 {
-    SpawnItem(self,FindItem("weapon_b34"));
+	SpawnItem(self,FindItem("weapon_b34"));
 }
 
 void SP_item_weapon_carcano(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_carcano"));
+	SpawnItem(self,FindItemByClassname("weapon_carcano"));
 }
 
 void SP_item_weapon_b38(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_b38"));
+	SpawnItem(self,FindItemByClassname("weapon_b38"));
 }
 
 void SP_item_weapon_k43(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_k43"));
+	SpawnItem(self,FindItemByClassname("weapon_k43"));
 }
 
 void SP_item_weapon_b3842(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_b3842"));
+	SpawnItem(self,FindItemByClassname("weapon_b3842"));
 }
 
 void SP_item_weapon_panzer(edict_t *self);
 
 void SP_item_weapon_m98ks(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_m98ks"));
+	SpawnItem(self,FindItemByClassname("weapon_m98ks"));
 }
 //ammo
 
 void SP_item_ammo_grenades_ita(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_ita"));
+	SpawnItem(self,FindItemByClassname("ammo_grenades_ita"));
 }
 void SP_item_ammo_b34(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_b34"));
+	SpawnItem(self,FindItemByClassname("ammo_b34"));
 }
 
 void SP_item_ammo_carcano(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_carcano"));
+	SpawnItem(self,FindItemByClassname("ammo_carcano"));
 }
 
 void SP_item_ammo_b38(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_b38"));
+	SpawnItem(self,FindItemByClassname("ammo_b38"));
 }
 
 void SP_item_ammo_k43(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_k43"));
+	SpawnItem(self,FindItemByClassname("ammo_k43"));
 }
 
 void SP_item_ammo_b3842(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_b3842"));
+	SpawnItem(self,FindItemByClassname("ammo_b3842"));
 }
 
 void SP_item_ammo_rocketsI(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_rocketsI"));
+	SpawnItem(self,FindItemByClassname("ammo_rocketsI"));
 }
 
 void SP_item_ammo_mauser98k(edict_t *self);
 
 void SP_item_weapon_breda(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_breda"));
+	SpawnItem(self,FindItemByClassname("weapon_breda"));
 }
 void SP_item_ammo_breda(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_breda"));
+	SpawnItem(self,FindItemByClassname("ammo_breda"));
 }
 
 
 
 
 spawn_t sp_ita[MAX_TEAM_ITEMS] =
-
 {
-    "weapon_b34", SP_item_weapon_b34,
-	"weapon_carcano",SP_item_weapon_carcano,
-	"weapon_b38", SP_item_weapon_b38,
-	"weapon_k43", SP_item_weapon_k43,
-	"weapon_b3842", SP_item_weapon_b3842,
-	"weapon_panzerfaust",SP_item_weapon_panzer,
-	"weapon_m98ks",SP_item_weapon_m98ks,
-	"weapon_breda", SP_item_weapon_breda,
-	"ammo_b34",SP_item_ammo_b34,
-	"ammo_carcano",SP_item_ammo_carcano,
-	"ammo_b38",SP_item_ammo_b38,
-	"ammo_k43",SP_item_ammo_k43,
-	"ammo_b3842",SP_item_ammo_b3842,
-	"ammo_rocketsI",SP_item_ammo_rocketsI,
-	"ammo_mauser98k",SP_item_ammo_mauser98k,
-	"ammo_grenades_ita", SP_item_ammo_grenades_ita,
-	"ammo_breda",SP_item_ammo_breda
+	{ "weapon_b34", SP_item_weapon_b34 },
+	{ "weapon_carcano",SP_item_weapon_carcano },
+	{ "weapon_b38", SP_item_weapon_b38 },
+	{ "weapon_k43", SP_item_weapon_k43 },
+	{ "weapon_b3842", SP_item_weapon_b3842 },
+	{ "weapon_panzerfaust", SP_item_weapon_panzer },
+	{ "weapon_m98ks", SP_item_weapon_m98ks },
+	{ "weapon_breda", SP_item_weapon_breda },
+	{ "ammo_b34", SP_item_ammo_b34 },
+	{ "ammo_carcano", SP_item_ammo_carcano },
+	{ "ammo_b38", SP_item_ammo_b38 },
+	{ "ammo_k43", SP_item_ammo_k43 },
+	{ "ammo_b3842", SP_item_ammo_b3842 },
+	{ "ammo_rocketsI", SP_item_ammo_rocketsI },
+	{ "ammo_mauser98k", SP_item_ammo_mauser98k },
+	{ "ammo_grenades_ita", SP_item_ammo_grenades_ita },
+	{ "ammo_breda", SP_item_ammo_breda }
 };

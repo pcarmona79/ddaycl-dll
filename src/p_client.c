@@ -28,6 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
+#include "game.h"
 #include "m_player.h"
 #include "g_cmds.h"
 #include "q_shared.h"
@@ -72,9 +73,11 @@ Cuando el jugador en racha es eliminado, el jugador que lo elimino tambien es an
 Si el jugador se suicida, comete un team kill o se cambia de equipo, la racha termina y el fin se anuncia.
 */
 
-void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para generar los mensajes.
+void AnnounceStreak(char *streakmsg) // Funcion secundaria para generar los mensajes.
 {
+	edict_t *Tent;
 	int i;
+
 	for (i = 1; i <= game.maxclients; i++)
 	{
 		Tent = &g_edicts[i];
@@ -87,7 +90,7 @@ void AnnounceStreak(char *streakmsg, edict_t *Tent) // Funcion secundaria para g
 		safe_cprintf(NULL, PRINT_MEDIUM, "%s\n", streakmsg);
 }
 
-void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion principal
+void KillingSpree(edict_t *attacker, edict_t *self) // Funcion principal
 {
 	char streakmsg[128];
 	
@@ -96,7 +99,7 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
 		if (attacker->client->resp.streak >= exbattleinfo->value)
 		{
 			Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has LOST his streak due to FRIENDLY FIRE. **", attacker->client->pers.netname);
-			AnnounceStreak (streakmsg, Tent);
+			AnnounceStreak(streakmsg);
 		}
 		attacker->client->resp.streak = 0;
 	}
@@ -111,33 +114,33 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
         		case 0:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/killingspree.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is on a KILLING SPREE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
             		break;
 	        	case 3:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/rampage.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is on a RAMPAGE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
         	    	break;
         		case 6:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/dominating.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is DOMINATING!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
     	        	break;
         		case 9:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/unstopable.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is UNSTOPABLE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
 	            	break;
 				case 12:
 					gi.positioned_sound(vec3_origin, &g_edicts[0], CHAN_AUTO, gi.soundindex("streak/godlike.wav"), 1, ATTN_NONE, 0);
     				Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is GODLIKE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-					AnnounceStreak (streakmsg, Tent);
+					AnnounceStreak(streakmsg);
 	            	break;
     	    	default:
 					if ((int)attacker->client->resp.streak - (int)exbattleinfo->value >= 13)
 					{
 						Com_sprintf(streakmsg, sizeof(streakmsg), "** %s is GODLIKE!: %d frags **", attacker->client->pers.netname, attacker->client->resp.streak);
-						AnnounceStreak (streakmsg, Tent);
+						AnnounceStreak(streakmsg);
 					}
 					break;
     		}
@@ -146,13 +149,13 @@ void KillingSpree(edict_t *attacker, edict_t *self, edict_t *Tent) // Funcion pr
 	if (self->client->resp.streak >= exbattleinfo->value && attacker->client && attacker != self) // Si el jugador está en racha y es asesinado, quien corta la racha es anunciado.
 	{
 		Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has ENDED %s streak. Total frags: %d **", attacker->client->pers.netname, self->client->pers.netname, self->client->resp.streak);
-		AnnounceStreak (streakmsg, Tent);
+		AnnounceStreak(streakmsg);
 	}
 
 	if (self->client->resp.streak >= exbattleinfo->value && (!attacker || !attacker->client || attacker == self)) // Si el jugador está en racha y cambia de equipo 0 se suicida se anuncia su error :P
 	{
 		Com_sprintf(streakmsg, sizeof(streakmsg), "** %s has made a mistake and LOST his streak. **", self->client->pers.netname);
-		AnnounceStreak (streakmsg, Tent);
+		AnnounceStreak(streakmsg);
 	}
 	
 	self->client->resp.streak = 0; // La racha se reinicia si el jugador muere.
@@ -684,7 +687,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 			if (!self->ai)
 				self->enemy = NULL;
 			if (exbattleinfo->value > 2)
-				KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+				KillingSpree(attacker, self); // ZeRo - Llamada a la función de racha
 			return;
 		}
 
@@ -894,7 +897,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 						attacker->client->resp.score++;
 				}
 				if (exbattleinfo->value > 2)
-					KillingSpree(attacker, self, Tent); // ZeRo - Llamada a la función de racha
+					KillingSpree(attacker, self); // ZeRo - Llamada a la función de racha
 				return;
 			}
 		}
@@ -1674,16 +1677,16 @@ specify ent, go to a random point // faf, not this:, but NOT the two points clos
 */
 edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 {
-	edict_t	*spot, *spotb, *spot1, *spot2;
+	edict_t	*spot, *spotb; // *spot1, *spot2;
 	int		count = 0;
 	int		selection;
-	float	range1, range2;
+//	float	range1, range2;
 	edict_t *e;
 	int i,otherteam;
 
 	spot = NULL;
-	range1 = range2 = 99999;
-	spot1 = spot2 = NULL;
+	//range1 = range2 = 99999.0;
+	//spot1 = spot2 = NULL;
 
 	while ((spot = G_Find_Team (spot, FOFS(classname), spawn_point, team)) != NULL)
 	{
@@ -1758,8 +1761,8 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 
 
 	spotb = NULL;
-	range1 = range2 = 99999;
-	spot1 = spot2 = NULL;
+	//range1 = range2 = 99999.0;
+	//spot1 = spot2 = NULL;
 	count = 0;
 
 	while ((spotb = G_Find_Team (spotb, FOFS(classname), spawn_point, otherteam)) != NULL)	{
@@ -1790,7 +1793,7 @@ edict_t *SelectRandomDDaySpawnPoint (char *spawn_point, int team)
 edict_t *SelectNearestSpawnPoint (int team)
 {
 	edict_t	*bestspot;
-	float	bestdistance;
+//	float	bestdistance;
 	edict_t	*spot;
 	vec3_t mean_origin;
 	int i;
@@ -1798,7 +1801,7 @@ edict_t *SelectNearestSpawnPoint (int team)
 	float temp_distance, nearest_distance = 9999999;
 	vec3_t dist;
 	int playercount = 0;
-	bestdistance = 0;
+//	bestdistance = 0;
 
 	VectorClear (mean_origin);
 	spot = NULL;
@@ -3506,16 +3509,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	int			 nWoundFrame;
 
 	// dday
-	qboolean oob_pitch=false;
-	qboolean found = false;
-	int CT_DUCKED=0;
+//	qboolean oob_pitch=false;
+//	qboolean found = false;
+//	int CT_DUCKED=0;
 	int pronedist=12;//8 causes getting stuck in doors;//faf 12;
 	char cmd[MAX_CMD_BUFFER];
 
 	// pbowens: more trace stuff
-	vec3_t	start, dist;
+	vec3_t	start; //, dist;
 	vec3_t	end = {0, 0, -8192};
-	trace_t	tr;
+//	trace_t	tr;
 
 	float time;
 	vec3_t diff; // kernel: to check for movement
@@ -3527,25 +3530,23 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	VectorCopy(ent->s.origin, start);	// initial value
 	VectorAdd(start, end, end);			// add distance for end
 
-	tr = gi.trace (start, ent->mins, ent->maxs, end, ent, MASK_SOLID);
+//	tr = gi.trace (start, ent->mins, ent->maxs, end, ent, MASK_SOLID);
 	//tr = gi.trace (start, NULL, NULL, end, ent, MASK_SOLID);
-	VectorSubtract(ent->s.origin, tr.endpos, dist);
+//	VectorSubtract(ent->s.origin, tr.endpos, dist);
 
 //	gi.dprintf("%i %s\n", ent->waterlevel, vtos(ent->client->v_angle));
 
 
 	if (!chile->value && ent->client && ent->client->pers.weapon)
-	{ 
+	{
 		time = 1 * (level.time - ent->client->last_fire_time);
 
-		/*if (time < 30)
+		if (time < 30)
 		{
 			if (ent->client->pers.weapon->position == LOC_SNIPER)
-			
 			{
 				if ((time < 20) && time != 0)
 					ent->client->kick_angles[0] = ((5 * cos((time/4) -4)) * ((20 -time)/20));
-
 			}
 			else if (ent->client->pers.weapon->position == LOC_RIFLE)
 			{
@@ -3568,7 +3569,6 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 					ent->client->kick_angles[0] = ((3 * cos((time) -4)) * ((20 -time)/20));
 			}
 		}
-		*/
 	}
 
 
@@ -3871,9 +3871,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 				SwitchToObserver(ent);
 		}
 
-		if (ent->client->aim &&  (
-			(ent->stanceflags == STANCE_CRAWL && ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_GRENADES) ||
-			ent->client->pers.weapon && ent->client->pers.weapon->classnameb == WEAPON_MORPHINE) )			
+		if ((ent->client->aim && ent->stanceflags == STANCE_CRAWL &&
+			 ent->client->pers.weapon && ent->client->pers.weapon->position != LOC_GRENADES) ||
+			 (ent->client->pers.weapon && ent->client->pers.weapon->classnameb == WEAPON_MORPHINE))
 		{
 			// pbowens: this directly undermines the purpose of ClientSetMaxSpeed :(
 			for (i = 0; i < 3; i++) {
@@ -4034,10 +4034,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	//DDAY
 	if (!ent->deadflag)
 	{
-
-		if (ent->s.frame > 197 &&
-		ent->s.frame < 235 ||
-		ent->s.frame > 290)
+		if ((ent->s.frame > 197 &&
+			 ent->s.frame < 235) ||
+			ent->s.frame > 290)
 			pronedist = 24;
 		else
 			pronedist = 16;
@@ -4598,16 +4597,16 @@ void Write_Player_Stats (edict_t *ent)
 {
 	char	statsfilename[MAX_QPATH] = "";
 	char	*ip;
-	int		c;
+//	int		c;
 
 	
 	char *s, *f;
 
 	char *statsc;
 
-	char *name;
+//	char *name;
 	int games = 0;
-	int ping = 0;
+//	int ping = 0;
 	int human_kills = 0;
 	int human_deaths = 0;
 	int bot_kills = 0;
@@ -4654,12 +4653,12 @@ void Write_Player_Stats (edict_t *ent)
 
 	if (statsc)
 	{
-		c = 0;
+//		c = 0;
 		f = strdup (statsc);
 		s = strtok(f, "\n");
 
 		if (s != NULL) {
-			name = s;
+//			name = s;
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
@@ -4667,7 +4666,7 @@ void Write_Player_Stats (edict_t *ent)
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			ping = atoi (s);
+//			ping = atoi (s);
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
@@ -4846,16 +4845,16 @@ void Write_Player_Stats (edict_t *ent)
 void SetPlayerRating(edict_t *ent)
 {
 	char	statsfilename[MAX_QPATH] = "";
-	int		c;
+//	int		c;
 	
 	char *s, *f;
 
 	char *statsc;
 
-	char *name;
-	float ratio = 0.0;
-	int games = 0;
-	int ping = 0;
+//	char *name;
+//	float ratio = 0.0;
+//	int games = 0;
+//	int ping = 0;
 	int	human_kills = 0;
 	int human_deaths = 0;
 	int	bot_kills = 0;
@@ -4880,22 +4879,22 @@ void SetPlayerRating(edict_t *ent)
 
 	if (stats->value)
 	{
-		c = 0;
+//		c = 0;
 		f = strdup (statsc);
 		s = strtok(f, "\n");
 
 
 		if (s != NULL) {
-			name = s;
+//			name = s;
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			games = atoi (s);
+//			games = atoi (s);
 			//gi.dprintf ("s: %i\n",games);
 			s = strtok (NULL, "\n");
 		}
 		if (s != NULL) {
-			ping = atoi (s);
+//			ping = atoi (s);
 			//gi.dprintf ("s: %i\n",games);
 			s = strtok (NULL, "\n");
 		}

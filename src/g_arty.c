@@ -332,7 +332,7 @@ void Think_Arty (edict_t *ent)
 	vec3_t	end;
 	vec3_t	targetdir;
 	vec3_t  tempvec;
-	trace_t	tr;
+	//trace_t	tr;
 	trace_t tr_2;
 
 
@@ -370,7 +370,7 @@ void Think_Arty (edict_t *ent)
 	start[2] += ent->owner->viewheight;
 	AngleVectors(ent->owner->client->v_angle, forward, NULL, NULL);
 	VectorMA(start, 8192, forward, end);
-	tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
+	//tr = gi.trace(start, NULL, NULL, end, ent->owner, MASK_SHOT|CONTENTS_SLIME|CONTENTS_LAVA);
 
 	// find the direction from the entry point to the target
     VectorSubtract(ent->arty_target, ent->arty_entry, targetdir);
@@ -686,6 +686,8 @@ void Spawn_Plane(edict_t *ent)
 	trace_t	tr;
 
 	edict_t *plane;
+
+	VectorSet(plane_start, 0, 0, 0);
 
 	/* kernel: not checking this because all info is in the airstrike ent
 	if (IsValidPlayer(ent) && 
@@ -1171,6 +1173,7 @@ void Spawn_Plane_i(edict_t *ent)
 	trace_t	tr;
 	edict_t *plane;
 
+	VectorSet(plane_start, 0, 0, 0);
 	VectorCopy (ent->move_origin, start);
  	VectorClear(longest);
 	VectorSet(left, 1, 0, 0);

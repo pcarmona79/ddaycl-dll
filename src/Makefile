@@ -29,8 +29,8 @@ ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/ar
 
 #ARCH=i386
 #ARCH=x86_64
-CC=gcc -fcommon
-BASE_CFLAGS=-Dstricmp=strcasecmp
+CC=gcc
+BASE_CFLAGS=-Wall -fcommon -Dstricmp=strcasecmp
 
 #CFLAGS_RELEASE=$(BASE_CFLAGS) -S
 
@@ -45,7 +45,7 @@ CFLAGS_DEBUG=$(BASE_CFLAGS) -DDEBUG -g
 
 # uncomment for ARM64 cross-compilation
 #ARCH=aarch64
-#CC=aarch64-linux-gnu-gcc -fcommon
+#CC=aarch64-linux-gnu-gcc
 
 # Always uncommented
 LDFLAGS=-ldl -lm
@@ -211,6 +211,7 @@ p_view.o: p_view.c g_local.h g_defines.h q_shared.h game.h p_menu.h \
 p_weapon.o: p_weapon.c g_local.h g_defines.h q_shared.h game.h \
  p_menu.h g_maps.h m_player.h x_fbomb.h x_fire.h
 q_shared.o: q_shared.c q_shared.h
+	$(CC) $(CFLAGS) -fno-strict-aliasing $(SHLIBCFLAGS) -o $@ -c $<
 u_entmgr.o: u_entmgr.c g_local.h g_defines.h q_shared.h game.h \
  p_menu.h g_maps.h 
 x_fbomb.o: x_fbomb.c g_local.h g_defines.h q_shared.h game.h p_menu.h \

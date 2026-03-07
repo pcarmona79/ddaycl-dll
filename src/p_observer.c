@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
 #include "p_menus.h"
@@ -81,7 +82,7 @@ void SwitchToObserver(edict_t *ent)
 	gi.linkentity (ent); 
 	ent->client->limbo_mode=true;
 //	ent->client->deathfade = 0;
-
+	ent->client->ps.fov = STANDARD_FOV;
 
 	if (!ent->client->display_info && ent->client->layout_type != SHOW_CAMPAIGN)
 	{
@@ -122,9 +123,9 @@ void Chute_Think(edict_t *ent)
 //	gi.dprintf("%f\n",ent->owner->client->jump_stamina);
 	//we've touched the ground
 	if (ent->owner->client && 
-		ent->owner->groundentity || ent->owner->velocity[2] > 0 ||
+		(ent->owner->groundentity || ent->owner->velocity[2] > 0 ||
 		ent->owner->client->jump_stamina < 80 ||
-		ent->s.frame > 5)
+		ent->s.frame > 5))
 //		ent->owner->client->ps.pmove.gravity == sv_gravity->value)//landed
 	{
 		if (ent->s.frame < 10)  //start parachute falling
@@ -708,6 +709,10 @@ void M_ChooseMOS(edict_t *ent)
 //	int index;
 	edict_t *cl_ent;
 
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
+
 	memset(mosname, 0, sizeof(mosname));
 
 	//pmenu = (ent->client->resp.team_on->index) ? menu_classes_grm : menu_classes_usa;
@@ -753,8 +758,8 @@ void M_ChooseMOS(edict_t *ent)
 				continue; 
 			
 //			if (cl_ent == ent && ent->client->resp.mos == INFANTRY)
-if (cl_ent == ent && (!ent->client->resp.AlreadySpawned || ent->client->resp.changeteam))
-continue;
+			if (cl_ent == ent && (!ent->client->resp.AlreadySpawned || ent->client->resp.changeteam))
+				continue;
 
 
 			if (ent->client->resp.team_on->mos[i]->mos ==
@@ -882,9 +887,12 @@ continue;
 
 void M_Team_Join(edict_t *ent, pmenu_t *p, int choice)
 {
-
-	qboolean foundspot=false;
+	//qboolean foundspot=false;
 	int i,j,k;
+
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
 
 	if (ent->client->menu)
 		PMenu_Close(ent);
@@ -1025,6 +1033,10 @@ void ChooseTeam(edict_t *ent) {
 	char* theText = NULL;
 	char teamname[17];
 	int max_clients;
+
+	// kernel: do not show menu at the beginning
+	if (level.framenum <= (10 * (int)(motd_time->value)))
+		return;
 
 	memset(teamname, 0, sizeof(teamname));
 
@@ -1448,7 +1460,7 @@ void MapVote(edict_t *ent)
 	int i;
 	char filename[100];
 	FILE	*f;
-	qboolean botmap = false;
+	//qboolean botmap = false;
 	char* theText = NULL;
 	char mapname[18];
 	char *add;
@@ -1480,7 +1492,7 @@ void MapVote(edict_t *ent)
 			if (f){
 				fclose (f);
 				add = "*";
-				botmap = true;
+				//botmap = true;
 			}
 			else
 				add = " ";

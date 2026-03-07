@@ -405,9 +405,6 @@ qboolean TestMap(const char *basedir, const char *dir, const char *mapname, cons
 
 qboolean MapExists (char *map)
 {
-	FILE *check;
-	char dirname[256];
-
 	// kernel: first use homedir to search for maps
 	if (TestMap(sys_homedir->string, GAMEVERSION "/maps", map, "bsp"))
 		return true;
@@ -471,20 +468,22 @@ void Write_Last_Maps()
 
 void Read_Last_Maps()
 {
-	int		i,c;
+	int		i;
 	char	*s, *f;
 	char	*lastmaps;
 
 	lastmaps = ReadEntFile("lastmaps.txt");
 
-	if (lastmaps)	{  
-		c = 0;
-		f = strdup (lastmaps);
+	if (lastmaps)
+	{
+		f = strdup(lastmaps);
 		s = strtok(f, "\n");
-		for (i=1; i<20; i++)		{
-			if (s != NULL) {
-				last_maps_played[i]= s;
-				s = strtok (NULL, "\n");
+		for (i = 1; i < 20; i++)
+		{
+			if (s != NULL)
+			{
+				last_maps_played[i] = s;
+				s = strtok(NULL, "\n");
 			}
 		}
 	}
@@ -601,7 +600,7 @@ The timelimit or fraglimit has been exceeded
 */
 void EndDMLevel (void)
 {
-	char *s, *t, *f, *sb, *tb;// *fb;
+	char *s, *t, *f, *tb;// *sb, *fb;
 	static const char *seps = " ,\n\r";
 	char *mapname, check[20]; // kernel: check must be char[]
 	int i, axiscount=0,alliedcount=0;
@@ -872,7 +871,7 @@ void EndDMLevel (void)
 				else
 				{
 					//restart maplist
-					sb = strdup(sv_maplist->string);
+					//sb = strdup(sv_maplist->string);
 					tb = strtok(s, seps);
 
 					if (MapExists(tb))
@@ -927,7 +926,7 @@ void EndDMLevel (void)
 		
 		ent = G_Spawn (); 
 		ent->classname = "target_changelevel"; 
-		if (maplist.mapnames[i] && !level.nextmap[0])
+		if (maplist.mapnames[i][0] && !level.nextmap[0])
 			ent->map = maplist.mapnames[i]; 
 		else if (level.nextmap[0])
 			ent->map = level.nextmap;
@@ -990,7 +989,7 @@ void CheckDMRules (void)
 	int			i=0,tempscore=0;
 	float		delay=0.0;
 	qboolean Is_Game_Over=false;
-	gclient_t	*cl;
+//	gclient_t	*cl;
 
 	int allies_kills_win = 0;
 	int axis_kills_win = 0;
@@ -1010,8 +1009,8 @@ void CheckDMRules (void)
 		vec3_t		w; //faf
 		float		range;//faf
 		edict_t		*check;
-		edict_t		*alliedflag;
-		edict_t     *axisflag;
+		edict_t		*alliedflag = NULL;
+		edict_t     *axisflag = NULL;
 		edict_t     *e;
 
 		if (level.time == level.ctb_time)

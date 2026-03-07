@@ -1918,10 +1918,9 @@ void misc_deadsoldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker,
 /*-----/ PM /-----/ MODIFIED:  Check for gib. /-----*/
 
     if (self->health > self->gib_health)
+		return;
 
 /*--------------------------------------------------*/
-
-	return;
 
 	gi.sound (self, CHAN_BODY, gi.soundindex ("misc/udeath.wav"), 1, ATTN_NORM, 0);
 	for (n= 0; n < 4; n++)
@@ -2583,7 +2582,7 @@ void teleporter_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_
 
 {
 
-	edict_t		*dest, *t;
+	edict_t		*dest = NULL, *t;
 
 	int			i, randnum;
 
@@ -3171,11 +3170,11 @@ void spawn_toggle_use (edict_t *self, edict_t *other, edict_t *activator)
 	if (self->style == 2 && activator->client)
 	{
 		//bulgef thing: only switch if the activating person's nearest i_r_s belongs to opposite team.
-		edict_t *e,*nearest;
+		edict_t *e, *nearest = NULL;
 		float temp_distance,nearest_distance;
 		vec3_t dist;
 
-		nearest_distance = 9999999999;
+		nearest_distance = 9999999999.0;
 		for (e = g_edicts; e < &g_edicts[globals.num_edicts]; e++)
 		{
 			if (!e->inuse)
@@ -3268,8 +3267,8 @@ void Medic_Screen (edict_t *ent)
 	vec3_t	a,b;
 	int iconpos;
 
-	qboolean qleft,qforward,qback,qright;
-	qleft = qforward = qback = qright = false;
+	//qboolean qleft,qforward,qback,qright;
+	//qleft = qforward = qback = qright = false;
 
 	//JABot[start]
 	if (ent->ai || !ent->inuse || !ent->client)
@@ -3333,11 +3332,11 @@ void Medic_Screen (edict_t *ent)
 		VectorNormalize (vec);
 	
 		dot = DotProduct (vec, forward);
-		if (dot > 0.9)
+/*		if (dot > 0.9)
 			qforward = true;
 		else if (dot < .1)
 			qback = true;
-/*		else
+		else
 		{
 			dot = DotProduct (vec, right);
 			if (dot >.1)

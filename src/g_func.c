@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 #include "game.h"
+#include "q_shared.h"
 
 /*
 =========================================================
@@ -2261,7 +2262,7 @@ void SP_spawn_protect (edict_t *self)
 	vec3_t min;
 	vec3_t max;
 	int i;
-	edict_t *area;
+	//edict_t *area;
 
 
 	self->touch = Touch_Spawn_Protect;
@@ -2271,7 +2272,8 @@ void SP_spawn_protect (edict_t *self)
 	self->solid = SOLID_TRIGGER;
 	if (self->model)
 		gi.setmodel (self, self->model);
-	else if (self->move_origin && self->move_angles)
+	else if (!VectorCompare(self->move_origin, vec3_origin) &&
+			 !VectorCompare(self->move_angles, vec3_origin))
 	{ 
 		VectorCopy (self->move_origin, min);
 		VectorCopy (self->move_angles, max);

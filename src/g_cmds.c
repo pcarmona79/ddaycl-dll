@@ -212,64 +212,64 @@ void Cmd_SexPistols_f(edict_t *ent)
 
 g_cmds_t id_GameCmds[NUM_ID_CMDS] = // remember to set back to NUM_ID_COMDS
 {
-    "use",			1,	Cmd_Use_f,
-    "drop",			1,	Cmd_Drop_f,
-	"give",			1,	Cmd_Give_f,
-	"god",			1,	Cmd_God_f,
-	"notarget",		1,	Cmd_Notarget_f,
-	"noclip",		1,	Cmd_Noclip_f,
-	"help",			1,	Cmd_Help_f,
-	"scoreboard",	1,	Cmd_Help_f,
-	"inven",		1,	Cmd_Inven_f,
-	"invnext",		2,	SelectNextItem,
-	"invprev",		2,	SelectPrevItem,
-	"invuse",		1,	Cmd_InvUse_f,
+	{ "use",				1,	Cmd_Use_f },
+	{ "drop",				1,	Cmd_Drop_f },
+	{ "give",				1,	Cmd_Give_f },
+	{ "god",				1,	Cmd_God_f },
+	{ "notarget",			1,	Cmd_Notarget_f },
+	{ "noclip",				1,	Cmd_Noclip_f },
+	{ "help",				1,	Cmd_Help_f },
+	{ "scoreboard",			1,	Cmd_Help_f },
+	{ "inven",				1,	Cmd_Inven_f },
+	{ "invnext",			2,	SelectNextItem },
+	{ "invprev",			2,	SelectPrevItem },
+	{ "invuse",				1,	Cmd_InvUse_f },
 //	"invdrop",		1,	Cmd_InvDrop_f,
-	"weapprev",		1,	Cmd_WeapPrev_f,
-	"weapnext",		1,	Cmd_WeapNext_f,
-	"kill",			1,	Cmd_Kill_f,
-	"putaway",		1,	Cmd_PutAway_f,
-	"wave",			1,	Cmd_Wave_f,
-	"gameversion",	1,	Cmd_GameVersion_f,
+	{ "weapprev",			1,	Cmd_WeapPrev_f },
+	{ "weapnext",			1,	Cmd_WeapNext_f },
+	{ "kill",				1,	Cmd_Kill_f },
+	{ "putaway",			1,	Cmd_PutAway_f },
+	{ "wave",				1,	Cmd_Wave_f },
+	{ "gameversion",		1,	Cmd_GameVersion_f },
 
-	"stance",		1,	Cmd_Stance,
+	{ "stance",				1,	Cmd_Stance },
 //	"airstrike",	1,	Cmd_Airstrike_f,
-	"arty",			1,	Cmd_Arty_f,
-	"attack2",			1,	Cmd_Arty_f,
-	"class",		1,	Cmd_Menu_Class_f, //Cmd_MOS,
+	{ "arty",				1,	Cmd_Arty_f },
+	{ "attack2",			1,	Cmd_Arty_f },
+	{ "class",				1,	Cmd_Menu_Class_f }, //Cmd_MOS,
 //	"create_team",	1,	Cmd_Create_Team,
-	"join_team",	1,	Cmd_Menu_Team_f,//Cmd_Join_team,
-	"team",			1,	Cmd_Menu_Team_f,//Cmd_Join_team,
-	"main",			1,	Cmd_Menu_Main_f,//Cmd_Join_team,
-	"menu",			1,	Cmd_Menu_Main_f,//Cmd_Join_team,
-	"list_team",	1,	Cmd_List_team,
+	{ "join_team",			1,	Cmd_Menu_Team_f },//Cmd_Join_team,
+	{ "team",				1,	Cmd_Menu_Team_f },//Cmd_Join_team,
+	{ "main",				1,	Cmd_Menu_Main_f },//Cmd_Join_team,
+	{ "menu",				1,	Cmd_Menu_Main_f },//Cmd_Join_team,
+	{ "list_team",			1,	Cmd_List_team },
 //	"quit_team",	1,	Cmd_Quit_team,
 //	"feed_ammo",	1,	Feed_Ammo,
-	"reload",		1,	Cmd_Reload_f,
+	{ "reload",				1,	Cmd_Reload_f },
 //	"begin_mission",1,	EndObserverMode,
-	"scope",		2,	(void *)Cmd_Scope_f,
-	"shout",		3,	Cmd_Shout_f,
-	"aliciamode",	1,	Cmd_AliciaMode_f,
-	"iwannabeanarchy",1,Cmd_SexPistols_f,
-	"observer",		1,	Cmd_FlyingNunMode_f,
+	{ "scope",				2,	(void *)Cmd_Scope_f },
+	{ "shout",				3,	Cmd_Shout_f },
+	{ "aliciamode",			1,	Cmd_AliciaMode_f },
+	{ "iwannabeanarchy",	1, Cmd_SexPistols_f },
+	{ "observer",			1,	Cmd_FlyingNunMode_f },
 //	"printcmds",	0,	PrintCmds,
 //	"ddhelp",		1,	Cmd_DDHelp_f,
-	"binds",		1,	Cmd_DDHelp_f,
-	"ddebug",		1,	Cmd_DDebug_f,
-	"maplist",		1,	Cmd_Maplist_f,
-	"autopickup",	1,	Cmd_AutoPickUp_f,
-	"id",			1,	Cmd_PlayerID_f,
-	"medic",		1,  Cmd_Medic_Call_f,
-	"motd",			1,	Cmd_MOTD,
+	{ "binds",		1,	Cmd_DDHelp_f },
+	{ "ddebug",		1,	Cmd_DDebug_f },
+	{ "maplist",		1,	Cmd_Maplist_f },
+	{ "autopickup",	1,	Cmd_AutoPickUp_f },
+	{ "id",			1,	Cmd_PlayerID_f },
+	{ "medic",		1,  Cmd_Medic_Call_f },
+	{ "motd",			1,	Cmd_MOTD },
 
-	"dday_menu_main",	1,	Cmd_Menu_Main_f,
-	"dday_menu_team",	1,	Cmd_Menu_Team_f,
-	"dday_menu_class",	1,	Cmd_Menu_Class_f,
-	"objectives",	1,	Cmd_Objectives_Toggle,//faf:  bring up objective pic
-	"spot", 1, Cmd_Spot,//for mappers to find coordinates for map entities
-	"removedoors", 1, Cmd_RemoveDoors,
-	"showlinks", 1, ShowLinks,
-	"removenode", 1, SV_Remove_Node
+	{ "dday_menu_main",	1,	Cmd_Menu_Main_f },
+	{ "dday_menu_team",	1,	Cmd_Menu_Team_f },
+	{ "dday_menu_class",	1,	Cmd_Menu_Class_f },
+	{ "objectives",	1,	Cmd_Objectives_Toggle },//faf:  bring up objective pic
+	{ "spot", 1, Cmd_Spot },//for mappers to find coordinates for map entities
+	{ "removedoors", 1, Cmd_RemoveDoors },
+	{ "showlinks", 1, ShowLinks },
+	{ "removenode", 1, SV_Remove_Node }
 };
 
 
@@ -1622,7 +1622,7 @@ void Cmd_Objectives (edict_t *ent)
 	char	entryb[1024];
 	int	stringlength;
 	char  *bp;
-	char  *objective_name;
+	char  *objective_name = NULL;
 
 
 	//JABot[start]
@@ -1683,6 +1683,8 @@ void Cmd_Objectives (edict_t *ent)
 			objective_name = "Objective";
 		else if (e->classnameb == FUNC_EXPLOSIVE_OBJECTIVE)
 			objective_name = "Destroyable Objective";
+		else
+			objective_name = "Objective";
 
 		//put ! next to own objectives that can't be recapped
 		if (ent->client->resp.team_on &&
@@ -2134,7 +2136,7 @@ void GetNearbyTeammates(edict_t *self, char *buf)
 			!OnSameTeam(ent, self))
 			continue;
 
-		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, 15);
+		strncpy(nearby_teammates[nearby_teammates_num], ent->client->pers.netname, sizeof(ent->client->pers.netname));
 		nearby_teammates[nearby_teammates_num][15] = 0; // in case their name is 15 chars...
 		nearby_teammates_num++;
 		if (nearby_teammates_num >= 10)
@@ -2235,7 +2237,7 @@ void GetNearbyLocation(edict_t *self, char *buf)
 	float nearest_distance = 9999999;
 
 	vec3_t dist, dist2;
-	edict_t	*e, *closest;
+	edict_t	*e, *closest = NULL;
 
 
 	for (i=0 ; i<globals.num_edicts ; i++)
@@ -2280,13 +2282,14 @@ void GetNearbyLocation(edict_t *self, char *buf)
 	}
 	else
 	{
-		if (closest->obj_name)
+		if (!closest)
+			strcpy(buf, "somewhere");
+		else if (closest->obj_name)
 			strcpy(buf, closest->obj_name);
 		else if (closest->message)
 			strcpy(buf, closest->message);
 		else
-			strcpy(buf,"somewhere");
-
+			strcpy(buf, "somewhere");
 	}
 
 	return;
@@ -2426,7 +2429,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0, qboolean saved)
 {
 	int			i,j, offset_of_text;
 	edict_t		*entR = NULL;
-	edict_t		*entG = NULL;
+	//edict_t		*entG = NULL;
 	char		*p;
 	char		text[2048];
 	gclient_t	*cl;
@@ -2781,13 +2784,13 @@ void M_ChooseMOS(edict_t *ent);
 
 void AfterSwitch(edict_t *ent, int type)
 {
-/*	gi.unlinkentity (ent);
+/ *	gi.unlinkentity (ent);
 	ent->movetype = MOVETYPE_NOCLIP; 
 	ent->solid = SOLID_NOT; 
 	ent->svflags |= SVF_NOCLIENT; 
-	ent->client->ps.gunindex = 0; */
+	ent->client->ps.gunindex = 0; * /
 
-/*	ent->client->limbo_mode=true;
+/ *	ent->client->limbo_mode=true;
 
 	switch (type) {
 	default:
@@ -2956,7 +2959,7 @@ void Cmd_Quit_team(edict_t *ent)
 	ent->client->resp.team_on = 0;
 	ent->client->resp.mos = NONE; //null
 
-	/*
+	/ *
 	ent->flags &= ~FL_GODMODE;
 	ent->health = 0;
 
@@ -3002,8 +3005,8 @@ qboolean Cmd_Reload (edict_t *ent)
 	//int rds_left;           //+BD - Variable to handle rounds left
 	int mags_left;
 
-	gitem_t *ammo_item;
-	int		ammo_index, *ammo_amount;
+	gitem_t *ammo_item = NULL;
+	int		ammo_index = 0, *ammo_amount = NULL;
 
 	if (!ent ||
 		!ent->client ||
@@ -3036,6 +3039,8 @@ qboolean Cmd_Reload (edict_t *ent)
 		ammo_index = ITEM_INDEX(ammo_item);
 		ammo_amount = &ent->client->pers.inventory[ammo_index];
 	}
+	else
+		return true;
 
     // Grab the current magazine max count...
 	if( ent->client->pers.weapon->topoff)
@@ -3098,7 +3103,7 @@ qboolean Cmd_Reload (edict_t *ent)
 
 			return true;
 		}
-        else
+		else
 		{
 			ent->client->weaponstate = WEAPON_RELOADING;
 //bcass start - truesite speed after reload
@@ -3109,7 +3114,7 @@ qboolean Cmd_Reload (edict_t *ent)
 			return true;
 		}
 	}
-    else
+	else
 	{
 		ent->client->weaponstate = WEAPON_READY;
 		safe_cprintf(ent,PRINT_HIGH,"You're out of ammo!\n");
@@ -3377,8 +3382,6 @@ void Cmd_ShowTimeLeft_f(edict_t* ent)
 {
 	if (timelimit->value > 0)
 	{
-		gclient_t* client = ent->client;
-
 		int totalTime = timelimit->value * 60;
 		int timeElapsed = level.time - gameStartTime;
 		int timeLeft = totalTime - timeElapsed;
@@ -3388,7 +3391,6 @@ void Cmd_ShowTimeLeft_f(edict_t* ent)
 
 		int minutesLeft = timeLeft / 60;
 		int secondsLeft = timeLeft % 60;
-
 
 		gi.cprintf(ent, PRINT_HIGH, "Tiempo restante: %d minutos y %d segundos.\n", minutesLeft, secondsLeft);
 	}
@@ -3464,14 +3466,14 @@ g_cmds_t *FindCommand(char *cmd)
 
 void ClientCommand (edict_t *ent)
 {
-    char        *cmd;
-    g_cmds_t *cmdptr;
+	char        *cmd;
+	g_cmds_t *cmdptr;
 
-    if (!ent->client)
-        return;         // not fully in game yet
+	if (!ent->client)
+		return;         // not fully in game yet
 
 	//JABot[start]
-	if(BOT_Commands(ent))
+	if (BOT_Commands(ent))
 		return;
 	//[end]
 

@@ -40,37 +40,37 @@ gitem_t	*FindItem (char *pickup_name);
 void SP_item_weapon_webley(edict_t *self)
 
 {
-    SpawnItem(self,FindItem("webley"));
+	SpawnItem(self,FindItem("webley"));
 }
 
 void SP_item_weapon_enfield(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_enfield"));
+	SpawnItem(self,FindItemByClassname("weapon_enfield"));
 }
 
 void SP_item_weapon_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_sten"));
+	SpawnItem(self,FindItemByClassname("weapon_sten"));
 }
 
 void SP_item_weapon_bren(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_bren"));
+	SpawnItem(self,FindItemByClassname("weapon_bren"));
 }
 void SP_item_weapon_vickers(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_vickers"));
+	SpawnItem(self,FindItemByClassname("weapon_vickers"));
 }
 
 
 void SP_item_weapon_piat(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_piat"));
+	SpawnItem(self,FindItemByClassname("weapon_piat"));
 }
 
 void SP_item_weapon_enfields(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("weapon_enfields"));
+	SpawnItem(self,FindItemByClassname("weapon_enfields"));
 }
 
 
@@ -78,41 +78,41 @@ void SP_item_weapon_enfields(edict_t *self)
 //ammo
 void SP_item_ammo_grenades_gbr(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_grenades_gbr"));
+	SpawnItem(self,FindItemByClassname("ammo_grenades_gbr"));
 }
 void SP_item_ammo_webley(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_webley"));
+	SpawnItem(self,FindItemByClassname("ammo_webley"));
 }
 
 void SP_item_ammo_sten(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_sten"));
+	SpawnItem(self,FindItemByClassname("ammo_sten"));
 }
 
 void SP_item_ammo_bren(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_bren"));
+	SpawnItem(self,FindItemByClassname("ammo_bren"));
 }
 
 void SP_item_ammo_piat(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_piat"));
+	SpawnItem(self,FindItemByClassname("ammo_piat"));
 }
 
 void SP_item_ammo_enfield(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_enfield"));
+	SpawnItem(self,FindItemByClassname("ammo_enfield"));
 }
 
 void SP_item_ammo_enfields(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_enfields"));
+	SpawnItem(self,FindItemByClassname("ammo_enfields"));
 }
 
 void SP_item_ammo_vickers(edict_t *self)
 {
-    SpawnItem(self,FindItemByClassname("ammo_vickers"));
+	SpawnItem(self,FindItemByClassname("ammo_vickers"));
 }
 
 // Misc stuff
@@ -138,24 +138,23 @@ void SP_misc_flag_brit (edict_t *ent);
 /////////////////////////////////////////////////////////////
 
 spawn_t sp_gbr[MAX_TEAM_ITEMS] =
-
 {
-    "weapon_webley", SP_item_weapon_webley,
-	"weapon_enfield",SP_item_weapon_enfield,
-	"weapon_sten", SP_item_weapon_sten,
-	"weapon_bren", SP_item_weapon_bren,
-	"weapon_vickers", SP_item_weapon_vickers,
-	"weapon_piat",SP_item_weapon_piat,
-	"weapon_enfields",SP_item_weapon_enfields,
-	"ammo_grenades_gbr",SP_item_ammo_grenades_gbr,
-	"ammo_webley",SP_item_ammo_webley,
-	"ammo_wembley",SP_item_ammo_enfield,
-	"ammo_sten",SP_item_ammo_sten,
-	"ammo_bren",SP_item_ammo_bren,
-	"ammo_vickers",SP_item_ammo_vickers,
-	"ammo_PIAT",SP_item_ammo_piat,
-	"ammo_enfields",SP_item_ammo_enfields,
-	"misc_banner_gbr",SP_misc_banner_gbr,
-	"misc_flag_gbr",SP_misc_flag_gbr,
-	"misc_flag_brit",SP_misc_flag_brit
+	{ "weapon_webley", SP_item_weapon_webley },
+	{ "weapon_enfield", SP_item_weapon_enfield },
+	{ "weapon_sten", SP_item_weapon_sten },
+	{ "weapon_bren", SP_item_weapon_bren },
+	{ "weapon_vickers", SP_item_weapon_vickers },
+	{ "weapon_piat", SP_item_weapon_piat },
+	{ "weapon_enfields", SP_item_weapon_enfields },
+	{ "ammo_grenades_gbr", SP_item_ammo_grenades_gbr },
+	{ "ammo_webley", SP_item_ammo_webley },
+	{ "ammo_wembley", SP_item_ammo_enfield },
+	{ "ammo_sten", SP_item_ammo_sten },
+	{ "ammo_bren", SP_item_ammo_bren },
+	{ "ammo_vickers", SP_item_ammo_vickers },
+	{ "ammo_PIAT", SP_item_ammo_piat },
+	{ "ammo_enfields", SP_item_ammo_enfields },
+	{ "misc_banner_gbr", SP_misc_banner_gbr },
+	{ "misc_flag_gbr", SP_misc_flag_gbr },
+	{ "misc_flag_brit", SP_misc_flag_brit }
 };

@@ -636,7 +636,7 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 {
 	int			ammo_index;
 	gitem_t		*ammo_item;
-	int			item_rounds;
+	int			item_rounds = 0;
 
 	// see if we're already using it
 	if (item == ent->client->pers.weapon)
@@ -731,7 +731,7 @@ void Drop_Weapon (edict_t *ent, gitem_t *item)
 	
 	// pbowens: fix in not drop weapon/while prone
 	if ( !item || 
-		((item == ent->client->newweapon)) && (ent->client->pers.inventory[index] == 1))// && (ent->stanceflags != STANCE_STAND))
+		(item == ent->client->newweapon && ent->client->pers.inventory[index] == 1))// && (ent->stanceflags != STANCE_STAND))
 	{
 		//safe_cprintf (ent, PRINT_HIGH, "Can't drop current weapon\n");
 		return;
@@ -1237,10 +1237,10 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	vec3_t	offset;
 	vec3_t	forward, right;
 	vec3_t	start;
-	int		damage = 120;
-	float	radius;
+	//int		damage = 120;
+	//float	radius;
 
-	radius = damage+40;
+	//radius = damage+40;
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
@@ -1433,7 +1433,7 @@ int Play_Bullet_Hit(edict_t *ent, char *surface, vec3_t endpos, edict_t *impact_
 qboolean Surface(char *name, int type);
 void Blade_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	qboolean fistarmed=Q_stricmp(self->classname,"blade");
+	//qboolean fistarmed=Q_stricmp(self->classname,"blade");
 	gitem_t *item= FindItem("Knife");
 	edict_t         *dropped;
     vec3_t          move_angles;//, origin;
@@ -1609,7 +1609,7 @@ void Helmet_Drop (edict_t *self)
 
 void Helmet_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
-	gitem_t *item = FindItem("Helmet");
+	//gitem_t *item = FindItem("Helmet");
 
 	self->count++;
 
@@ -1656,7 +1656,7 @@ void Helmet_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 	{
 		if (random() > 0.5)
 			gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/hgrenb1a.wav"), 1, ATTN_NORM, 0);
-        else
+		else
 		{
 			gi.sound (self, CHAN_VOICE, gi.soundindex ("weapons/grenlb1b.wav"), 1, ATTN_NORM, 0);
 		}
@@ -1688,7 +1688,7 @@ void Helmet_touch(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *su
 
 void Knife_Throw (edict_t *self, vec3_t start, vec3_t dir, int damage)
 {
-	int effect=EF_ANIM01;
+	//int effect=EF_ANIM01;
 	edict_t	*blade;
 	trace_t	tr;
 	qboolean fistarmed = Q_stricmp(self->client->pers.weapon->pickup_name, "Knife");

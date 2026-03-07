@@ -447,12 +447,12 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 	float x_coord, y_coord, p_angle; //faf
 
 	
-	float min_x = targ->s.origin[0] + targ->mins[0] - 0.1;
-	float max_x = targ->s.origin[0] + targ->maxs[0] + 0.1;
-	float min_y = targ->s.origin[1] + targ->mins[1] - 0.1;
-	float max_y = targ->s.origin[1] + targ->maxs[1] + 0.1;
+	//float min_x = targ->s.origin[0] + targ->mins[0] - 0.1;
+	//float max_x = targ->s.origin[0] + targ->maxs[0] + 0.1;
+	//float min_y = targ->s.origin[1] + targ->mins[1] - 0.1;
+	//float max_y = targ->s.origin[1] + targ->maxs[1] + 0.1;
 	float min_z = targ->s.origin[2] + targ->mins[2] - 0.1;
-	float max_z = targ->s.origin[2] + targ->maxs[2] + 0.1;
+	//float max_z = targ->s.origin[2] + targ->maxs[2] + 0.1;
 
 	// rezmoth - impact debug info
 	//gi.dprintf("mins  (%f, %f, %f)\n", targ->mins[0], targ->mins[1], targ->mins[2]);
@@ -777,12 +777,12 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	gclient_t	*client;
 	int			take,
 
-				save,
+//				save,
 //				asave,
 //	int			psave;
 				te_sparks,
-				result,
-				height,
+				result = 0,
+//				height,
 				randnum,
 				
 				wound_location, 
@@ -883,7 +883,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 
 	wound_location = die_time = 0;
-	height = fabs(targ->mins[2]) + targ->maxs[2];
+	//height = fabs(targ->mins[2]) + targ->maxs[2];
 
    	if (targ->client &&((mod == MOD_PISTOL) || 
 						(mod == MOD_SHOTGUN) || 
@@ -1347,17 +1347,17 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 			else
 				mass = targ->mass;
 
-		if (targ->client  && attacker == targ)
-			VectorScale (dir, 1600.0 * (float)knockback / mass, kvel);	// the rocket jump hack...
-		else
-			VectorScale (dir, 500.0 * (float)knockback / mass, kvel);
+			if (targ->client  && attacker == targ)
+				VectorScale (dir, 1600.0 * (float)knockback / mass, kvel);	// the rocket jump hack...
+			else
+				VectorScale (dir, 500.0 * (float)knockback / mass, kvel);
 
 			VectorAdd (targ->velocity, kvel, targ->velocity);
 		}
 	}
 
 	take = damage;
-	save = 0;
+	//save = 0;
 
 	//psave = CheckPowerArmor (targ, point, normal, take, dflags);
 	//take -= psave;
