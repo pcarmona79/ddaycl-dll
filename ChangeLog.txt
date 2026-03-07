@@ -4,6 +4,15 @@ Versión 5.065
 - Corrige varios archivos para remover todas las alertas generadas por
   el compilador al usar -Wall.
 
+- Modifica la función SwitchToObserver() de p_observer.c para establecer
+  el campo de visión del cliente en STANDARD_FOV.
+
+- Corrige la función LoadMapList() de g_maps.c para limitar el nombre
+  del mapa a 15 caracteres.
+
+- Los menús M_ChooseMOS(), M_Team_Join() y ChooseTeam() se bloquearán
+  antes del "motd_time" para que los usuarios puedan leer el MOTD.
+
 Versión 5.064
 -------------
 
