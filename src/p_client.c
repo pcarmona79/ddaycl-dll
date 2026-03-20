@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
 
+#include "ai/ai.h"
 #include "g_defines.h"
 #include "g_local.h"
 #include "g_maps.h"
@@ -1348,13 +1349,9 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		if (!self->deadflag)
 		{
 			static int i;
-				i = (i+1)%3;
+			i = (i+1)%3;
 
-
-
-				
-				
-				// start a death animation
+			// start a death animation
 			self->client->anim_priority = ANIM_DEATH;
 			if (self->stanceflags==STANCE_DUCK)
 			{
@@ -2502,7 +2499,9 @@ void PutClientInServer (edict_t *ent)
 	client->ps.pmove.origin[1] = spawn_origin[1]*8;
 	client->ps.pmove.origin[2] = spawn_origin[2]*8;
 
-	if (deathmatch->value && ((int)dmflags->value & DF_FIXED_FOV))
+	// kernel: force the standard FOV
+	client->ps.fov = STANDARD_FOV;
+/*	if (deathmatch->value && ((int)dmflags->value & DF_FIXED_FOV))
 	{
 		client->ps.fov = STANDARD_FOV;
 	}
@@ -2513,7 +2512,7 @@ void PutClientInServer (edict_t *ent)
 			client->ps.fov = STANDARD_FOV;
 		else if (client->ps.fov > MAX_FOV)
 			client->ps.fov = MAX_FOV;
-	}
+	}*/
 
 	//if (client->pers.weapon)
 	//	client->ps.gunindex = gi.modelindex(client->pers.weapon->view_model);
