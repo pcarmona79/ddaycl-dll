@@ -9,6 +9,9 @@ Versión 5.066
   si hay animación cuando el jugador está en el agua, para que los
   cuerpos muertos en el agua puedan completar la animación de muerte.
 
+- El método DropFlamed() de g_combat.c solo soltará un item y no vaciará
+  el inventario de ese item.
+
 Versión 5.065
 -------------
 
