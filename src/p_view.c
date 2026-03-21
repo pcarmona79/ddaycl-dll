@@ -1912,12 +1912,12 @@ void G_SetClientFrame (edict_t *ent)
 	if (run != client->anim_run && client->anim_priority == ANIM_BASIC
 		&& !(run == false && client->sidestep_anim != 0))//faf: let them finish sidestepping
 		goto newanim;
-	if ((!ent->deadflag &&
-		 !ent->groundentity &&
-		 client->last_jump_time > level.time - 1 && //faf:  only do jump anims when jump is pressed
-		 client->anim_priority <= ANIM_WAVE) ||
-		ent->client->landed == false ||
-		(ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL))
+	if (!ent->deadflag &&
+		((!ent->groundentity &&
+		   client->last_jump_time > level.time - 1 && //faf:  only do jump anims when jump is pressed
+		   client->anim_priority <= ANIM_WAVE) ||
+		 ent->client->landed == false ||
+		 (ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL)))
 		goto newanim;
 	//faf: go to new sidestep animations immediately
 	if (extra_anims->value !=0 && 
