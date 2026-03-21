@@ -1,3 +1,14 @@
+Versión 5.066
+-------------
+
+- Fuerza el campo de visión estándar (STANDARD_FOV) en
+  PutClientInServer() de p_client.c, no es necesario copiarlo del
+  jugador, ya que cambiará durante el juego.
+
+- Corrige la condición en G_SetClientFrame() de p_view.c que comprueba
+  si hay animación cuando el jugador está en el agua, para que los
+  cuerpos muertos en el agua puedan completar la animación de muerte.
+
 Versión 5.065
 -------------
 
