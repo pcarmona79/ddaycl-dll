@@ -3173,18 +3173,26 @@ if (ent->client->turret)
 
 	VectorCopy (ent->s.origin, ent->client->last_pos1);
 
-	if (afk_time->value && level.framenum % 10 == 0 && ent->client->resp.team_on && !level.intermissiontime)
+	// kernel: AFK should not check bots
+	if (!ent->ai &&
+		afk_time->value &&
+		level.framenum % 10 == 0 &&
+		ent->client->resp.team_on &&
+		!level.intermissiontime)
 	{
-		//gi.dprintf ("checktime: %i time: %i diff: %i lastorg: %s movement: %s\n", ent->client->pers.afk_check_time,
-		//			level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
-		//			(ent->client->movement) ? "yes" : "no");
-
 		// kernel: add movement check
 		if (ent->client->movement || !VectorCompare(ent->s.angles, ent->client->pers.last_angles))
 			ent->client->pers.afk_check_time = level.framenum;
+
 		VectorCopy(ent->s.angles, ent->client->pers.last_angles);
 
-		if (!ent->ai && level.framenum - ent->client->pers.afk_check_time > (10 * afk_time->value))
+		//gi.dprintf("checktime: %i time: %i diff: %i last_angles: %s movement: %s\n", ent->client->pers.afk_check_time,
+		//		   level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
+		//		   (ent->client->movement) ? "yes" : "no");
+
+		if (!ent->ai &&
+			ent->client->pers.afk_check_time > 0 &&
+			level.framenum - ent->client->pers.afk_check_time > (10 * afk_time->value))
 		{
 			safe_bprintf(PRINT_HIGH, "%s is being removed from his team for being AFK.\n", ent->client->pers.netname);
 			DoObserverMode(ent);

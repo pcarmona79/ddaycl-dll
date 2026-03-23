@@ -1475,7 +1475,12 @@ void InitClientPersistant (gclient_t *client)
 	int afk_check_time;
 	vec3_t last_angles;
 
-	afk_check_time = client->pers.afk_check_time;
+	// kernel: copy AFK time only if was setted
+	if (client->pers.afk_check_time > 0)
+		afk_check_time = client->pers.afk_check_time;
+	else
+		afk_check_time = level.framenum;
+
 	VectorCopy(client->pers.last_angles, last_angles);
 
 	memset (&client->pers, 0, sizeof(client->pers));

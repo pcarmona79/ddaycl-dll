@@ -12,6 +12,11 @@ Versión 5.066
 - El método DropFlamed() de g_combat.c solo soltará un item y no vaciará
   el inventario de ese item.
 
+- Garantiza que afk_check_time se establezca en un valor distinto de
+  cero en InitClientPersistant() de p_client.c y se establezca en el
+  número de fotograma actual al cambiar o unirse a un equipo en
+  M_Team_Join() de p_observer.c.
+
 Versión 5.065
 -------------
 
