@@ -759,7 +759,7 @@ void Drop_Flamed (edict_t *ent)
 		if (ent->client->pers.inventory[index])
 		{
 			Drop_Item (ent, item);
-			ent->client->pers.inventory[index] = 0;
+			ent->client->pers.inventory[index]--; // kernel: drop only one item
 
 			ent->s.modelindex2 = 0; //faf:  remove the weapon model immediately or it looks like theres 2
 		}

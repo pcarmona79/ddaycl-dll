@@ -1912,12 +1912,12 @@ void G_SetClientFrame (edict_t *ent)
 	if (run != client->anim_run && client->anim_priority == ANIM_BASIC
 		&& !(run == false && client->sidestep_anim != 0))//faf: let them finish sidestepping
 		goto newanim;
-	if ((!ent->deadflag &&
-		 !ent->groundentity &&
-		 client->last_jump_time > level.time - 1 && //faf:  only do jump anims when jump is pressed
-		 client->anim_priority <= ANIM_WAVE) ||
-		ent->client->landed == false ||
-		(ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL))
+	if (!ent->deadflag &&
+		((!ent->groundentity &&
+		   client->last_jump_time > level.time - 1 && //faf:  only do jump anims when jump is pressed
+		   client->anim_priority <= ANIM_WAVE) ||
+		 ent->client->landed == false ||
+		 (ent->waterlevel > 1 && ent->stanceflags != STANCE_CRAWL)))
 		goto newanim;
 	//faf: go to new sidestep animations immediately
 	if (extra_anims->value !=0 && 
@@ -3173,18 +3173,26 @@ if (ent->client->turret)
 
 	VectorCopy (ent->s.origin, ent->client->last_pos1);
 
-	if (afk_time->value && level.framenum % 10 == 0 && ent->client->resp.team_on && !level.intermissiontime)
+	// kernel: AFK should not check bots
+	if (!ent->ai &&
+		afk_time->value &&
+		level.framenum % 10 == 0 &&
+		ent->client->resp.team_on &&
+		!level.intermissiontime)
 	{
-		//gi.dprintf ("checktime: %i time: %i diff: %i lastorg: %s movement: %s\n", ent->client->pers.afk_check_time,
-		//			level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
-		//			(ent->client->movement) ? "yes" : "no");
-
 		// kernel: add movement check
 		if (ent->client->movement || !VectorCompare(ent->s.angles, ent->client->pers.last_angles))
 			ent->client->pers.afk_check_time = level.framenum;
+
 		VectorCopy(ent->s.angles, ent->client->pers.last_angles);
 
-		if (!ent->ai && level.framenum - ent->client->pers.afk_check_time > (10 * afk_time->value))
+		//gi.dprintf("checktime: %i time: %i diff: %i last_angles: %s movement: %s\n", ent->client->pers.afk_check_time,
+		//		   level.framenum, level.framenum - ent->client->pers.afk_check_time, vtos(ent->client->pers.last_angles),
+		//		   (ent->client->movement) ? "yes" : "no");
+
+		if (!ent->ai &&
+			ent->client->pers.afk_check_time > 0 &&
+			level.framenum - ent->client->pers.afk_check_time > (10 * afk_time->value))
 		{
 			safe_bprintf(PRINT_HIGH, "%s is being removed from his team for being AFK.\n", ent->client->pers.netname);
 			DoObserverMode(ent);
