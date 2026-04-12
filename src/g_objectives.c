@@ -793,6 +793,10 @@ void briefcase_spawn_think(edict_t *ent)
 			idx = rand() % briefcase_count;
 			VectorCopy(level.briefcase_origin[idx], ent->s.origin);
 			VectorCopy(level.briefcase_angles[idx], ent->s.angles);
+
+			// kernel: must remove entities near the spawn point
+			KillBox(ent);
+
 			ent->think = briefcase_spawn_unhide; // kernel: reveal after movement
 			ent->nextthink = level.time + 1;
 		}
