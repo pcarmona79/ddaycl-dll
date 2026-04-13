@@ -2429,7 +2429,11 @@ void PutClientInServer (edict_t *ent)
 			if (itemlist[n].flags & IT_KEY)
 				resp.coop_respawn.inventory[n] = client->pers.inventory[n];
 		}
-		client->pers = resp.coop_respawn;
+		// kernel: replace this by just copying what changed
+		//client->pers = resp.coop_respawn;
+		for (n = 0; n < MAX_ITEMS; n++)
+			client->pers.inventory[n] = resp.coop_respawn.inventory[n];
+
 		globals.ClientUserinfoChanged (ent, userinfo);
 //		if (resp.score > client->pers.score)
 //			client->pers.score = resp.score;
