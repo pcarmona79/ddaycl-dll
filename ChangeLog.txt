@@ -1,3 +1,17 @@
+Versión 5.067
+-------------
+
+- Agrega una llamada a la función `KillBox()` para hacer espacio después
+  de mover el maletín en `briefcase_spawn_think()` de g_objectives.c.
+
+- Agrega una comprobación de puntero nulo al verificar si el rifle de
+  francotirador está completamente cargado en `Weapon_Generic()` de
+  p_generic_wep.c.
+
+- Comenta la línea que copia las estructuras de `coop_respawn` a `pers`
+  cuando el juego está en modo cooperativo. Se reemplaza por un bucle
+  `for` que simplemente copia los objetos del inventario.
+
 Versión 5.066
 -------------
 
