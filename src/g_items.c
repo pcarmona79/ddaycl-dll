@@ -2240,3 +2240,24 @@ void RemoveSandbags(void)
 		}
 	}
 }
+
+void TNT_Dud(edict_t *ent);
+void Shrapnel_Dud(edict_t *ent);
+
+void RemoveTimeBombs(void)
+{
+	int i;
+	edict_t *ent;
+
+	for (i = 0; i < MAX_EDICTS; ++i)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+
+		if (ent->classnameb == TNT)
+			TNT_Dud(ent);
+		else if (ent->classnameb == HGRENADE)
+			Shrapnel_Dud(ent);
+	}
+}

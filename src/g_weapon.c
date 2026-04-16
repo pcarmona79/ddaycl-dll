@@ -3923,6 +3923,13 @@ void TNT_Explode (edict_t *ent)
     G_FreeEdict (ent);
 }
 
+void TNT_Dud(edict_t *ent)
+{
+	if (ent->owner && ent->owner->client)
+		safe_centerprintf(ent->owner, "Your TNT did not go off!\n");
+
+	G_FreeEdict(ent);
+}
 
 void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {

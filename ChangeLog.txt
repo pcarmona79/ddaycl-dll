@@ -12,6 +12,11 @@ Versión 5.067
   cuando el juego está en modo cooperativo. Se reemplaza por un bucle
   `for` que simplemente copia los objetos del inventario.
 
+- Añade la nueva función `TNT_Dud()` en g_weapon.c para desactivar TNT
+  activas. Esto permite usarla en la nueva función `RemoveTimeBombs()`
+  en g_items.c, que se aplicará al inicio de la cuenta atrás en el modo
+  torneo para eliminar granadas y TNT activas.
+
 Versión 5.066
 -------------
 
