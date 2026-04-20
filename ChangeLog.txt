@@ -17,6 +17,9 @@ Versión 5.067
   en g_items.c, que se aplicará al inicio de la cuenta atrás en el modo
   torneo para eliminar granadas y TNT activas.
 
+- Cambia probabilidad de quedar sangrando del pie en vez de morir a un
+  50%.
+
 Versión 5.066
 -------------
 

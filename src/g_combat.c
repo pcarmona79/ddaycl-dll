@@ -676,7 +676,7 @@ int Damage_Loc(edict_t *targ, vec3_t point, edict_t *attacker)
 #define	BLEND_TIME 2		// How long the player is affected by damage.. (seconds)
 //bcass start - 3% chance of being shot/function to do it
 #define DROP_SHOT 97
-#define BLEEDING_FEET_WOUND 30 // kernel: 70% chance of a bleeding feet wound
+#define BLEEDING_FEET_WOUND 50 // kernel: 50% chance of a bleeding feet wound
 
 //void Drop_Shot (edict_t *ent, gitem_t *item);
 void Use_Weapon (edict_t *ent, gitem_t *inv);
