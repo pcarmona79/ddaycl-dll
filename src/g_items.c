@@ -2259,5 +2259,20 @@ void RemoveTimeBombs(void)
 			TNT_Dud(ent);
 		else if (ent->classnameb == HGRENADE)
 			Shrapnel_Dud(ent);
+		else if (ent->classnameb == AIRSTRIKE ||
+				 ent->classnameb == AIRSTRIKE_CALLED ||
+				 ent->classnameb == PLANE ||
+				 ent->classnameb == BOMB)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing %s\n", ent->classname);
+			G_FreeEdict(ent);
+		}
+		else if (ent->client && ent->client->airstrike)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing ongoing airstrike from %s\n", ent->client->pers.netname);
+			if (ent->client->airstrike->inuse)
+				G_FreeEdict(ent->client->airstrike);
+			ent->client->airstrike = NULL;
+		}
 	}
 }

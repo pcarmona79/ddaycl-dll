@@ -2115,6 +2115,7 @@ void fire_airstrike (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	airstrike->dmg_radius = damage_radius;
 	airstrike->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	airstrike->classname = "airstrike";
+	airstrike->classnameb = AIRSTRIKE;
 //	airstrike->gravity = .5; // faf
 
 

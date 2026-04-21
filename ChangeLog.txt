@@ -16,7 +16,9 @@ Versión 5.067
 - Añade la nueva función `TNT_Dud()` en g_weapon.c para desactivar TNT
   activas. Esto permite usarla en la nueva función `RemoveTimeBombs()`
   en g_items.c, que se aplicará al inicio de la cuenta atrás en el modo
-  torneo para eliminar granadas y TNT activas.
+  torneo para eliminar granadas y TNT activas. También se removerán los
+  llamados a ataques aéreos y cualquier avión que se esté desplazando
+  por el mapa.
 
 - Cambia probabilidad de quedar sangrando del pie en vez de morir a un
   50%.

@@ -2194,7 +2194,11 @@ typedef enum
 	ROCKET,
 	FUNC_TRAIN,
 	BOTWARN,
-	OBJECTIVE_VIP
+	OBJECTIVE_VIP,
+	AIRSTRIKE,
+	AIRSTRIKE_CALLED,
+	PLANE,
+	BOMB
 } classnameb_t;
 
 typedef enum
