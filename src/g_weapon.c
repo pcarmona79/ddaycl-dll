@@ -2527,7 +2527,7 @@ void Weapon_Rifle_Fire (edict_t *ent)
 		ent->client->ps.gunframe = ((ent->client->aim)? guninfo->LastAFire : guninfo->LastFire) + 1;
 
 
-	if ( *ent->client->p_rnd == 0 )
+	if (ent->client->p_rnd && *ent->client->p_rnd == 0)
 	{
 		ent->client->ps.gunframe = ((ent->client->aim)? guninfo->LastAFire : guninfo->LastFire) + 1;
 

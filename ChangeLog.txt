@@ -6,7 +6,8 @@ Versión 5.067
 
 - Agrega una comprobación de puntero nulo al verificar si el rifle de
   francotirador está completamente cargado en `Weapon_Generic()` de
-  p_generic_wep.c.
+  p_generic_wep.c y en `Weapon_Rifle_Fire()` de g_weapon.c cuando se
+  comprueba si hay munición cargada.
 
 - Comenta la línea que copia las estructuras de `coop_respawn` a `pers`
   cuando el juego está en modo cooperativo. Se reemplaza por un bucle
