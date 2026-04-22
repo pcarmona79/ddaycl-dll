@@ -2240,3 +2240,39 @@ void RemoveSandbags(void)
 		}
 	}
 }
+
+void TNT_Dud(edict_t *ent);
+void Shrapnel_Dud(edict_t *ent);
+
+void RemoveTimeBombs(void)
+{
+	int i;
+	edict_t *ent;
+
+	for (i = 0; i < MAX_EDICTS; ++i)
+	{
+		ent = &g_edicts[i];
+		if (!ent->inuse)
+			continue;
+
+		if (ent->classnameb == TNT)
+			TNT_Dud(ent);
+		else if (ent->classnameb == HGRENADE)
+			Shrapnel_Dud(ent);
+		else if (ent->classnameb == AIRSTRIKE ||
+				 ent->classnameb == AIRSTRIKE_CALLED ||
+				 ent->classnameb == PLANE ||
+				 ent->classnameb == BOMB)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing %s\n", ent->classname);
+			G_FreeEdict(ent);
+		}
+		else if (ent->client && ent->client->airstrike)
+		{
+			gi.bprintf(PRINT_HIGH, "Removing ongoing airstrike from %s\n", ent->client->pers.netname);
+			if (ent->client->airstrike->inuse)
+				G_FreeEdict(ent->client->airstrike);
+			ent->client->airstrike = NULL;
+		}
+	}
+}

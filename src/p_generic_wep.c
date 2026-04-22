@@ -411,7 +411,7 @@ void Weapon_Generic (edict_t *ent,
 		// Nerfeo recarga automatica doble pipa
 		if (ent->client->pers.weapon->position == LOC_SNIPER)
 		{
-			if (*ent->client->p_rnd == ammo_item->quantity) //if fully loaded, assume it's bolted
+			if (ent->client->p_rnd && *ent->client->p_rnd == ammo_item->quantity) //if fully loaded, assume it's bolted
 				ent->client->sniper_loaded[ent->client->resp.team_on->index] = true;
 		}
 

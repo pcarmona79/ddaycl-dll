@@ -51,7 +51,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // the "gameversion" client command will print this plus compile date
 #define	GAMEVERSION	"dday"
-#define DEVVERSION	"5.066" // ddaychile
+#define DEVVERSION	"5.067" // ddaychile
 //#define	DEBUG		1
 
 // protocol bytes that can be directly added to messages
@@ -2194,7 +2194,11 @@ typedef enum
 	ROCKET,
 	FUNC_TRAIN,
 	BOTWARN,
-	OBJECTIVE_VIP
+	OBJECTIVE_VIP,
+	AIRSTRIKE,
+	AIRSTRIKE_CALLED,
+	PLANE,
+	BOMB
 } classnameb_t;
 
 typedef enum

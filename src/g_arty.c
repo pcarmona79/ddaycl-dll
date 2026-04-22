@@ -824,6 +824,7 @@ void Spawn_Plane(edict_t *ent)
 	plane->die = plane_die;
 */
 	plane->classname = "plane";
+	plane->classnameb = PLANE;
 
 	plane->think = Plane_Think;
 	plane->nextthink = level.time +.1;
@@ -1086,6 +1087,7 @@ void Drop_Bomb_i(edict_t *ent)
 	bomb->dmg_radius = 300;
 	bomb->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	bomb->classname = "bomb";
+	bomb->classnameb = BOMB;
 	bomb->gravity = 1; // faf
 	gi.linkentity (bomb);
 }

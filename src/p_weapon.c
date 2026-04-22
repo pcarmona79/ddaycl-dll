@@ -2063,6 +2063,7 @@ void Binocular_Fire(edict_t *ent)
 
 	VectorCopy(tr.endpos, airstrike->pos2);
 	airstrike->classname ="airstrike_called";
+	airstrike->classnameb = AIRSTRIKE_CALLED;
 	airstrike->owner = ent;
 
 	// kernel: add arty_confirm delay to nextthink

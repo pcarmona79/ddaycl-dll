@@ -2115,6 +2115,7 @@ void fire_airstrike (edict_t *self, vec3_t start, vec3_t dir, int damage, int sp
 	airstrike->dmg_radius = damage_radius;
 	airstrike->s.sound = gi.soundindex ("weapons/rockfly.wav");
 	airstrike->classname = "airstrike";
+	airstrike->classnameb = AIRSTRIKE;
 //	airstrike->gravity = .5; // faf
 
 
@@ -2527,7 +2528,7 @@ void Weapon_Rifle_Fire (edict_t *ent)
 		ent->client->ps.gunframe = ((ent->client->aim)? guninfo->LastAFire : guninfo->LastFire) + 1;
 
 
-	if ( *ent->client->p_rnd == 0 )
+	if (ent->client->p_rnd && *ent->client->p_rnd == 0)
 	{
 		ent->client->ps.gunframe = ((ent->client->aim)? guninfo->LastAFire : guninfo->LastFire) + 1;
 
@@ -3923,6 +3924,13 @@ void TNT_Explode (edict_t *ent)
     G_FreeEdict (ent);
 }
 
+void TNT_Dud(edict_t *ent)
+{
+	if (ent->owner && ent->owner->client)
+		safe_centerprintf(ent->owner, "Your TNT did not go off!\n");
+
+	G_FreeEdict(ent);
+}
 
 void TNT_Touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf)
 {

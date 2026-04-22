@@ -1,3 +1,28 @@
+Versión 5.067
+-------------
+
+- Agrega una llamada a la función `KillBox()` para hacer espacio después
+  de mover el maletín en `briefcase_spawn_think()` de g_objectives.c.
+
+- Agrega una comprobación de puntero nulo al verificar si el rifle de
+  francotirador está completamente cargado en `Weapon_Generic()` de
+  p_generic_wep.c y en `Weapon_Rifle_Fire()` de g_weapon.c cuando se
+  comprueba si hay munición cargada.
+
+- Comenta la línea que copia las estructuras de `coop_respawn` a `pers`
+  cuando el juego está en modo cooperativo. Se reemplaza por un bucle
+  `for` que simplemente copia los objetos del inventario.
+
+- Añade la nueva función `TNT_Dud()` en g_weapon.c para desactivar TNT
+  activas. Esto permite usarla en la nueva función `RemoveTimeBombs()`
+  en g_items.c, que se aplicará al inicio de la cuenta atrás en el modo
+  torneo para eliminar granadas y TNT activas. También se removerán los
+  llamados a ataques aéreos y cualquier avión que se esté desplazando
+  por el mapa.
+
+- Cambia probabilidad de quedar sangrando del pie en vez de morir a un
+  50%.
+
 Versión 5.066
 -------------
 
